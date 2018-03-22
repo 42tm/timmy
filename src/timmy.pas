@@ -58,9 +58,60 @@ Type
                  Function Answer(TQuestion: String): String;
              End;
 
+Function StrProcessor(S: String):String;
+Function StrSplit(S: String):Array of String;
 Function CompareStrArrays(ArrayA, ArrayB: Array of String):Boolean;
 
 Implementation
+
+{
+	Given a string, process it so that the first and the last
+	character are not space, and there is no multiple spaces
+	character in a row.
+}
+Function StrProcessor(S: String):String;
+Var iter: Integer;
+	FlagStr: String;
+	SpaceOn: Boolean;
+Begin
+	While S[1] = ' ' do Delete(S, 1, 1);
+	While S[Length(S)] = ' ' do Delete(S, Length(S), 1);
+	FlagStr := '';
+	For iter := 1 to Length(S)
+	do If S[iter] <> ' '
+	   then Begin FlagStr := FlagStr + S[iter]; SpaceOn := False; End
+	   else Case SpaceOn of
+		 	  True: Continue;
+		      False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
+		 	End;
+
+	StrProcessor := FlagStr;
+End;
+
+{
+	Given a string, split the string using the delimiter
+	and return an array containing the seperated strings.
+}
+Function StrSplit(S: String; delimiter: Char):Array of String;
+Var iter, counter: Integer;
+	FlagStr: String;
+Begin
+	While S[1] = delimiter do Delete(S, 1, 1);
+	While S[Length(S)] = delimiter do Delete(S, Length(S), 1);
+	FlagStr := '';
+	counter := -1;
+
+	For iter := 1 to Length(S)
+	do If S[iter] <> delimiter
+	   then FlagStr := FlagStr + S[iter]
+	   else Begin
+	   		  If FlagStr = '' then Continue;
+	   		  Inc(counter);
+			  SetLength(StrSplit, counter);
+			  StrSplit[counter] := FlagStr;
+			  FlagStr := '';
+	   	    End;
+End;
 
 {
 	Given two arrays of strings, compare them.
@@ -179,6 +230,11 @@ Begin
 
 	SetLength(QKeywordsList, NOfEntries);
 	SetLength(ReplyList, NOfEntries);
+End;
+
+Function TTimmy.Answer(TQuestion: String): String;
+Begin
+
 End;
 
 End.
