@@ -48,19 +48,19 @@ Type
     NotUnderstandReply : String to assign to TTimmy.Answer in case there's no possible answer to the given question
     }
     TTimmy = Object
-     Initialized: Boolean;
+                 Initialized: Boolean;
                  Enabled: Boolean;
-     NOfEntries: Integer;
+                 NOfEntries: Integer;
                  QKeywordsList: Array of Array of String;
-     ReplyList: Array of Array of String;
-     DupesCheck: Boolean;
-     TPercent: Integer;
-     NotUnderstandReply: String;
+                 ReplyList: Array of Array of String;
+                 DupesCheck: Boolean;
+                 TPercent: Integer;
+                 NotUnderstandReply: String;
                  Function Init: Integer;
                  Function Add(QKeywords, Replies: TStrArray): Integer;
                  Function Remove(QKeywords: TStrArray): Integer;
-     Function RemoveByIndex(AIndex: Integer):Integer;
-     Procedure Update;
+                 Function RemoveByIndex(AIndex: Integer):Integer;
+                 Procedure Update;
                  Function Answer(TQuestion: String): String;
              End;
 
@@ -87,9 +87,9 @@ Begin
     do If S[iter] <> ' '
        then Begin FlagStr := FlagStr + S[iter]; SpaceOn := False; End
        else Case SpaceOn of
-     	  True: Continue;
-          False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
-     	End;
+     	      True: Continue;
+              False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
+     	    End;
 
     StrProcessor := FlagStr;
 End;
@@ -114,15 +114,15 @@ Begin
        else Begin
        		  If FlagStr = '' then Continue;
        		  Inc(counter);
-      SetLength(StrSplit, counter + 1);
-      StrSplit[counter] := FlagStr;
-      FlagStr := '';
+              SetLength(StrSplit, counter + 1);
+              StrSplit[counter] := FlagStr;
+              FlagStr := '';
        	    End;
 
     If counter = -1 then Begin
-       SetLength(StrSplit, 1);
-       StrSplit[0] := S;
-     End;
+                           SetLength(StrSplit, 1);
+                           StrSplit[0] := S;
+                         End;
 End;
 
 {
@@ -145,14 +145,14 @@ Function TTimmy.Init: Integer;
 Begin
     If Initialized then Exit(101);
 
-   DupesCheck := True;
-   NotUnderstandReply := 'Sorry, I didn''t get that';
-   TPercent := 70;
-   NOfEntries := 0;
-   Update;
-   Enabled := True;
-   Initialized := True;
-   Exit(100);
+    DupesCheck := True;
+    NotUnderstandReply := 'Sorry, I didn''t get that';
+    TPercent := 70;
+    NOfEntries := 0;
+    Update;
+    Enabled := True;
+    Initialized := True;
+    Exit(100);
 End;
 
 {
@@ -169,7 +169,7 @@ Begin
     If (not Initialized) or (not Enabled) then Exit(102);
     If (DupesCheck) and (NOfEntries > 0)
     then For iter := Low(QKeywordsList) to High(QKeywordsList) do
-       If CompareStrArrays(QKeywordsList[iter], QKeywords) then Exit(202);
+           If CompareStrArrays(QKeywordsList[iter], QKeywords) then Exit(202);
 
     Inc(NOfEntries); Update;
     QKeywordsList[High(QKeywordsList)] := QKeywords;
@@ -199,17 +199,18 @@ Begin
     // and later deal with them using TTimmy.RemoveByIndex
       For iter := Low(QKeywordsList) to High(QKeywordsList) do
         If CompareStrArrays(QKeywordsList[iter], QKeywords)
-    then Begin
+        then Begin
       	       Inc(counter);
-       Indexes[counter] := iter;
-     End;
+               Indexes[counter] := iter;
+             End;
 
     Inc(counter);
     SetLength(Indexes, counter);
-    While counter > 0 do Begin
+    While counter > 0 do
+    Begin
        RemoveByIndex(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
        Dec(counter);
-     End;
+    End;
     Exit(308);
 End;
 
@@ -259,26 +260,27 @@ Begin
       FlagQ := StrProcessor(TQuestion);
       // Delete punctuation at the end of the question (like "?" or "!")
         While True do Begin
-      		        LastChar := FlagQ[Length(FlagQ)];
-        Case LastChar of
-          'a'..'z', 'A'..'Z': Break;
-        Else Delete(FlagQ, Length(FlagQ), 1);
-        End;
-          End;
+      		            LastChar := FlagQ[Length(FlagQ)];
+                        Case LastChar of
+                          'a'..'z', 'A'..'Z', '0'..'9': Break;
+                        Else Delete(FlagQ, Length(FlagQ), 1);
+                        End;
+                      End;
 
     FlagWords := StrSplit(FlagQ, ' ');
     For MetaIter := 0 to NOfEntries - 1
     do Begin
-     counter := 0;
+         counter := 0;
          For QKIter := Low(QKeywordsList[MetaIter]) to High(QKeywordsList[MetaIter])
-     do For QWiter := Low(FlagWords) to High(FlagWords)
-    do If FlagWords[QWiter] = QKeywordsList[MetaIter][QKIter] then Inc(counter);
+         do For QWiter := Low(FlagWords) to High(FlagWords)
+            do If FlagWords[QWiter] = QKeywordsList[MetaIter][QKIter] then Inc(counter);
+
          If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
-     then Begin
-     	    Randomize;
-    GetAnswer := Random(Length(ReplyList[MetaIter]));
-    Exit(ReplyList[MetaIter][GetAnswer]);
-     	  End;
+         then Begin
+     	        Randomize;
+                GetAnswer := Random(Length(ReplyList[MetaIter]));
+                Exit(ReplyList[MetaIter][GetAnswer]);
+     	      End;
        End;
 
     Exit(NotUnderstandReply);
