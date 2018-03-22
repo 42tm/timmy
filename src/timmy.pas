@@ -59,14 +59,14 @@ Type
                  Function Init: Integer;
                  Function Add(QKeywords, Replies: TStrArray): Integer;
                  Function Remove(QKeywords: TStrArray): Integer;
-                 Function RemoveByIndex(AIndex: Integer):Integer;
+                 Function RemoveByIndex(AIndex: Integer): Integer;
                  Procedure Update;
                  Function Answer(TQuestion: String): String;
              End;
 
-Function StrProcessor(S: String):String;
-Function StrSplit(S: String; delimiter: Char):TStrArray;
-Function CompareStrArrays(ArrayA, ArrayB: TStrArray):Boolean;
+Function StrProcessor(S: String): String;
+Function StrSplit(S: String; delimiter: Char): TStrArray;
+Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 
 Implementation
 
@@ -75,7 +75,7 @@ Implementation
     character are not space, and there is no multiple spaces
     character in a row.
 }
-Function StrProcessor(S: String):String;
+Function StrProcessor(S: String): String;
 Var iter: Integer;
     FlagStr: String;
     SpaceOn: Boolean;
@@ -98,7 +98,7 @@ End;
     Given a string, split the string using the delimiter
     and return an array containing the seperated strings.
 }
-Function StrSplit(S: String; delimiter: Char):TStrArray;
+Function StrSplit(S: String; delimiter: Char): TStrArray;
 Var iter, counter: Integer;
     FlagStr: String;
 Begin
@@ -129,7 +129,7 @@ End;
     Given two arrays of strings, compare them.
     Return true if they are the same, false otherwise.
 }
-Function CompareStrArrays(ArrayA, ArrayB: TStrArray):Boolean;
+Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 Var iter: Integer;
 Begin
     If Length(ArrayA) <> Length(ArrayB) then Exit(False);
@@ -221,7 +221,7 @@ End;
             305 if AIndex is invalid
             300 if the operation succeed
 }
-Function TTimmy.RemoveByIndex(AIndex: Integer):Integer;
+Function TTimmy.RemoveByIndex(AIndex: Integer): Integer;
 Var iter: Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit(102);
