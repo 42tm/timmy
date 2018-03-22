@@ -31,8 +31,8 @@ Type
     ReplyList which holds replies
 
       QKeywordsList [                                 ReplyList [
-                         [*keywords for question 1*],                [*possible answers for question 1*],
-                         [*keywords for question 2*],                [*possible answers for question 2*],
+                     [*keywords for question 1*],                [*possible answers for question 1*],
+                     [*keywords for question 2*],                [*possible answers for question 2*],
                                  ...                                             ...
                                                  ]                                                   ]
 
