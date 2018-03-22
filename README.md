@@ -1,2 +1,57 @@
-# timmy
-Timmy is a Pascal unit (i.e. library) for creating chat bots
+# Timmy
+Timmy is a Pascal unit (i.e. library) for creating chat bots.  
+Creating bots with Timmy is as easy as 1 2 3.
+
+## How to create a bot with Timmy
+1. Declare `timmy` unit
+2. Declare a `TTimmy` variable
+3. Initialize your `TTimmy`
+4. Add some keywords for your questions, and possible replies to those questions
+5. Start answering
+
+## Example program
+
+```pascal
+Program MyFirstBot;
+Uses timmy;
+Var MyBot: TTimmy;
+
+BEGIN
+    MyBot.Init;
+    MyBot.NotUnderstandReply := 'I gave up.';
+    MyBot.Add(StrSplit('Hello', ' '), StrSplit('Greetings!|Hello to you!|Hi!', '|'));
+    MyBot.Add(StrSplit('How are you', ' '), StrSplit('I am fine!|Never better!|I''m doing great', '|'));
+    MyBot.Add(StrSplit('What 2 + 2', ' '), StrSplit('The answer is 4', '@'));
+
+    Writeln(MyBot.Answer('Hello!'));
+    Writeln(MyBot.Answer('How are you?'));
+    Writeln(MyBot.Answer('What is 2 + 2?'));
+    Writeln(MyBot.Answer('What is the meaning of life?'));
+END.
+```
+
+If we compile and execute the program, we should get the following result:
+```
+Hi!
+I'm doing great
+The answer is 4
+I gave up.
+```
+
+## Variables, functions and procedures of `TTimmy`
+|Name|Type|Parameters|Description|Notes|
+| --- | --- | --- | --- | --- |
+|`Initialized`|Boolean variable||The state of initialization. Is true if you've done `.Init`.|**Do not set the value of this variable manually**|
+|`Enabled`|Boolean variable||Determine if the bot is enabled. Acts like `Initialized` but at a smaller scale.|You can manually set the value of this variable. If you set it to `False`, you should not add or remove data in between the bot's saved question keywords and replies, and you should not let the bot answers any question, until you set it to `True` again. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
+|`NOfEntries`|Integer variable||The number of elements in `QKeywordsList` (or `ReplyList`).|**Do not set the value of this variable manually**|
+|`QKeywordsList`|Dynamic matrix of strings||Array holding keywords for questions. This is an array of arrays. Each array inside `QKeywordsList` contains keywords for a question.|**Do not set the value of this variable manually**|
+|`ReplyList`|Dynamic matrix of strings||Just like `QKeywordsList` but for replies instead of keywords.|**Do not set the value of this variable manually**|
+|`DupesCheck`|Boolean variable||If set to `True`, the bot will check `QKeywordsList` when performing a `.Add`. If an array in `QKeywordsList` matches with `QKeywords` (parameter of `Add` function), the `Add` routine will halt.|You can set the variable to `True` if you want your bot to check for duplicates when adding new keywords, however, if you have lots of data already, the operation might becomes slow. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
+|`TPercent`|Integer variable||A value that determines the minimum percentage value of occurrences of keywords in a question so that the bot can actually "understand" and have a reply to the question.|Upon bot initialization (`.Init`), the value for this variable is set to 70.|
+|`NotUnderstandReply`|String variable||Reply that is used in case the bot cannot answer the given question via `Answer`.|Upon bot initialization (`.Init`), the value for this variable is set to "Sorry, I didn't get that".|
+|`Init`|Function -> Integer|None.|Initiate the bot (`TTimmy` instance). Return 101 if already initiated, 100 otherwise. In this function, `TTimmy` gets some variables set, like `DupesCheck`, `NOfEntries`, `Enabled`. In case the bot is already initiated, the variable-setting operation will not be performed.|Must use this function before doing other things like adding or removing data. Should only initiate once.|
+|`Add`|Function -> Integer|`QKeywords`, `Replies`: `TStrArray`|Add keywords clue for a question. Return 102 if the bot is not initialized or not enabled, 202 if `DupesCheck` is true and a match with `QKeywords` is presented in `QKeywordsList`, and 200 if the operation is successful.|You can use `StrSplit` (see in later section) to help you perform the adding operation. Consider the example program above.|
+|`Remove`|Function -> Integer|`QKeywords`: `TStrArray`|Remove keywords clue from the bot's metadata by keywords. The function will search `QKeywordsList` to see if there is any match with `QKeywords`. If there is, remove it. It there are many matches, remove them. Return 102 if the bot is not initialized or not enabled, 308 if the operation is successful.||
+|`RemoveByIndex`|Function -> Integer|AIndex: Integer|Remove keywords clue from the bot's metadata by index. To be exact, this function removes `QKeywordsList[AIndex]`, if `QKeywordsList[AIndex]` does exist. Return 102 if the bot is not initiated or not enabled, 305 if `AIndex` is an invalid offset, and 300 if the operation is successful.||
+|`Update`|Procedure|None.|Update the lengths of `QKeywordsList` and `ReplyList` to be equal to `NOfEntries`.|This procedure is **not** for you to execute.|
+|`Answer`|Function -> String|`TQuestion`: String|Return a random possible answer to the given question `TQuestion`. If the question cannot be answered by the bot then `NotUnderstandReply` is returned.||
