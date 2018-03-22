@@ -246,6 +246,9 @@ Begin
 	SetLength(ReplyList, NOfEntries);
 End;
 
+{
+	Answer the given question, using assets in the metadata
+}
 Function TTimmy.Answer(TQuestion: String): String;
 Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
 	FlagQ: String;
@@ -270,7 +273,7 @@ Begin
 	     For QKIter := Low(QKeywordsList[MetaIter]) to High(QKeywordsList[MetaIter])
 		 do For QWiter := Low(FlagWords) to High(FlagWords)
 			do If FlagWords[QWiter] = QKeywordsList[MetaIter][QKIter] then Inc(counter);
-	     If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent
+	     If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
 		 then Begin
 		 	    Randomize;
 				GetAnswer := Random(Length(ReplyList[MetaIter]));
