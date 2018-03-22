@@ -55,3 +55,26 @@ I gave up.
 |`RemoveByIndex`|Function -> Integer|`AIndex`: Integer|Remove keywords clue from the bot's metadata by index. To be exact, this function removes `QKeywordsList[AIndex]`, if `QKeywordsList[AIndex]` does exist. Return 102 if the bot is not initiated or not enabled, 305 if `AIndex` is an invalid offset, and 300 if the operation is successful.||
 |`Update`|Procedure|None.|Update the lengths of `QKeywordsList` and `ReplyList` to be equal to `NOfEntries`.|This procedure is **not** for you to execute.|
 |`Answer`|Function -> String|`TQuestion`: String|Return a random possible answer to the given question `TQuestion`. If the question cannot be answered by the bot then `NotUnderstandReply` is returned.||
+
+## Other variables and functions provided by the library
+1. `TStrArray`: Which is actually `array of string`
+2. `StrProcessor`
+    - Type: Function -> String
+    - Parameters:
+        - `S`: String - the string that needs to be processed
+    - Description:
+        `StrProcessor` removes space characters at the start and at the end of the string, if there are. Also remove space characters that appear multiple times in a row in the processing string.
+3. `StrSplit`
+    - Type: Function -> `TStrArray`
+    - Parameters:
+        - `S`: String - the string that needs to be splitted
+        - `delimiter`: Character - The delimiter to split the string `S`
+    - Description:
+        `StrSplit` splits the string `S` according to the delimiter `delimiter`.
+4. `CompareStrArrays`
+    - Type: Function -> Boolean
+    - Parameters:
+        - `ArrayA`: `TStrArray`
+        - `ArrayB`: `TStrArray`
+    - Description:
+        Compare `ArrayA` and `ArrayB`. Return `True` if they are the same (including the order of the elements), return `False` otherwise.
