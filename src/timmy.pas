@@ -256,6 +256,8 @@ Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
     LastChar: Char;
     FlagWords: TStrArray;
 Begin
+    If (not Initialized) or (not Enabled) then Exit;
+
     // Pre-process the question
       FlagQ := StrProcessor(TQuestion);
       // Delete punctuation at the end of the question (like "?" or "!")
