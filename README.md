@@ -68,7 +68,7 @@ I gave up.
     - Type: Function -> `TStrArray`
     - Parameters:
         - `S`: String - the string that needs to be splitted
-        - `delimiter`: Character - The delimiter to split the string `S`
+        - `delimiter`: Character - the delimiter to split the string `S`
     - Description:  
         `StrSplit` splits the string `S` according to the delimiter `delimiter`.
 4. `CompareStrArrays`
