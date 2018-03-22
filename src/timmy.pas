@@ -274,7 +274,7 @@ Begin
     do Begin
          counter := 0;
          For QKIter := Low(QKeywordsList[MetaIter]) to High(QKeywordsList[MetaIter])
-         do For QWiter := Low(FlagWords) to High(FlagWords)
+         do For QWIter := Low(FlagWords) to High(FlagWords)
             do If FlagWords[QWiter] = QKeywordsList[MetaIter][QKIter] then Inc(counter);
 
          If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
