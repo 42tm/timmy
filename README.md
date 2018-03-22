@@ -62,19 +62,19 @@ I gave up.
     - Type: Function -> String
     - Parameters:
         - `S`: String - the string that needs to be processed
-    - Description:
+    - Description:  
         `StrProcessor` removes space characters at the start and at the end of the string, if there are. Also remove space characters that appear multiple times in a row in the processing string.
 3. `StrSplit`
     - Type: Function -> `TStrArray`
     - Parameters:
         - `S`: String - the string that needs to be splitted
         - `delimiter`: Character - The delimiter to split the string `S`
-    - Description:
+    - Description:  
         `StrSplit` splits the string `S` according to the delimiter `delimiter`.
 4. `CompareStrArrays`
     - Type: Function -> Boolean
     - Parameters:
         - `ArrayA`: `TStrArray`
         - `ArrayB`: `TStrArray`
-    - Description:
+    - Description:  
         Compare `ArrayA` and `ArrayB`. Return `True` if they are the same (including the order of the elements), return `False` otherwise.
