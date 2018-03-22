@@ -208,8 +208,8 @@ Begin
     SetLength(Indexes, counter);
     While counter > 0 do
     Begin
-       RemoveByIndex(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
-       Dec(counter);
+      RemoveByIndex(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
+      Dec(counter);
     End;
     Exit(308);
 End;
