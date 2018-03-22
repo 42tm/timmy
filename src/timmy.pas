@@ -160,8 +160,8 @@ End;
     Data include question's keywords and possible replies to the question.
 
     Return: 102 if object is not initialized or enabled
-    202 if DupesCheck = True and found a match to QKeywords in QKeywordsList
-    200 if the adding operation succeed
+            202 if DupesCheck = True and found a match to QKeywords in QKeywordsList
+            200 if the adding operation succeed
 }
 Function TTimmy.Add(QKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
