@@ -112,8 +112,8 @@ Begin
     do If S[iter] <> delimiter
        then FlagStr := FlagStr + S[iter]
        else Begin
-       		  If FlagStr = '' then Continue;
-       		  Inc(counter);
+              If FlagStr = '' then Continue;
+              Inc(counter);
               SetLength(StrSplit, counter + 1);
               StrSplit[counter] := FlagStr;
               FlagStr := '';
@@ -184,7 +184,7 @@ End;
     and then call TTimmy.RemoveByIndex().
 
     Return: 102 if object is not initialized or not enabled
-        308 if the operation succeed
+            308 if the operation succeed
 }
 Function TTimmy.Remove(QKeywords: TStrArray): Integer;
 Var iter, counter: Integer;
@@ -218,8 +218,8 @@ End;
     Delete array at offset AIndex in QKeywordsList and in ReplyList
 
     Return: 102 if not initialized or enabled
-    305 if AIndex is invalid
-    300 if the operation succeed
+            305 if AIndex is invalid
+            300 if the operation succeed
 }
 Function TTimmy.RemoveByIndex(AIndex: Integer):Integer;
 Var iter: Integer;
@@ -230,7 +230,7 @@ Begin
     For iter := AIndex to High(QKeywordsList) - 1
     do QKeywordsList[iter] := QKeywordsList[iter + 1];
     For iter := AIndex to High(ReplyList) - 1
-   	do ReplyList[iter] := ReplyList[iter + 1];
+    do ReplyList[iter] := ReplyList[iter + 1];
 
     Dec(NOfEntries); Update;
     Exit(300);
@@ -260,7 +260,7 @@ Begin
       FlagQ := StrProcessor(TQuestion);
       // Delete punctuation at the end of the question (like "?" or "!")
         While True do Begin
-      		            LastChar := FlagQ[Length(FlagQ)];
+                        LastChar := FlagQ[Length(FlagQ)];
                         Case LastChar of
                           'a'..'z', 'A'..'Z', '0'..'9': Break;
                         Else Delete(FlagQ, Length(FlagQ), 1);
