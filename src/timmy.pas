@@ -23,6 +23,8 @@ Unit timmy;
 
 Interface
 Type
+	TStrArray = Array of String;
+
 	{
 		Metadata refers to two arrays holding data:
 			QKeywordsList which holds keywords, and
@@ -40,6 +42,9 @@ Type
 		Enabled            : Acts like Initialized but used in fewer number of functions
 		NOfEntries         : Number of entries (elements) in QKeywordsList or ReplyList
 		DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
+		TPercent           : Minimum percentage of the number of keywords over all the words of the question
+							 so that the bot object can "understand" and have a reply.
+						     Sorry I don't have a good way to explain it.
 		NotUnderstandReply : String to assign to TTimmy.Answer in case there's no possible answer to the given question
 	}
     TTimmy = Object
@@ -49,18 +54,19 @@ Type
                  QKeywordsList: Array of Array of String;
 				 ReplyList: Array of Array of String;
 				 DupesCheck: Boolean;
+				 TPercent: Integer;
 				 NotUnderstandReply: String;
                  Function Init: Integer;
-                 Function Add(QKeywords, Replies: Array of String): Integer;
-                 Function Remove(QKeywords: Array of String): Integer;
+                 Function Add(QKeywords, Replies: TStrArray): Integer;
+                 Function Remove(QKeywords: TStrArray): Integer;
 				 Function RemoveByIndex(AIndex: Integer):Integer;
 				 Procedure Update;
                  Function Answer(TQuestion: String): String;
              End;
 
 Function StrProcessor(S: String):String;
-Function StrSplit(S: String):Array of String;
-Function CompareStrArrays(ArrayA, ArrayB: Array of String):Boolean;
+Function StrSplit(S: String; delimiter: Char):TStrArray;
+Function CompareStrArrays(ArrayA, ArrayB: TStrArray):Boolean;
 
 Implementation
 
@@ -92,7 +98,7 @@ End;
 	Given a string, split the string using the delimiter
 	and return an array containing the seperated strings.
 }
-Function StrSplit(S: String; delimiter: Char):Array of String;
+Function StrSplit(S: String; delimiter: Char):TStrArray;
 Var iter, counter: Integer;
 	FlagStr: String;
 Begin
@@ -117,7 +123,7 @@ End;
 	Given two arrays of strings, compare them.
 	Return true if they are the same, false otherwise.
 }
-Function CompareStrArrays(ArrayA, ArrayB: Array of String):Boolean;
+Function CompareStrArrays(ArrayA, ArrayB: TStrArray):Boolean;
 Var iter: Integer;
 Begin
 	If Length(ArrayA) <> Length(ArrayB) then Exit(False);
@@ -134,6 +140,8 @@ Begin
 	If Initialized then Exit(101);
 
    DupesCheck := True;
+   NotUnderstandReply := 'Sorry, I didn''t get that';
+   TPercent := 70;
    NOfEntries := 0;
    Update;
    Enabled := True;
@@ -149,7 +157,7 @@ End;
 			202 if DupesCheck = True and found a match to QKeywords in QKeywordsList
 			200 if the adding operation succeed
 }
-Function TTimmy.Add(QKeywords, Replies: Array of String): Integer;
+Function TTimmy.Add(QKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
 	If (not Initialized) or (not Enabled) then Exit(102);
@@ -172,7 +180,7 @@ End;
 	Return: 102 if object is not initialized or not enabled
 		    308 if the operation succeed
 }
-Function TTimmy.Remove(QKeywords: Array of String): Integer;
+Function TTimmy.Remove(QKeywords: TStrArray): Integer;
 Var iter, counter: Integer;
 	Indexes: Array of Integer;
 Begin
@@ -233,8 +241,38 @@ Begin
 End;
 
 Function TTimmy.Answer(TQuestion: String): String;
+Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
+	FlagQ: String;
+	LastChar: Char;
+	FlagWords: TStrArray;
 Begin
+	// Pre-process the question
+	  FlagQ := StrProcessor(TQuestion);
+	  // Delete punctuation at the end of the question (like "?" or "!")
+	    While True do Begin
+		  		        LastChar := FlagQ[Length(FlagQ)];
+					    Case LastChar of
+					      'a'..'z', 'A'..'Z': Break;
+					    Else Delete(FlagQ, Length(FlagQ), 1);
+					    End;
+				      End;
 
+	FlagWords := StrSplit(FlagQ, ' ');
+	For MetaIter := 0 to NOfEntries - 1
+	do Begin
+		 counter := 0;
+	     For QKIter := Low(QKeywordsList[MetaIter]) to High(QKeywordsList[MetaIter])
+		 do For QWiter := Low(FlagWords) to High(FlagWords)
+			do If FlagWords[QWiter] = QKeywordsList[MetaIter][QKIter] then Inc(counter);
+	     If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent
+		 then Begin
+		 	    Randomize;
+				Repeat GetAnswer := Random(Length(ReplyList[MetaIter]) + 1) Until GetAnswer > 0;
+				Exit(ReplyList[MetaIter][GetAnswer]);
+		 	  End;
+	   End;
+
+	Exit(NotUnderstandReply);
 End;
 
 End.
