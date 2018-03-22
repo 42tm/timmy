@@ -80,15 +80,14 @@ End;
 }
 Function TTimmy.Init: Integer;
 Begin
-	If Initialized then Init := 101
-	else Begin
-		   DupesCheck := True;
-		   NOfEntries := 0;
-		   Update;
-	       Enabled := True;
-		   Initialized := True;
-		   Init := 100;
-	     End;
+	If Initialized then Exit(101);
+
+   DupesCheck := True;
+   NOfEntries := 0;
+   Update;
+   Enabled := True;
+   Initialized := True;
+   Exit(100);
 End;
 
 {
@@ -116,6 +115,8 @@ End;
 {
 	Given a set of keywords, find matches to that set in QKeywordsList,
 	remove the matches, and remove the correspondants in ReplyList as well.
+	This function simply saves offsets of the matching arrays in QKeywordsList
+	and then call TTimmy.RemoveByIndex().
 
 	Return: 102 if object is not initialized or not enabled
 		    308 if the operation succeed
@@ -149,7 +150,7 @@ End;
 
 {
 	Delete array at offset AIndex in QKeywordsList and in ReplyList
-	
+
 	Return: 102 if not initialized or enabled
 			305 if AIndex is invalid
 			300 if the operation succeed
