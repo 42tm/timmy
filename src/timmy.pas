@@ -104,6 +104,7 @@ Var iter, counter: Integer;
 Begin
 	While S[1] = delimiter do Delete(S, 1, 1);
 	While S[Length(S)] = delimiter do Delete(S, Length(S), 1);
+	S := S + delimiter;
 	FlagStr := '';
 	counter := -1;
 
@@ -113,10 +114,15 @@ Begin
 	   else Begin
 	   		  If FlagStr = '' then Continue;
 	   		  Inc(counter);
-			  SetLength(StrSplit, counter);
+			  SetLength(StrSplit, counter + 1);
 			  StrSplit[counter] := FlagStr;
 			  FlagStr := '';
 	   	    End;
+
+	If counter = -1 then Begin
+						   SetLength(StrSplit, 1);
+						   StrSplit[0] := S;
+						 End;
 End;
 
 {
@@ -267,7 +273,7 @@ Begin
 	     If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent
 		 then Begin
 		 	    Randomize;
-				Repeat GetAnswer := Random(Length(ReplyList[MetaIter]) + 1) Until GetAnswer > 0;
+				GetAnswer := Random(Length(ReplyList[MetaIter]));
 				Exit(ReplyList[MetaIter][GetAnswer]);
 		 	  End;
 	   End;
