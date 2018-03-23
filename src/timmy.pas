@@ -36,16 +36,16 @@ Type
                                  ...                                             ...
                                                  ]                                                   ]
 
-      Variables:
+    Variables:
 
-    Initialized        : State of initialization
-    Enabled            : Acts like Initialized but used in fewer number of functions
-    NOfEntries         : Number of entries (elements) in QKeywordsList or ReplyList
-    DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
-    TPercent           : Minimum percentage of the number of keywords over all the words of the question
-     so that the bot object can "understand" and have a reply.
-         Sorry I don't have a good way to explain it.
-    NotUnderstandReply : String to assign to TTimmy.Answer in case there's no possible answer to the given question
+      Initialized        : State of initialization
+      Enabled            : Acts like Initialized but used in fewer number of functions
+      NOfEntries         : Number of entries (elements) in QKeywordsList or ReplyList
+      DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
+      TPercent           : Minimum percentage of the number of keywords over all the words of the question
+                           so that the bot object can "understand" and have a reply.
+                           Sorry I don't have a good way to explain it.
+      NotUnderstandReply : String to assign to TTimmy.Answer in case there's no possible answer to the given question
     }
     TTimmy = Object
                  Initialized: Boolean;
