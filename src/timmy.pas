@@ -167,6 +167,7 @@ Function TTimmy.Add(QKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit(102);
+    For iter := Low(QKeywords) to High(QKeywords) do QKeywords[iter] := LowerCase(QKeywords[iter]);
     If (DupesCheck) and (NOfEntries > 0)
     then For iter := Low(QKeywordsList) to High(QKeywordsList) do
            If CompareStrArrays(QKeywordsList[iter], QKeywords) then Exit(202);
@@ -259,7 +260,7 @@ Begin
     If (not Initialized) or (not Enabled) then Exit;
 
     // Pre-process the question
-      FlagQ := StrProcessor(TQuestion);
+      FlagQ := LowerCase(StrProcessor(TQuestion));
       // Delete punctuation at the end of the question (like "?" or "!")
         While True do Begin
                         LastChar := FlagQ[Length(FlagQ)];
