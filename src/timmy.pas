@@ -45,7 +45,7 @@ Type
       TPercent           : Minimum percentage of the number of keywords over all the words of the question
                            so that the bot object can "understand" and have a reply.
                            Sorry I don't have a good way to explain it.
-      NotUnderstandReply : String to assign to TTimmy.Answer in case there's no possible answer to the given question
+      NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given question
     }
     TTimmy = Object
                  Initialized: Boolean;
@@ -55,7 +55,7 @@ Type
                  ReplyList: Array of Array of String;
                  DupesCheck: Boolean;
                  TPercent: Integer;
-                 NotUnderstandReply: String;
+                 NoUdstdRep: String;
                  Function Init: Integer;
                  Function Add(QKeywords, Replies: TStrArray): Integer;
                  Function Remove(QKeywords: TStrArray): Integer; overload;
@@ -146,7 +146,7 @@ Begin
     If Initialized then Exit(101);
 
     DupesCheck := True;
-    NotUnderstandReply := 'Sorry, I didn''t get that';
+    NoUdstdRep := 'Sorry, I didn''t get that';
     TPercent := 70;
     NOfEntries := 0;
     Update;
@@ -280,7 +280,7 @@ Begin
      	      End;
        End;
 
-    Exit(NotUnderstandReply);
+    Exit(NoUdstdRep);
 End;
 
 End.
