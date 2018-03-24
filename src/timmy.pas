@@ -58,8 +58,8 @@ Type
                  NotUnderstandReply: String;
                  Function Init: Integer;
                  Function Add(QKeywords, Replies: TStrArray): Integer;
-                 Function Remove(QKeywords: TStrArray): Integer;
-                 Function RemoveByIndex(AIndex: Integer): Integer;
+                 Function Remove(QKeywords: TStrArray): Integer; overload;
+                 Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
                  Function Answer(TQuestion: String): String;
              End;
@@ -209,20 +209,13 @@ Begin
     SetLength(Indexes, counter);
     While counter > 0 do
     Begin
-      RemoveByIndex(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
+      Remove(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
       Dec(counter);
     End;
     Exit(308);
 End;
 
-{
-    Delete array at offset AIndex in QKeywordsList and in ReplyList
-
-    Return: 102 if not initialized or enabled
-            305 if AIndex is invalid
-            300 if the operation succeed
-}
-Function TTimmy.RemoveByIndex(AIndex: Integer): Integer;
+Function TTimmy.Remove(AIndex: Integer): Integer;
 Var iter: Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit(102);
