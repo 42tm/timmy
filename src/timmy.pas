@@ -193,6 +193,7 @@ Var iter, counter: Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit(102);
 
+    For iter := Low(QKeywords) to High(QKeywords) do QKeywords[iter] := LowerCase(QKeywords[iter]);
     counter := -1;  // Matches counter in 0-based
     SetLength(Indexes, Length(QKeywordsList));
 
