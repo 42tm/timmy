@@ -102,8 +102,6 @@ Function StrSplit(S: String; delimiter: Char): TStrArray;
 Var iter, counter: Integer;
     FlagStr: String;
 Begin
-    While S[1] = delimiter do Delete(S, 1, 1);
-    While S[Length(S)] = delimiter do Delete(S, Length(S), 1);
     S := S + delimiter;
     FlagStr := '';
     counter := -1;
@@ -117,7 +115,7 @@ Begin
               SetLength(StrSplit, counter + 1);
               StrSplit[counter] := FlagStr;
               FlagStr := '';
-       	    End;
+            End;
 
     If counter = -1 then Begin
                            SetLength(StrSplit, 1);
