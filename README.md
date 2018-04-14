@@ -48,14 +48,14 @@ Variables of `TTimmy`
 
 |Name|Type|Description|Notes|
 |:---:|:---:|---|---|
-|`Initialized`|Boolean variable|The state of initialization. Is true if you've done `.Init`.|**Do not set the value of this variable manually.**|
-|`Enabled`|Boolean variable|Determine if the bot is enabled. Acts like `Initialized` but at a smaller scale.|You can manually set the value of this variable. If you set it to `False`, you should not add or remove data in between the bot's saved question keywords and replies, and you should not let the bot answers any question, until you set `Enabled` to `True` again. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
-|`NOfEntries`|Integer variable|The number of elements in `QKeywordsList` (or `ReplyList`).|**Do not set the value of this variable manually.**|
+|`Initialized`|Boolean|The state of initialization. Is true if you've done `.Init`.|**Do not set the value of this variable manually.**|
+|`Enabled`|Boolean|Determine if the bot is enabled. Acts like `Initialized` but at a smaller scale.|You can manually set the value of this variable. If you set it to `False`, you should not add or remove data in between the bot's saved question keywords and replies, and you should not let the bot answers any question, until you set `Enabled` to `True` again. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
+|`NOfEntries`|Integer|The number of elements in `QKeywordsList` (or `ReplyList`).|**Do not set the value of this variable manually.**|
 |`QKeywordsList`|Dynamic matrix of strings|Array holding keywords for questions. This is an array of arrays. Each array inside `QKeywordsList` contains keywords for a question.|**Do not set the value of this variable manually.**|
 |`ReplyList`|Dynamic matrix of strings|Just like `QKeywordsList` but for replies instead of keywords.|**Do not set the value of this variable manually.**|
-|`DupesCheck`|Boolean variable|If set to `True`, the bot will check `QKeywordsList` when performing a `.Add`. If an array in `QKeywordsList` matches with `QKeywords` (parameter of `Add` function), the `Add` routine will halt.|You can set the variable to `True` if you want your bot to check for duplicates when adding new keywords, however, if you have lots of data already, the operation might be slow. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
-|`TPercent`|Integer variable|A value that determines the minimum percentage value of occurrences of keywords in a question so that the bot can actually "understand" and have a reply to the question.|Upon bot initialization (`.Init`), the value for this variable is set to 70.|
-|`NoUdstdRep`|String variable|Reply that is used in case the bot cannot answer the given question via `Answer`.|Upon bot initialization (`.Init`), the value for this variable is set to "Sorry, I didn't get that".|
+|`DupesCheck`|Boolean|If set to `True`, the bot will check `QKeywordsList` when performing a `.Add`. If an array in `QKeywordsList` matches with `QKeywords` (parameter of `Add` function), the `Add` routine will halt.|You can set the variable to `True` if you want your bot to check for duplicates when adding new keywords, however, if you have lots of data already, the operation might be slow. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
+|`TPercent`|Integer|A value that determines the minimum percentage value of occurrences of keywords in a question so that the bot can actually "understand" and have a reply to the question.|Upon bot initialization (`.Init`), the value for this variable is set to 70.|
+|`NoUdstdRep`|String|Reply that is used in case the bot cannot answer the given question via `Answer`.|Upon bot initialization (`.Init`), the value for this variable is set to "Sorry, I didn't get that".|
 
 Functions and procedures of `TTimmy`
 ------------------------------------
