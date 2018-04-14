@@ -179,14 +179,15 @@ End;
 
 {
     Add data to bot but this one gets string inputs instead of TStrArray inputs.
-    This uses StrSplit() to split the string inputs (with a space character as the delimiter),
-    and then let the Add() function that accepts TStrArray do the work.
+    This use StrSplit() to split the string inputs (with a space character as the delimiter
+    for the question keywords string input and a semicolon character for the replies string input).
+    The main work is done by the primary implementation of TTimmy.Add().
 
     Return: TTimmy.Add(QKeywords, Replies: TStrArray)
 }
 Function TTimmy.Add(KeywordsStr, RepStr: String): Integer;
 Begin
-    Exit(Add(StrSplit(KeywordsStr, ' '), StrSplit(RepStr, ' ')));
+    Exit(Add(StrSplit(KeywordsStr, ' '), StrSplit(RepStr, ';')));
 End;
 
 {
