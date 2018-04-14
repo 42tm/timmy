@@ -57,7 +57,8 @@ Type
                  TPercent: Integer;
                  NoUdstdRep: String;
                  Function Init: Integer;
-                 Function Add(QKeywords, Replies: TStrArray): Integer;
+                 Function Add(QKeywords, Replies: TStrArray): Integer; overload;
+                 Function Add(KeywordsStr, RepStr: String): Integer; overload;
                  Function Remove(QKeywords: TStrArray): Integer; overload;
                  Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
@@ -174,6 +175,18 @@ Begin
     QKeywordsList[High(QKeywordsList)] := QKeywords;
     ReplyList[High(ReplyList)] := Replies;
     Exit(200);
+End;
+
+{
+    Add data to bot but this one gets string inputs instead of TStrArray inputs.
+    This uses StrSplit() to split the string inputs (with a space character as the delimiter),
+    and then let the Add() function that accepts TStrArray do the work.
+
+    Return: TTimmy.Add(QKeywords, Replies: TStrArray)
+}
+Function TTimmy.Add(KeywordsStr, RepStr: String): Integer;
+Begin
+    Exit(Add(StrSplit(KeywordsStr, ' '), StrSplit(RepStr, ' ')));
 End;
 
 {
