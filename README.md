@@ -47,12 +47,12 @@ Variables of `TTimmy`
 ---------------------
 
 |Name|Type|Description|Notes|
-|:---:|:---:| --- | --- |
-|`Initialized`|Boolean variable|The state of initialization. Is true if you've done `.Init`.|**Do not set the value of this variable manually**|
+|:---:|:---:|---|---|
+|`Initialized`|Boolean variable|The state of initialization. Is true if you've done `.Init`.|**Do not set the value of this variable manually.**|
 |`Enabled`|Boolean variable|Determine if the bot is enabled. Acts like `Initialized` but at a smaller scale.|You can manually set the value of this variable. If you set it to `False`, you should not add or remove data in between the bot's saved question keywords and replies, and you should not let the bot answers any question, until you set `Enabled` to `True` again. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
-|`NOfEntries`|Integer variable|The number of elements in `QKeywordsList` (or `ReplyList`).|**Do not set the value of this variable manually**|
-|`QKeywordsList`|Dynamic matrix of strings|Array holding keywords for questions. This is an array of arrays. Each array inside `QKeywordsList` contains keywords for a question.|**Do not set the value of this variable manually**|
-|`ReplyList`|Dynamic matrix of strings|Just like `QKeywordsList` but for replies instead of keywords.|**Do not set the value of this variable manually**|
+|`NOfEntries`|Integer variable|The number of elements in `QKeywordsList` (or `ReplyList`).|**Do not set the value of this variable manually.**|
+|`QKeywordsList`|Dynamic matrix of strings|Array holding keywords for questions. This is an array of arrays. Each array inside `QKeywordsList` contains keywords for a question.|**Do not set the value of this variable manually.**|
+|`ReplyList`|Dynamic matrix of strings|Just like `QKeywordsList` but for replies instead of keywords.|**Do not set the value of this variable manually.**|
 |`DupesCheck`|Boolean variable|If set to `True`, the bot will check `QKeywordsList` when performing a `.Add`. If an array in `QKeywordsList` matches with `QKeywords` (parameter of `Add` function), the `Add` routine will halt.|You can set the variable to `True` if you want your bot to check for duplicates when adding new keywords, however, if you have lots of data already, the operation might be slow. Upon bot initialization (`.Init`), the value for this variable is set to `True`.|
 |`TPercent`|Integer variable|A value that determines the minimum percentage value of occurrences of keywords in a question so that the bot can actually "understand" and have a reply to the question.|Upon bot initialization (`.Init`), the value for this variable is set to 70.|
 |`NoUdstdRep`|String variable|Reply that is used in case the bot cannot answer the given question via `Answer`.|Upon bot initialization (`.Init`), the value for this variable is set to "Sorry, I didn't get that".|
@@ -61,7 +61,7 @@ Functions and procedures of `TTimmy`
 ------------------------------------
 
 |Name|Return|Parameters|Description|Notes|
-|:---:|:---:|---|---|
+|:---:|:---:|---|---|---|
 |`Init`|Integer|None.|Initiate the bot (`TTimmy` instance). Return 101 if already initiated, 100 otherwise. In this function, `TTimmy` gets some variables set, like `DupesCheck`, `NOfEntries`, `Enabled`. In case the bot is already initiated, the variable-setting operation will not be performed.|Must use this function before doing other things like adding or removing data. Should only initiate once.|
 |`Add`|Integer|`QKeywords`, `Replies`: `TStrArray`|Add keywords clue for a question. Return 102 if the bot is not initialized or not enabled, 202 if `DupesCheck` is true and a match with `QKeywords` is presented in `QKeywordsList`, and 200 if the operation is successful.|You can use `StrSplit` (see in later section) to help you perform the adding operation. Consider the example program above.|
 |`Add`|Integer|`KeywordsStr`, `RepStr`: String|Just like the above implementation of `Add()`, but this one gets string inputs instead of `TStrArray` inputs. The strings will then be delimited and passed to the above `Add()` function. `KeywordsStr` is delimited using a space character as the delimiter, and `RepStr` is delimited using a semicolon.||
