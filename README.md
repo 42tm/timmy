@@ -35,7 +35,7 @@ BEGIN
 END.
 ```
 
-If we compile and execute the program, we should get the following result:
+If we compile and execute the program, we should get something like this as the output:
 ```
 Hi!
 I'm doing great
