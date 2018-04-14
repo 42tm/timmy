@@ -25,8 +25,8 @@ BEGIN
     MyBot.Init;
     MyBot.NoUdstdRep := 'I gave up.';
     MyBot.Add(StrSplit('Hello', ' '), StrSplit('Greetings!|Hello to you!|Hi!', '|'));
-    MyBot.Add(StrSplit('How are you', ' '), StrSplit('I am fine!|Never better!|I''m doing great', '|'));
-    MyBot.Add(StrSplit('What 2 + 2', ' '), StrSplit('The answer is 4', '@'));
+    MyBot.Add('How are you', 'I am fine!;Never better!;I''m doing great.');
+    MyBot.Add('What 2 + 2', 'The answer is 4', ' ', '@');
 
     Writeln(MyBot.Answer('Hello!'));
     Writeln(MyBot.Answer('How are you?'));
