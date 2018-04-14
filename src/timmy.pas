@@ -59,6 +59,7 @@ Type
                  Function Init: Integer;
                  Function Add(QKeywords, Replies: TStrArray): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String): Integer; overload;
+                 Function Add(KeywordsStr, RepStr: String; KStrDeli, QStrDeli: Char): Integer; overload;
                  Function Remove(QKeywords: TStrArray): Integer; overload;
                  Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
@@ -188,6 +189,16 @@ End;
 Function TTimmy.Add(KeywordsStr, RepStr: String): Integer;
 Begin
     Exit(Add(StrSplit(KeywordsStr, ' '), StrSplit(RepStr, ';')));
+End;
+
+{
+    Just like the above implementation of TTimmy.Add() but this one is with custom delimiters.
+
+    Return: TTimmy.Add(QKeywords, Replies: TStrArray)
+}
+Function TTimmy.Add(KeywordsStr, RepStr: String; KStrDeli, QStrDeli: Char): Integer;
+Begin
+    Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, QStrDeli)));
 End;
 
 {
