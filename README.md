@@ -94,3 +94,9 @@ Other variables and functions provided by the library
         - `ArrayB`: `TStrArray`
     - Description:
         Compare `ArrayA` and `ArrayB`. Return `True` if they are the same (including the order of the elements), return `False` otherwise.
+
+License
+-------
+
+![License logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
+Timmy is licensed under the [GNU LGPL v3](LICENSE)
