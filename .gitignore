@@ -2,4 +2,6 @@
 !src/
 !*.pas
 !*.md
+!COPYING
+!COPYING.LESSER
 !.gitignore
