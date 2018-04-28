@@ -66,7 +66,8 @@ Functions and procedures of `TTimmy`
 |`Add`|Integer|`QKeywords`, `Replies`: `TStrArray`|Add keywords clue for a question. Return 102 if the bot is not initialized or not enabled, 202 if `DupesCheck` is true and a match with `QKeywords` is presented in `QKeywordsList`, and 200 if the operation is successful.|You can use `StrSplit` (see in later section) to help you perform the adding operation. Consider the example program above.|
 |`Add`|Integer|`KeywordsStr`, `RepStr`: String|Just like the above implementation of `Add()`, but this one gets string inputs instead of `TStrArray` inputs. The strings will then be delimited and passed to the above `Add()` function. `KeywordsStr` is delimited using a space character as the delimiter, and `RepStr` is delimited using a semicolon.||
 |`Add`|Integer|`KeywordsStr`, `RepStr`: String; `KStrDeli`, `QStrDeli`: `Char`|Another implementation of `Add()`. This one is like the above one, which uses string inputs as oppose to `TStrArray` inputs. The difference is, with this one, you get to have custom delimiter. `KStrDeli` is delimiter for `KeywordsStr`, and `QStrDeli` is delimiter for `RepStr`.||
-|`Remove`|Integer|`QKeywords`: `TStrArray`; `AIndex`: Integer|Remove keywords clue from the bot's metadata, by keywords if a `TStrArray` is passed, by array index if an integer is passed. If a `TStrArray` is given, the function will search `QKeywordsList` to see if there is any match with `QKeywords`. If there is, remove it. It there are many matches, remove them. Return 102 if the bot is not initialized or not enabled, 305 if `AIndex` is an invalid offset, 300 or 308 if the operation is successful.|The `AIndex` is 0-based.|
+|`Remove`|Integer|`QKeywords`: `TStrArray`|Remove keywords clue from the bot's metadata by keywords. The function searches `QKeywordsList` to see if there is any match with `QKeywords`. If there is, remove it. It there are many matches, remove them. Return 102 if the bot is not initialized or not enabled, 308 if the operation is successful.||
+|`Remove`|Integer|`AIndex`: Integer|Does the same job as the above `Remove` but requires an integer as the (only) argument instead of a `TStrArray`. This integer is the offset for the keyword clues array in `QKeywordsList` that you wish to delete. Return 102 if the bot is not initialized or not enabled, 305 if `AIndex` is an invalid offset, 300 if the operation is successful.|The integer is 0-based.|
 |`Update`||None.|Update the lengths of `QKeywordsList` and `ReplyList` to be equal to `NOfEntries`.|This procedure is **not** for you to execute.|
 |`Answer`|String|`TQuestion`: String|Return a random possible answer to the given question `TQuestion`. If the question cannot be answered by the bot then `NoUdstdRep` is returned.||
 
@@ -98,5 +99,5 @@ Other variables and functions provided by the library
 License
 -------
 
-![License logo](https://www.gnu.org/graphics/lgplv3-147x51.png)  
+![License logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
 Timmy is licensed under the [GNU LGPL v3](LICENSE).
