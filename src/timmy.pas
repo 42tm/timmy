@@ -1,22 +1,20 @@
 {
     timmy - Pascal unit for creating chat bots
+    Version 1.0.0
 
-    Created by Nguyen Hoang Duong (@NOVAglow) @ 42tm
-    on 19 March, 2018.
-
-    Copyright (C) 2018, 42tm
+    Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
+    it under the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 Unit timmy;
@@ -44,7 +42,7 @@ Type
       DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
       TPercent           : Minimum percentage of the number of keywords over all the words of the question
                            so that the bot object can "understand" and have a reply.
-                           Sorry I don't have a good way to explain it.
+                           (Sorry I don't have a good way to explain it)
       NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given question
     }
     TTimmy = Object
