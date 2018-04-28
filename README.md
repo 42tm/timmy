@@ -100,4 +100,5 @@ License
 -------
 
 ![License logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
+
 Timmy is licensed under the [GNU LGPL v3](LICENSE).
