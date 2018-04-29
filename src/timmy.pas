@@ -49,8 +49,8 @@ Type
                  Initialized: Boolean;
                  Enabled: Boolean;
                  NOfEntries: Integer;
-                 MKeywordsList: Array of Array of String;
-                 ReplyList: Array of Array of String;
+                 MKeywordsList: Array of TStrArray;
+                 ReplyList: Array of TStrArray;
                  DupesCheck: Boolean;
                  TPercent: Integer;
                  NoUdstdRep: String;
@@ -87,9 +87,9 @@ Begin
     do If S[iter] <> ' '
        then Begin FlagStr := FlagStr + S[iter]; SpaceOn := False; End
        else Case SpaceOn of
-     	      True: Continue;
+              True: Continue;
               False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
-     	    End;
+            End;
 
     StrTrim := FlagStr;
 End;
