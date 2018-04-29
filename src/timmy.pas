@@ -29,8 +29,8 @@ Type
     ReplyList which holds replies
 
       QKeywordsList [                                 ReplyList [
-                     [*keywords for question 1*],                [*possible answers for question 1*],
-                     [*keywords for question 2*],                [*possible answers for question 2*],
+                     [*keywords for message 1*],                [*possible answers for message 1*],
+                     [*keywords for message 2*],                [*possible answers for message 2*],
                                  ...                                             ...
                                                  ]                                                   ]
 
@@ -40,10 +40,10 @@ Type
       Enabled            : Acts like Initialized but used in fewer number of functions
       NOfEntries         : Number of entries (elements) in QKeywordsList or ReplyList
       DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
-      TPercent           : Minimum percentage of the number of keywords over all the words of the question
+      TPercent           : Minimum percentage of the number of keywords over all the words of the message
                            so that the bot object can "understand" and have a reply.
                            (Sorry I don't have a good way to explain it)
-      NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given question
+      NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given message
     }
     TTimmy = Object
                  Initialized: Boolean;
@@ -155,7 +155,7 @@ End;
 
 {
     Add data to bot object's metadata base.
-    Data include question's keywords and possible replies to the question.
+    Data include message's keywords and possible replies to the message.
 
     Return: 102 if object is not initialized or enabled
             202 if DupesCheck = True and found a match to QKeywords in QKeywordsList
@@ -179,7 +179,7 @@ End;
 {
     Add data to bot but this one gets string inputs instead of TStrArray inputs.
     This use StrSplit() to split the string inputs (with a space character as the delimiter
-    for the question keywords string input and a semicolon character for the replies string input).
+    for the message keywords string input and a semicolon character for the replies string input).
     The main work is done by the primary implementation of TTimmy.Add().
 
     Return: TTimmy.Add(QKeywords, Replies: TStrArray)
@@ -264,7 +264,7 @@ Begin
 End;
 
 {
-    Answer the given question, using assets in the metadata
+    Answer the given message, using assets in the metadata
 }
 Function TTimmy.Answer(TQuestion: String): String;
 Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
@@ -274,9 +274,9 @@ Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit;
 
-    // Pre-process the question
+    // Pre-process the message
       FlagQ := LowerCase(StrProcessor(TQuestion));
-      // Delete punctuation at the end of the question (like "?" or "!")
+      // Delete punctuation at the end of the message (like "?" or "!")
         While True do Begin
                         LastChar := FlagQ[Length(FlagQ)];
                         Case LastChar of
