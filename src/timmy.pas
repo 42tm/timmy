@@ -25,20 +25,20 @@ Type
 
     {
     Metadata refers to two arrays holding data:
-    QKeywordsList which holds keywords, and
+    MKeywordsList which holds keywords, and
     ReplyList which holds replies
 
-      QKeywordsList [                                 ReplyList [
+      MKeywordsList [                                 ReplyList [
                      [*keywords for message 1*],                [*possible answers for message 1*],
                      [*keywords for message 2*],                [*possible answers for message 2*],
                                  ...                                             ...
                                                  ]                                                   ]
 
-    Variables:
+    Variables (see also the README file):
 
       Initialized        : State of initialization
       Enabled            : Acts like Initialized but used in fewer number of functions
-      NOfEntries         : Number of entries (elements) in QKeywordsList or ReplyList
+      NOfEntries         : Number of entries (elements) in MKeywordsList or ReplyList
       DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
       TPercent           : Minimum percentage of the number of keywords over all the words of the message
                            so that the bot object can "understand" and have a reply.
@@ -49,22 +49,22 @@ Type
                  Initialized: Boolean;
                  Enabled: Boolean;
                  NOfEntries: Integer;
-                 QKeywordsList: Array of Array of String;
+                 MKeywordsList: Array of Array of String;
                  ReplyList: Array of Array of String;
                  DupesCheck: Boolean;
                  TPercent: Integer;
                  NoUdstdRep: String;
                  Function Init: Integer;
-                 Function Add(QKeywords, Replies: TStrArray): Integer; overload;
+                 Function Add(MKeywords, Replies: TStrArray): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String; KStrDeli, QStrDeli: Char): Integer; overload;
-                 Function Remove(QKeywords: TStrArray): Integer; overload;
+                 Function Remove(MKeywords: TStrArray): Integer; overload;
                  Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
-                 Function Answer(TQuestion: String): String;
+                 Function Answer(TMessage: String): String;
              End;
 
-Function StrProcessor(S: String): String;
+Function StrTrim(S: String): String;
 Function StrSplit(S: String; delimiter: Char): TStrArray;
 Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 
@@ -75,7 +75,7 @@ Implementation
     character are not space, and there is no multiple spaces
     character in a row.
 }
-Function StrProcessor(S: String): String;
+Function StrTrim(S: String): String;
 Var iter: Integer;
     FlagStr: String;
     SpaceOn: Boolean;
@@ -91,7 +91,7 @@ Begin
               False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
      	    End;
 
-    StrProcessor := FlagStr;
+    StrTrim := FlagStr;
 End;
 
 {
@@ -158,20 +158,20 @@ End;
     Data include message's keywords and possible replies to the message.
 
     Return: 102 if object is not initialized or enabled
-            202 if DupesCheck = True and found a match to QKeywords in QKeywordsList
+            202 if DupesCheck = True and found a match to MKeywords in MKeywordsList
             200 if the adding operation succeed
 }
-Function TTimmy.Add(QKeywords, Replies: TStrArray): Integer;
+Function TTimmy.Add(MKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit(102);
-    For iter := Low(QKeywords) to High(QKeywords) do QKeywords[iter] := LowerCase(QKeywords[iter]);
+    For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     If (DupesCheck) and (NOfEntries > 0)
-    then For iter := Low(QKeywordsList) to High(QKeywordsList) do
-           If CompareStrArrays(QKeywordsList[iter], QKeywords) then Exit(202);
+    then For iter := Low(MKeywordsList) to High(MKeywordsList) do
+           If CompareStrArrays(MKeywordsList[iter], MKeywords) then Exit(202);
 
     Inc(NOfEntries); Update;
-    QKeywordsList[High(QKeywordsList)] := QKeywords;
+    MKeywordsList[High(MKeywordsList)] := MKeywords;
     ReplyList[High(ReplyList)] := Replies;
     Exit(200);
 End;
@@ -182,7 +182,7 @@ End;
     for the message keywords string input and a semicolon character for the replies string input).
     The main work is done by the primary implementation of TTimmy.Add().
 
-    Return: TTimmy.Add(QKeywords, Replies: TStrArray)
+    Return: TTimmy.Add(MKeywords, Replies: TStrArray)
 }
 Function TTimmy.Add(KeywordsStr, RepStr: String): Integer;
 Begin
@@ -192,7 +192,7 @@ End;
 {
     Just like the above implementation of TTimmy.Add() but this one is with custom delimiters.
 
-    Return: TTimmy.Add(QKeywords, Replies: TStrArray)
+    Return: TTimmy.Add(MKeywords, Replies: TStrArray)
 }
 Function TTimmy.Add(KeywordsStr, RepStr: String; KStrDeli, QStrDeli: Char): Integer;
 Begin
@@ -200,28 +200,28 @@ Begin
 End;
 
 {
-    Given a set of keywords, find matches to that set in QKeywordsList,
+    Given a set of keywords, find matches to that set in MKeywordsList,
     remove the matches, and remove the correspondants in ReplyList as well.
-    This function simply saves offsets of the matching arrays in QKeywordsList
+    This function simply saves offsets of the matching arrays in MKeywordsList
     and then call TTimmy.RemoveByIndex().
 
     Return: 102 if object is not initialized or not enabled
             308 if the operation succeed
 }
-Function TTimmy.Remove(QKeywords: TStrArray): Integer;
+Function TTimmy.Remove(MKeywords: TStrArray): Integer;
 Var iter, counter: Integer;
     Indexes: Array of Integer;
 Begin
     If (not Initialized) or (not Enabled) then Exit(102);
 
-    For iter := Low(QKeywords) to High(QKeywords) do QKeywords[iter] := LowerCase(QKeywords[iter]);
+    For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     counter := -1;  // Matches counter in 0-based
-    SetLength(Indexes, Length(QKeywordsList));
+    SetLength(Indexes, Length(MKeywordsList));
 
-    // Get offsets of keywords set that match the given QKeywords parameter
+    // Get offsets of keywords set that match the given MKeywords parameter
     // and later deal with them using TTimmy.RemoveByIndex
-      For iter := Low(QKeywordsList) to High(QKeywordsList) do
-        If CompareStrArrays(QKeywordsList[iter], QKeywords)
+      For iter := Low(MKeywordsList) to High(MKeywordsList) do
+        If CompareStrArrays(MKeywordsList[iter], MKeywords)
         then Begin
       	       Inc(counter);
                Indexes[counter] := iter;
@@ -243,8 +243,8 @@ Begin
     If (not Initialized) or (not Enabled) then Exit(102);
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
-    For iter := AIndex to High(QKeywordsList) - 1
-    do QKeywordsList[iter] := QKeywordsList[iter + 1];
+    For iter := AIndex to High(MKeywordsList) - 1
+    do MKeywordsList[iter] := MKeywordsList[iter + 1];
     For iter := AIndex to High(ReplyList) - 1
     do ReplyList[iter] := ReplyList[iter + 1];
 
@@ -259,14 +259,14 @@ Procedure TTimmy.Update;
 Begin
     If not Initialized then Exit;
 
-    SetLength(QKeywordsList, NOfEntries);
+    SetLength(MKeywordsList, NOfEntries);
     SetLength(ReplyList, NOfEntries);
 End;
 
 {
     Answer the given message, using assets in the metadata
 }
-Function TTimmy.Answer(TQuestion: String): String;
+Function TTimmy.Answer(TMessage: String): String;
 Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
     FlagQ: String;
     LastChar: Char;
@@ -275,7 +275,7 @@ Begin
     If (not Initialized) or (not Enabled) then Exit;
 
     // Pre-process the message
-      FlagQ := LowerCase(StrProcessor(TQuestion));
+      FlagQ := LowerCase(StrTrim(TMessage));
       // Delete punctuation at the end of the message (like "?" or "!")
         While True do Begin
                         LastChar := FlagQ[Length(FlagQ)];
@@ -289,11 +289,11 @@ Begin
     For MetaIter := 0 to NOfEntries - 1
     do Begin
          counter := 0;
-         For QKIter := Low(QKeywordsList[MetaIter]) to High(QKeywordsList[MetaIter])
+         For QKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
          do For QWIter := Low(FlagWords) to High(FlagWords)
-            do If FlagWords[QWiter] = QKeywordsList[MetaIter][QKIter] then Inc(counter);
+            do If FlagWords[QWiter] = MKeywordsList[MetaIter][QKIter] then Inc(counter);
 
-         If counter / Length(QKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
+         If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
          then Begin
      	        Randomize;
                 GetAnswer := Random(Length(ReplyList[MetaIter]));
