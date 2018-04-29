@@ -1,6 +1,6 @@
 *
 !src/
-!test/
+!examples
 !*.pas
 !*.md
 !COPYING
