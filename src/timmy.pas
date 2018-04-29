@@ -57,7 +57,7 @@ Type
                  Function Init: Integer;
                  Function Add(MKeywords, Replies: TStrArray): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String): Integer; overload;
-                 Function Add(KeywordsStr, RepStr: String; KStrDeli, QStrDeli: Char): Integer; overload;
+                 Function Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
                  Function Remove(MKeywords: TStrArray): Integer; overload;
                  Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
@@ -194,9 +194,9 @@ End;
 
     Return: TTimmy.Add(MKeywords, Replies: TStrArray)
 }
-Function TTimmy.Add(KeywordsStr, RepStr: String; KStrDeli, QStrDeli: Char): Integer;
+Function TTimmy.Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer;
 Begin
-    Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, QStrDeli)));
+    Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
 End;
 
 {
@@ -267,31 +267,31 @@ End;
     Answer the given message, using assets in the metadata
 }
 Function TTimmy.Answer(TMessage: String): String;
-Var MetaIter, QKIter, QWIter, counter, GetAnswer: Integer;
-    FlagQ: String;
+Var MetaIter, MKIter, MWIter, counter, GetAnswer: Integer;
+    FlagM: String;
     LastChar: Char;
     FlagWords: TStrArray;
 Begin
     If (not Initialized) or (not Enabled) then Exit;
 
     // Pre-process the message
-      FlagQ := LowerCase(StrTrim(TMessage));
+      FlagM := LowerCase(StrTrim(TMessage));
       // Delete punctuation at the end of the message (like "?" or "!")
         While True do Begin
-                        LastChar := FlagQ[Length(FlagQ)];
+                        LastChar := FlagM[Length(FlagM)];
                         Case LastChar of
                           'a'..'z', 'A'..'Z', '0'..'9': Break;
-                        Else Delete(FlagQ, Length(FlagQ), 1);
+                        Else Delete(FlagM, Length(FlagM), 1);
                         End;
                       End;
 
-    FlagWords := StrSplit(FlagQ, ' ');
+    FlagWords := StrSplit(FlagM, ' ');
     For MetaIter := 0 to NOfEntries - 1
     do Begin
          counter := 0;
-         For QKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
-         do For QWIter := Low(FlagWords) to High(FlagWords)
-            do If FlagWords[QWiter] = MKeywordsList[MetaIter][QKIter] then Inc(counter);
+         For MKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
+         do For MWIter := Low(FlagWords) to High(FlagWords)
+            do If FlagWords[MWiter] = MKeywordsList[MetaIter][MKIter] then Inc(counter);
 
          If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
          then Begin
