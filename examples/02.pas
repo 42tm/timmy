@@ -10,19 +10,23 @@ Uses SysUtils, timmy in '../src/timmy.pas';
 Const
     MONTHS: Array[1..12] of String = ('January', 'February', 'March', 'April', 'May', 'June',
                                       'July', 'August', 'September', 'October', 'November', 'December');
-    MONTHSALIAS: Array[1..12] of String = ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                           'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+    MONTHSALIAS: Array[1..12] of String = ('jan', 'feb', 'mar', 'apr', 'may', 'jun',
+                                           'jul', 'aug', 'sep', 'oct', 'nov', 'dec');
 Var
     PP: TTimmy;  // Bot instance
-    BDays: Array of String;
+    BDays: Array of String;  // Array holding birthdays data in form of strings
+    UserCmd: String;  // User's input to the bot
 
 {
     Convert the alias of a month's name to its (full) name
     and return the alias, or the month's full name to its alias name.
+    In case the input is invalid, an empty string is returned.
     Not case-sensitive.
-    Example: - ConvertName('Aug') = 'August'
-             - ConvertName('Oct') = 'October'
-             - ConvertName('something else') = ''
+    Examples: - ConvertName('aug') = 'August'
+              - ConvertName('April') = 'apr'
+              - ConvertName('Oct') = 'October'
+              - ConvertName('january') = 'jan'
+              - ConvertName('something else') = ''
 }
 Function ConvertName(MonthName: String):String;
 Var Mon: Integer;
@@ -37,13 +41,14 @@ Begin
 End;
 
 {
-    Given a date string in form of date-month (all lowercase, month's name in alias),
+    Given a date string in form of date-month (month's name in alias),
     return true if it's today.
 }
 Function Today(DateStr: String): Boolean;
 Begin
+    DateStr := LowerCase(DateStr);
     If ( StrSplit(DateStr, '-')[0] = StrSplit(DateToStr(Now), '-')[0] )
-       and ( LowerCase(StrSplit(DateStr, '-')[1]) = LowerCase(MONTHSALIAS[StrToInt(StrSplit(DateToStr(Now), '-')[1])]) )
+       and ( LowerCase(StrSplit(DateStr, '-')[1]) = MONTHSALIAS[StrToInt(StrSplit(DateToStr(Now), '-')[1])] )
     then Exit(True)
     else Exit(False);
 End;
@@ -72,6 +77,16 @@ Begin
 End;
 
 {
+    Add birthday to array BDays.
+    Needs user's command to get the person's name and his/her birthday.
+    Returns bot's reply to use with Add().
+}
+Function AddBDays(UserMsg: String): String;
+Begin
+
+End;
+
+{
     Compose the birthday strings (including the names)
     into one string to print out. This string includes linefeed (ASCII 10).
 }
@@ -87,17 +102,26 @@ Begin
 End;
 
 {
-    Replace full words with aliases and words that the bot understands.
+    Given a user's message, attempts to convert it to the bot's language so that
+    the bot "understands" the message.
+    This requires removing words that the bot does not understand and convert
+    month names to their aliases.
 }
 Function ProcessedMsg(UserMessage: String): String;
+Var Month: String;
 Begin
     ProcessedMsg := LowerCase(UserMessage);
-    For Month in MONTHS do ProcessedMsgStringReplace(ProcessedMsg, Month, LowerCase(Copy(Month, 1, 3)), []);
+    For Month in MONTHS
+      do ProcessedMsg := StringReplace(ProcessedMsg,
+                                       Month,
+                                       LowerCase(Copy(Month, 1, 3)), []);
+
 End;
 
 BEGIN
     // Setting up the bot
     PP.Init;
+    PP.TPercent := 40;
     PP.NoUdstdRep := 'Uhhh...I don''t understand. I''m just a bot after all';
     PP.Add('list bdays', GetBDaysStr);
 
