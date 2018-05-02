@@ -1,7 +1,11 @@
 Timmy
 =====
 
-Timmy is a Pascal unit (i.e. library) for creating chat bots.
+Timmy is a Pascal unit for creating chat bots. It provides the `TTimmy` object,
+which is a data type that you can assign your variables to to make bots.
+Once that is done, you can start adding keywords for questions,
+and get the bot answers to the end user's questions.
+
 Creating bots with Timmy is as easy as 1 2 3.
 
 How to create a bot with Timmy

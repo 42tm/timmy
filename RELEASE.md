@@ -1,10 +1,6 @@
 Release Notes for Timmy 1.1.0
 =============================
 
-What is Timmy?
---------------
-Timmy is a Pascal unit for creating chat bots. It provides the `TTimmy` object, which is a data type that you can assign your variables to to make bots. Once that is done, you can start adding keywords for questions, and get the bot answers to the end user's questions.
-
 What's in this release?
 ----------------------------
 This stable release (1.1.0) provides the `TTimmy` object with 3 ways to add keywords clues, and 4 ways to remove keywords clues, along with `TStrArray` - Array of String, and several helper functions like `StrSplit` and `StrTrim` that aren't part of the `TTimmy` object. See the included README file to know all what this Timmy release offers.
