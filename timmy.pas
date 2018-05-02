@@ -1,6 +1,6 @@
 {
     timmy - Pascal unit for creating chat bots
-    Version 1.0.0
+    Version 1.1.0
 
     Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
 
