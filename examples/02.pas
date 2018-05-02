@@ -47,7 +47,7 @@
     list |bdays/birthdays|
 }
 Program TimmyExample2;
-Uses SysUtils, timmy in '../src/timmy.pas';
+Uses SysUtils, timmy in '../timmy.pas';
 Const
     MONTHS: Array[1..12] of String = ('January', 'February', 'March', 'April', 'May', 'June',
                                       'July', 'August', 'September', 'October', 'November', 'December');
