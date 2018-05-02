@@ -7,7 +7,7 @@
     object's metadata by using the overloaded function Add.
 }
 Program TimmyExample1;
-Uses timmy in '../src/timmy.pas';
+Uses timmy in '../timmy.pas';
 Var MyBot: TTimmy;
 
 BEGIN
