@@ -59,6 +59,8 @@ Type
                  Function Add(KeywordsStr, RepStr: String): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
                  Function Remove(MKeywords: TStrArray): Integer; overload;
+                 Function Remove(KeywordsStr: String): Integer; overload;
+                 Function Remove(KeywordsStr: String; KStrDeli: Char): Integer; overload;
                  Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
                  Function Answer(TMessage: String): String;
@@ -237,6 +239,36 @@ Begin
     Exit(308);
 End;
 
+{
+    An implementation of Remove that uses string as an argument
+    instead of a TStrArray. The string is delimited using the space character
+    to form a TStrArray, and then pass that TStrArray to the
+    common Remove function.
+
+    Return TTimmy.Remove(MKeywords: TStrArray)
+}
+Function TTimmy.Remove(KeywordsStr: String): Integer;
+Begin
+    Exit(Remove(StrSplit(KeywordsStr, ' ')));
+End;
+
+{
+    The same as the above implementation of Remove, but allows
+    use of custom string delimiter.
+
+    Return TTimmy.Remove(MKeywords: TStrArray)
+}
+Function TTimmy.Remove(KeywordsStr: String; KStrDeli: Char): Integer;
+Begin
+    Exit(Remove(StrSplit(KeywordsStr, KStrDeli)));
+End;
+
+{
+    Remove data from MKeywordsList at MKeywordsList[AIndex].
+
+    Return - 305 if the given index is invalid (out of bound)
+           - 300 if operation successful
+}
 Function TTimmy.Remove(AIndex: Integer): Integer;
 Var iter: Integer;
 Begin
