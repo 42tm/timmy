@@ -157,10 +157,10 @@ Begin
                                   '''s', '',
                                   [rfReplaceAll, rfIgnoreCase]);
     ProcessedMsg := StringReplace(ProcessedMsg,
-                                  'on ', '',
+                                  ' on', '',
                                   [rfReplaceAll, rfIgnoreCase]);
     ProcessedMsg := StringReplace(ProcessedMsg,
-                                  'of ', '',
+                                  ' of', '',
                                   [rfReplaceAll, rfIgnoreCase]);
 End;
 
@@ -242,7 +242,9 @@ Begin
 
     For AIter := Iter to High(BDays) - 1 do BDays[AIter] := BDays[AIter + 1];
     SetLength(BDays, Length(BDays) - 1);
-    Exit('No problem, I forgot this person''s birthday.');
+    If PersonName = 'my'
+    then Exit('Okay, I forgot your birthday.')
+    else Exit('No problem, I forgot this person''s birthday.');
 End;
 
 {
@@ -268,29 +270,47 @@ End;
 
 {
     Compose the birthday strings (including the names)
-    into one string to print out. This string includes linefeed (ASCII 10).
+    into one string to print out. This string includes break line.
 }
 Function GetBDaysStr: String;
 Var BDay: String;
 Begin
     GetBDaysStr := '';
     For BDay in BDays
-      do GetBDaysStr := StrSplit(BDay, '@')[0] + ': '  // Name
+      do GetBDaysStr := GetBDaysStr
+                        + StrSplit(BDay, '@')[0] + ': '  // Name
                         + StrSplit(StrSplit(BDay, '@')[1], '-')[0] + ' '  // Birth date
                         + ConvertName(StrSplit(StrSplit(BDay, '@')[1], '-')[1])  // Birth month (full, not alias)
-                        + #10;  // Break line/Linefeed
+                        + sLineBreak;  // Break line/Linefeed
+    Delete(GetBDaysStr, Length(GetBDaysStr), 1);
 End;
 
 BEGIN
+    If (ParamStr(1) = '--help') or (ParamStr(1) = '-h') or (ParamStr(1) = '?')
+    then Begin
+           Writeln('Birthday Bot (example 2 of Timmy unit)');
+           Writeln;
+           Writeln('[ ]: Optional, | |: Can be any');
+           Writeln;
+           Writeln('Add a birthday: PERSON_NAME[''s] |birthday/bday| is [on] |MONTH/MONTH_ALIAS| |DATE|'
+                 + sLineBreak
+                 + '                PERSON_NAME[''s] |birthday/bday| is [on] |DATE| |MONTH/MONTH_ALIAS|');
+           Writeln('Remove a birthday: forget PERSON_NAME[''s] [|bday/birthday|]');
+           Writeln('List all saved birthdays: list |bdays/birthdays|');
+           Halt;
+         End;
+
     // Setting up the bot
     PP.Init;
     PP.TPercent := 30;
     PP.NoUdstdRep := DEFAULTREP;
+    PP.Add('hello', 'Greetings!;Hi!;Nice to see you!');
+    PP.Add('hi', 'Greetings!;Hi!;Nice to see you!');
+    PP.Add('how are you', 'I''m fine! Now, how can I help you?');
+    PP.Add('yes', 'That''s what I thought.');
+    PP.Add('no', 'Okay then.');
 
-    // Bot's first actions
-    Writeln('Hello! This is birthday bot!');
     FetchBDays;
-    PP.Add('list bdays', GetBDaysStr);
     // Check if today is someone's birthday
     For Entry in BDays
       do If IsToday(StrSplit(Entry, '@')[1])
@@ -310,19 +330,25 @@ BEGIN
            UserCmd := ProcessedMsg(UserCmd);
            Entry := LowerCase(StrSplit(UserCmd, ' ')[0]);
            Case Entry of
-               'list': Writeln(PP.Answer(UserCmd));
-               'forget':
-                 Begin
-                   PP.Remove(1);
-                   PP.Add('forget bday', ForgetBDay(UserCmd));
-                   Writeln(PP.Answer(UserCmd));
-                 End;
+               'list': If Length(BDays) = 0
+                       then Begin
+                              Writeln('There''s no birthday to list. Add one now!');
+                              Continue;
+                            End
+                       else Begin
+                              PP.Remove(5);
+                              PP.Add('list bdays', GetBDaysStr);
+                            End;
+               'forget': Begin
+                           PP.Remove(5);
+                           PP.Add('forget', ForgetBDay(UserCmd));
+                         End;
                'exit', 'goodbye', 'quit': BotExit;
                else Begin
-                      PP.Remove(1);
+                      PP.Remove(5);
                       PP.Add('bday is', AddBDay(UserCmd));
-                      Writeln(PP.Answer(UserCmd));
                     End;
            End;
+           Writeln(PP.Answer(UserCmd));
          End;
 END.
