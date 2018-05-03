@@ -46,22 +46,22 @@ Type
       NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given message
     }
     TTimmy = Object
-               public
+               Constructor Init;
+               Public
                  DupesCheck: Boolean;
                  TPercent: Integer;
                  NoUdstdRep: String;
-                 Function Init: Integer;
                  Procedure Enable;
                  Procedure Disable;
-                 Function Add(MKeywords, Replies: TStrArray): Integer; overload;
-                 Function Add(KeywordsStr, RepStr: String): Integer; overload;
+                 Function Add(MKeywords, Replies: TStrArray): Integer;                         overload;
+                 Function Add(KeywordsStr, RepStr: String): Integer;                           overload;
                  Function Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
-                 Function Remove(MKeywords: TStrArray): Integer; overload;
-                 Function Remove(KeywordsStr: String): Integer; overload;
-                 Function Remove(KeywordsStr: String; KStrDeli: Char): Integer; overload;
-                 Function Remove(AIndex: Integer): Integer; overload;
+                 Function Remove(MKeywords: TStrArray): Integer;                               overload;
+                 Function Remove(KeywordsStr: String): Integer;                                overload;
+                 Function Remove(KeywordsStr: String; KStrDeli: Char): Integer;                overload;
+                 Function Remove(AIndex: Integer): Integer;                                    overload;
                  Function Answer(TMessage: String): String;
-               private
+               Private
                  Initialized: Boolean;
                  Enabled: Boolean;
                  NOfEntries: Integer;
@@ -145,10 +145,8 @@ End;
     Initialize object with some default values set.
     Return 101 if object is initialized, 100 otherwise.
 }
-Function TTimmy.Init: Integer;
+Constructor TTimmy.Init;
 Begin
-    If Initialized then Exit(101);
-
     DupesCheck := True;
     NoUdstdRep := 'Sorry, I didn''t get that';
     TPercent := 70;
@@ -156,7 +154,6 @@ Begin
     Update;
     Enabled := True;
     Initialized := True;
-    Exit(100);
 End;
 
 { Enable the instance. }
