@@ -11,8 +11,7 @@ Uses timmy in '../timmy.pas';
 Var MyBot: TTimmy;
 
 BEGIN
-    MyBot.Init;
-    MyBot.NoUdstdRep := 'I gave up.';
+    MyBot.Init(70, 'I gave up', False);
     MyBot.Add(StrSplit('Hello', ' '), StrSplit('Greetings!|Hello to you!|Hi!', '|'));
     MyBot.Add('How are you', 'I am fine!;Never better!;I''m doing great.');
     MyBot.Add('What 2 + 2', 'The answer is 4', ' ', '@');
