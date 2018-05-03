@@ -46,15 +46,13 @@ Type
       NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given message
     }
     TTimmy = Object
-                 Initialized: Boolean;
-                 Enabled: Boolean;
-                 NOfEntries: Integer;
-                 MKeywordsList: Array of TStrArray;
-                 ReplyList: Array of TStrArray;
+               public
                  DupesCheck: Boolean;
                  TPercent: Integer;
                  NoUdstdRep: String;
                  Function Init: Integer;
+                 Procedure Enable;
+                 Procedure Disable;
                  Function Add(MKeywords, Replies: TStrArray): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String): Integer; overload;
                  Function Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
@@ -62,8 +60,14 @@ Type
                  Function Remove(KeywordsStr: String): Integer; overload;
                  Function Remove(KeywordsStr: String; KStrDeli: Char): Integer; overload;
                  Function Remove(AIndex: Integer): Integer; overload;
-                 Procedure Update;
                  Function Answer(TMessage: String): String;
+               private
+                 Initialized: Boolean;
+                 Enabled: Boolean;
+                 NOfEntries: Integer;
+                 MKeywordsList: Array of TStrArray;
+                 ReplyList: Array of TStrArray;
+                 Procedure Update;
              End;
 
 Function StrTrim(S: String): String;
@@ -153,6 +157,18 @@ Begin
     Enabled := True;
     Initialized := True;
     Exit(100);
+End;
+
+{ Enable the instance. }
+Procedure TTimmy.Enable;
+Begin
+    Enabled := True;
+End;
+
+{ Disable the instance. }
+Procedure TTimmy.Disable;
+Begin
+    Enabled := False;
 End;
 
 {
