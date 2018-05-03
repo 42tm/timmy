@@ -98,7 +98,7 @@ End;
 
 {
     Given a string, split the string using the delimiter
-    and return an array containing the seperated strings.
+    and return an array containing the separated strings.
 }
 Function StrSplit(S: String; delimiter: Char): TStrArray;
 Var iter, counter: Integer;
@@ -152,15 +152,11 @@ End;
 
 { Enable the instance. }
 Procedure TTimmy.Enable;
-Begin
-    Enabled := True;
-End;
+Begin Enabled := True; End;
 
 { Disable the instance. }
 Procedure TTimmy.Disable;
-Begin
-    Enabled := False;
-End;
+Begin Enabled := False; End;
 
 {
     Add data to bot object's metadata base.
@@ -173,7 +169,7 @@ End;
 Function TTimmy.Add(MKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
-    If Enabled then Exit(102);
+    If not Enabled then Exit(102);
     For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     If (DupesCheck) and (NOfEntries > 0)
     then For iter := Low(MKeywordsList) to High(MKeywordsList) do
