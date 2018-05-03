@@ -81,21 +81,19 @@ Implementation
 }
 Function StrTrim(S: String): String;
 Var iter: Integer;
-    FlagStr: String;
     SpaceOn: Boolean;
 Begin
     While S[1] = ' ' do Delete(S, 1, 1);
     While S[Length(S)] = ' ' do Delete(S, Length(S), 1);
-    FlagStr := '';
+    StrTrim := '';
+    SpaceOn := False;
     For iter := 1 to Length(S)
     do If S[iter] <> ' '
-       then Begin FlagStr := FlagStr + S[iter]; SpaceOn := False; End
+       then Begin StrTrim := StrTrim + S[iter]; SpaceOn := False; End
        else Case SpaceOn of
               True: Continue;
-              False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
+              False: Begin StrTrim := StrTrim + ' '; SpaceOn := True; End;
             End;
-
-    StrTrim := FlagStr;
 End;
 
 {
