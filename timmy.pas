@@ -45,21 +45,21 @@ Type
       NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given message
     }
     TTimmy = Object
-               Constructor Init;
+               Constructor Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
                Public
                  DupesCheck: Boolean;
                  TPercent: Integer;
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function Add(MKeywords, Replies: TStrArray): Integer;                         overload;
-                 Function Add(KeywordsStr, RepStr: String): Integer;                           overload;
-                 Function Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
-                 Function Remove(MKeywords: TStrArray): Integer;                               overload;
-                 Function Remove(KeywordsStr: String): Integer;                                overload;
-                 Function Remove(KeywordsStr: String; KStrDeli: Char): Integer;                overload;
-                 Function Remove(AIndex: Integer): Integer;                                    overload;
-                 Function Answer(TMessage: String): String;
+                 Function Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
+                 Function Add    (KeywordsStr, RepStr: String):                           Integer; overload;
+                 Function Add    (KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
+                 Function Remove (MKeywords: TStrArray):                                  Integer; overload;
+                 Function Remove (KeywordsStr: String):                                   Integer; overload;
+                 Function Remove (KeywordsStr: String; KStrDeli: Char):                   Integer; overload;
+                 Function Remove (AIndex: Integer):                                       Integer; overload;
+                 Function Answer (TMessage: String):                                      String ;
                Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
@@ -140,11 +140,11 @@ End;
 {
     Initialize object with some default values set.
 }
-Constructor TTimmy.Init;
+Constructor TTimmy.Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
 Begin
-    DupesCheck := True;
-    NoUdstdRep := 'Sorry, I didn''t get that';
-    TPercent := 70;
+    DupesCheck := DpCheck;
+    NoUdstdRep := DefaultRep;
+    TPercent := Percent;
     NOfEntries := 0;
     Update;
     Enable;
