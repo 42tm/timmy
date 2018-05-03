@@ -36,8 +36,7 @@ Type
 
     Variables (see also the README file):
 
-      Initialized        : State of initialization
-      Enabled            : Acts like Initialized but used in fewer number of functions
+      Enabled            : Bot's state. If Enabled is True, the bot is ready to work
       NOfEntries         : Number of entries (elements) in MKeywordsList or ReplyList
       DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
       TPercent           : Minimum percentage of the number of keywords over all the words of the message
@@ -62,7 +61,6 @@ Type
                  Function Remove(AIndex: Integer): Integer;                                    overload;
                  Function Answer(TMessage: String): String;
                Private
-                 Initialized: Boolean;
                  Enabled: Boolean;
                  NOfEntries: Integer;
                  MKeywordsList: Array of TStrArray;
@@ -143,7 +141,6 @@ End;
 
 {
     Initialize object with some default values set.
-    Return 101 if object is initialized, 100 otherwise.
 }
 Constructor TTimmy.Init;
 Begin
@@ -152,8 +149,7 @@ Begin
     TPercent := 70;
     NOfEntries := 0;
     Update;
-    Enabled := True;
-    Initialized := True;
+    Enable;
 End;
 
 { Enable the instance. }
@@ -172,14 +168,14 @@ End;
     Add data to bot object's metadata base.
     Data include message's keywords and possible replies to the message.
 
-    Return: 102 if object is not initialized or enabled
+    Return: 102 if object is not enabled
             202 if DupesCheck = True and found a match to MKeywords in MKeywordsList
             200 if the adding operation succeed
 }
 Function TTimmy.Add(MKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
-    If (not Initialized) or (not Enabled) then Exit(102);
+    If Enabled then Exit(102);
     For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     If (DupesCheck) and (NOfEntries > 0)
     then For iter := Low(MKeywordsList) to High(MKeywordsList) do
@@ -220,14 +216,14 @@ End;
     This function simply saves offsets of the matching arrays in MKeywordsList
     and then call TTimmy.RemoveByIndex().
 
-    Return: 102 if object is not initialized or not enabled
+    Return: 102 if object is not enabled
             308 if the operation succeed
 }
 Function TTimmy.Remove(MKeywords: TStrArray): Integer;
 Var iter, counter: Integer;
     Indexes: Array of Integer;
 Begin
-    If (not Initialized) or (not Enabled) then Exit(102);
+    If not Enabled then Exit(102);
 
     For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     counter := -1;  // Matches counter in 0-based
@@ -279,13 +275,13 @@ End;
 {
     Remove data from MKeywordsList at MKeywordsList[AIndex].
 
-    Return - 305 if the given index is invalid (out of bound)
-           - 300 if operation successful
+    Return: 305 if the given index is invalid (out of bound)
+            300 if operation successful
 }
 Function TTimmy.Remove(AIndex: Integer): Integer;
 Var iter: Integer;
 Begin
-    If (not Initialized) or (not Enabled) then Exit(102);
+    If not Enabled then Exit(102);
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
     For iter := AIndex to High(MKeywordsList) - 1
@@ -302,8 +298,6 @@ End;
 }
 Procedure TTimmy.Update;
 Begin
-    If not Initialized then Exit;
-
     SetLength(MKeywordsList, NOfEntries);
     SetLength(ReplyList, NOfEntries);
 End;
@@ -317,7 +311,7 @@ Var MetaIter, MKIter, MWIter, counter, GetAnswer: Integer;
     LastChar: Char;
     FlagWords: TStrArray;
 Begin
-    If (not Initialized) or (not Enabled) then Exit;
+    If not Enabled then Exit;
 
     // Pre-process the message
       FlagM := LowerCase(StrTrim(TMessage));
