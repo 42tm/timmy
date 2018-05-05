@@ -143,7 +143,7 @@ Variables, functions and procedures of `TTimmy`
     - `Replies` \[`TStrArray`\]: Possible replies to the message that contains the keywords clue in `MKeywords`
 - **Return**: Integer
     - 102: The instance is not enabled (or initialized)
-    - 202: Duplication check is enabled (`DupesCheck` = true) and a match of `MKeywords` is presented in `MKeywordsList`
+    - 202: Duplication check is enabled (`TTimmy.DupesCheck` = true) and a match of `MKeywords` is presented in `MKeywordsList`
     - 200: The operation is successful
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
@@ -176,6 +176,12 @@ Variables, functions and procedures of `TTimmy`
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: This implementation of `TTimmy.Add()` is the same as the above one (which takes string arguments). However, the difference is, this one allows you to use custom delimiters for the strings.
+
+### `DupesCheck`
+- **Type**: Boolean
+- **Visibility**: Public
+- **Availability**: v1.0.0 to v1.2.0
+- **Description**: `TTimmy.DupesCheck` specifies whether `TTimmy.Add()` should check for duplicate before adding new data or not. If the new data matches any of those already persisted in `ReplyList`, `TTimmy.Add()` stops its operation and return 202, indicating that the operation is not successful.
 
 ### <small>function</small> `Remove(MKeywords: TStrArray)`
 - **Source**:
