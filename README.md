@@ -56,9 +56,9 @@ Variables, functions and procedures of `TTimmy`
 ### <small>constructor</small> `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
 - **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/1.2.0/timmy.pas#L143))
 - **Parameters**:
-    - `Percent` \[Integer\]: Desired initial value for [`TPercent`](#tpercent)
-    - `DefaultRep` \[String\]: Initial value for [`NoUdstdRep`](#noudstdrep)
-    - `DpCheck` \[Boolean\]: Initial value for [`DupesCheck`](#dupescheck)
+    - `Percent` \[Integer\]: Desired initial value for [`TTimmy.Percent`](#tpercent)
+    - `DefaultRep` \[String\]: Initial value for [`TTimmy.NoUdstdRep`](#noudstdrep)
+    - `DpCheck` \[Boolean\]: Initial value for [`TTimmy.DupesCheck`](#dupescheck)
 - **Availability**: v1.2.0
 - **Description**: Constructor of the `TTimmy` instance, which prepares the instance for being used. In this constructor, `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, and `TTimmy.DupesCheck` get assigned to the values of the arguments `Percent`, `DefaultRep` and `DpCheck`, respectively. `TTimmy.Enabled` is set to true, and the bot starts with nothing in its metadata. <mark>You must run this constructor before performing any other operation with your bot instance, or else the bot won't work properly.</mark>
 
@@ -77,7 +77,7 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Boolean variable
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `Enabled` is false, all major functions of `TTimmy` wont' perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable`](#procedure-enable) or [`TTimmy.Disable`](#procedure-disable).
+- **Description**: `TTimmy.Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `TTimmy.Enabled` is false, all major functions of `TTimmy` wont' perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable`](#procedure-enable) or [`TTimmy.Disable`](#procedure-disable).
 
 ### <small>procedure</small> `Enable()`
 - **Source**: Line 154 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L154))
@@ -103,13 +103,13 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Dynamic array of `TStrArray`
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Just like `MKeywordsList`, `ReplyList` is an array of arrays. Each array in `ReplyList` holds strings, which are possible replies for a question. If an array in `ReplyList` has more than two strings, the bot will pick one, randomly. Arrays in `ReplyList` are correspond to arrays in `MKeywordsList` if we are speaking in terms of position. For example, the replies at offset 2 of `ReplyList` are replies for the message with the keywords at offset 2 of `MKeywordsList`.
+- **Description**: Just like `TTimmy.MKeywordsList`, `TTimmy.ReplyList` is an array of arrays. Each array in `TTimmy.ReplyList` holds strings, which are possible replies for a question. If an array in `TTimmy.ReplyList` has more than two strings, the bot will pick one, randomly. Arrays in `TTimmy.ReplyList` are correspond to arrays in `TTimmy.MKeywordsList` if we are speaking in terms of position. For example, the replies at offset 2 of `TTimmy.ReplyList` are replies for the message with the keywords at offset 2 of `TTimmy.MKeywordsList`.
 
 ### `NOfEntries`
 - **Type**: Integer
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `NOfEntries` is the number of element in `MKeywordsList`, or `ReplyList` (the length of `MKeywordsList` is the same as the length of `ReplyList` at all times anyway). We implement this instead of doing `Length(MKeywordsList)` (or `Length(ReplyList)`) because it's more convenient.
+- **Description**: `TTimmy.NOfEntries` is the number of element in `TTimmy.MKeywordsList`, or `TTimmy.ReplyList` (the length of `TTimmy.MKeywordsList` is the same as the length of `TTimmy.ReplyList` at all times anyway). We implement this instead of doing `Length(MKeywordsList)` (or `Length(ReplyList)`) because it's more convenient.
 
 ### <small>procedure</small> `Update()`
 - **Source**:
@@ -119,19 +119,19 @@ Variables, functions and procedures of `TTimmy`
 - **Parameters**: None
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Procedure that sets the lengths of `MKeywordsList` and `ReplyList` to `NOfEntries`. This procedure is called whenever the bot takes or remove date within its metadata (either by `TTimmy.Add()` or `TTimmy.Remove()`), in which the length of `MKeywordsList` (and `ReplyList` as well) is changed.
+- **Description**: Procedure that sets the lengths of `TTimmy.MKeywordsList` and `TTimmy.ReplyList` to `TTimmy.NOfEntries`. This procedure is called whenever the bot takes or remove date within its metadata (either by `TTimmy.Add()` or `TTimmy.Remove()`), in which the length of `TTimmy.MKeywordsList` (and `TTimmy.ReplyList` as well) is changed.
 
-### `TPercent`
+### `Percent`
 - **Type**: Integer
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TPercent` specifies the minimum percentage of the number of matching keywords over the total number of words in the message that the bot needs in order to "understand" the message.
+- **Description**: `TTimmy.Percent` specifies the minimum percentage of the number of matching keywords over the total number of words in the message that the bot needs in order to "understand" the message.
 
 ### `NoUdstdRep`
 - **Type**: String
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `NoUdstdRep` is the default reply of the bot. It is returned to `TTimmy.Answer()` whenever the bot does not "understand" the user's message.
+- **Description**: `TTimmy.NoUdstdRep` is the default reply of the bot. It is returned to `TTimmy.Answer()` whenever the bot does not "understand" the user's message.
 
 ### <small>function</small> `Add(MKeywords, Replies: TStrArray)`
 - **Source**:
@@ -143,11 +143,11 @@ Variables, functions and procedures of `TTimmy`
     - `Replies` \[`TStrArray`\]: Possible replies to the message that contains the keywords clue in `MKeywords`
 - **Return**: Integer
     - 102: The instance is not enabled (or initialized)
-    - 202: Duplication check is enabled (`TTimmy.DupesCheck` = true) and a match of `MKeywords` is presented in `MKeywordsList`
+    - 202: Duplication check is enabled (`TTimmy.DupesCheck` = true) and a match of `MKeywords` is presented in `TTimmy.MKeywordsList`
     - 200: The operation is successful
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.Add()` adds new data to the bot's metadata, which means it adds `MKeywords` to `MKeywordsList` and `Replies` to `ReplyList`. It takes two arguments, one is keywords clue for a message, and two is possible responses to that message. **`TTimmy.Add()` is overloaded and this implementation of it is considered the original implementation.**
+- **Description**: `TTimmy.Add()` adds new data to the bot's metadata, which means it adds `MKeywords` to `TTimmy.MKeywordsList` and `Replies` to `TTimmy.ReplyList`. It takes two arguments, one is keywords clue for a message, and two is possible responses to that message. **`TTimmy.Add()` is overloaded and this implementation of it is considered the original implementation.**
 
 ### <small>function</small> `Add(KeywordsStr, RepStr: String)`
 - **Source**:
@@ -181,20 +181,20 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Boolean
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.DupesCheck` specifies whether `TTimmy.Add()` should check for duplicate before adding new data or not. If the new data matches any of those already persisted in `ReplyList`, `TTimmy.Add()` stops its operation and return 202, indicating that the operation is not successful.
+- **Description**: `TTimmy.DupesCheck` specifies whether `TTimmy.Add()` should check for duplicate before adding new data or not. If the new data matches any of those already persisted in `TTimmy.ReplyList`, `TTimmy.Add()` stops its operation and return 202, indicating that the operation is not successful.
 
 ### <small>function</small> `Remove(MKeywords: TStrArray)`
 - **Source**:
     - v1.0.0: Line 211 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L211))
     - v1.1.0: Line 213 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L213))
     - v1.2.0: Line 216 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L216))
-- **Parameters**: `MKeywords` (`QKeywords` in v1.0.0) \[`TStrArray`\]: Keywords clue to delete from the bot's metadata (or more specifically, `MKeywordsList`).
+- **Parameters**: `MKeywords` (`QKeywords` in v1.0.0) \[`TStrArray`\]: Keywords clue to delete from the bot's metadata (or more specifically, `TTimmy.MKeywordsList`).
 - **Return**: Integer
     - 102: The instance is not enabled (or initialized)
     - 308: The operation is successful
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.Remove()` removes data from the bot's metadata, and as of version 1.2.0, there are 4 overloaded `TTimmy.Remove()`. This one takes a `TStrArray`, find matching arrays (arrays with the same elements in the same order) in `MKeywordsList`, and delete those matching arrays.
+- **Description**: `TTimmy.Remove()` removes data from the bot's metadata, and as of version 1.2.0, there are 4 overloaded `TTimmy.Remove()`. This one takes a `TStrArray`, find matching arrays (arrays with the same elements in the same order) in `TTimmy.MKeywordsList`, and delete those matching arrays.
 
 ### <small>function</small> `Remove(KeywordsStr: String)`
 - **Source**:
@@ -223,13 +223,13 @@ Variables, functions and procedures of `TTimmy`
     - v1.0.0: Line 240 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L240))
     - v1.1.0: Line 272 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L272))
     - v1.2.0: Line 275 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L275))
-- **Parameters**: `AIndex` \[Integer\]: Offset of elements in `MKeywordsList` and `ReplyList` that need to be removed
+- **Parameters**: `AIndex` \[Integer\]: Offset of elements in `TTimmy.MKeywordsList` and `TTimmy.ReplyList` that need to be removed
 - **Return**: Integer
-    - 305: `AIndex` is an invalid offset in `MKeywordsList` (or `ReplyList`)
+    - 305: `AIndex` is an invalid offset in `TTimmy.MKeywordsList` (or `TTimmy.ReplyList`)
     - 300: The operation is successful
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: This is the major implementation of `TTimmy.Remove()` due to the fact that other overloaded `TTimmy.Remove()` rely on this one, whether directly or indirectly. This one removes the array at offset `AIndex` in `MKeywordsList` and in `ReplyList`. In other words, it removes `MKeywordsList[AIndex]` and `ReplyList[AIndex]`.
+- **Description**: This is the major implementation of `TTimmy.Remove()` due to the fact that other overloaded `TTimmy.Remove()` rely on this one, whether directly or indirectly. This one removes the array at offset `AIndex` in `TTimmy.MKeywordsList` and in `TTimmy.ReplyList`. In other words, it removes `MKeywordsList[AIndex]` and `ReplyList[AIndex]`.
 
 ### <small>function</small> `Answer(TMessage: String)`
 - **Source**:
@@ -240,7 +240,7 @@ Variables, functions and procedures of `TTimmy`
 - **Return**: String. Bot's response to `TMessage`.
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Given the end-user's message, returns the bot instance's response to that message. The message is first pre-processed (like removing extra white-spaces or punctuations like ! or ?). Then, it is splitted into many words using the space character. The function will then iterate through `MKeywordsList`, and compute the percentage of the keywords in each of the array in `MKeywordsList` to the user message's splitted words. If the percentage is larger then `TPercent`, a random reply in the corresponding array in `ReplyList` will be returned to `TTimmy.Answer()`. In this case, we say that the bot has "understood" the end-user's message. In the case that it could not understand, `TTimmy.NoUdstdRep` is returned.
+- **Description**: Given the end-user's message, returns the bot instance's response to that message. The message is first pre-processed (like removing extra white-spaces or punctuations like ! or ?). Then, it is splitted into many words using the space character. The function will then iterate through `TTimmy.MKeywordsList`, and compute the percentage of the keywords in each of the array in `TTimmy.MKeywordsList` to the user message's splitted words. If the percentage is larger then `TTimmy.Percent`, a random reply in the corresponding array in `TTimmy.ReplyList` will be returned to `TTimmy.Answer()`. In this case, we say that the bot has "understood" the end-user's message. In the case that it could not understand, `TTimmy.NoUdstdRep` is returned.
 
 Other functions provided by the unit & `TStrArray`
 --------------------------------------------------
