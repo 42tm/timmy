@@ -208,7 +208,7 @@ End;
     Given a set of keywords, find matches to that set in MKeywordsList,
     remove the matches, and remove the correspondants in ReplyList as well.
     This function simply saves offsets of the matching arrays in MKeywordsList
-    and then call TTimmy.RemoveByIndex().
+    and then call TTimmy.Remove(AIndex: Integer).
 
     Return: 102 if object is not enabled
             308 if the operation succeed
