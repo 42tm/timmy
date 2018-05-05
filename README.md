@@ -51,7 +51,7 @@ For more examples, check out the [`examples`](examples/) folder.
 Variables, functions and procedures of `TTimmy`
 -----------------------------------------------
 
-**`TTimmy`**
+**<big>`TTimmy`</big>**
 
 ### <small>constructor</small> `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
 - **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/1.2.0/timmy.pas#L143))
@@ -236,6 +236,42 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: Given the end-user's message, returns the bot instance's response to that message. The message is first pre-processed (like removing extra white-spaces or punctuations like ! or ?). Then, it is splitted into many words using the space character. The function will then iterate through `MKeywordsList`, and compute the percentage of the keywords in each of the array in `MKeywordsList` to the user message's splitted words. If the percentage is larger then `TPercent`, a random reply in the corresponding array in `ReplyList` will be returned to `TTimmy.Answer()`. In this case, we say that the bot has "understood" the end-user's message. In the case that it could not understand, `TTimmy.NoUdstdRep` is returned.
 
+Other functions provided by the unit & `TStrArray`
+--------------------------------------------------
+### `TStrArray`
+`TStrArray` is `Array of Array of String`. In Timmy, it is used instead of `Array of Array of String` to avoid type incompatible compile error.
+
+### <small>function</small> `StrTrim(S: String)`
+- **Source**:
+    - v1.0.0: Line 78 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L78))
+    - v1.1.0: Line 80 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L80))
+    - v1.2.0: Line 82 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L82))
+- **Parameters**: `S` \[String\]: String to be processed.
+- **Return**: String. The processed string.
+- **Availability**: v1.0.0 to v1.2.0 (In v1.0.0, it's `StrProcessor()`)
+- **Description**: `StrTrim()` deletes extra white spaces in the string `S`.
+
+### <small>function</small> `StrSplit(S: String; delimiter: Char)`
+- **Source**:
+    - v1.0.0: Line 101 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L101))
+    - v1.1.0: Line 103 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L103))
+    - v1.2.0: Line 103 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L103))
+- **Parameters**:
+    - `S` \[String\]: String to be splitted
+    - `delimiter` \[Character\]: Delimiter for `S`
+- **Return**: `TStrArray`, contains the strings of `S` after being splitted.
+- **Availability**: v1.0.0 to v1.2.0
+- **Description**: `StrSplit()` splits the string `S` using `delimiter` as delimiter, and returns a `TStrArray` holding the delimited strings.
+
+### <small>function</small> CompareStrArrays(ArrayA, ArrayB: TStrArray)
+- **Source**:
+    - v1.0.0: Line 130 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L130))
+    - v1.1.0: Line 132 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L132))
+    - v1.2.0: Line 132 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L132))
+- **Parameters**: Two `TStrArray`s to be compared, `ArrayA` and `ArrayB`.
+- **Return**: Boolean. True if `ArrayA` is the same as `ArrayB`, false otherwise.
+- **Availability**: v1.0.0 to v1.2.0
+- **Description**: This function compares two `TStrArray`s to see if they have the exact same elements. The order of elements in the arrays does matter.
 
 License
 -------
