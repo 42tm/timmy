@@ -301,9 +301,7 @@ BEGIN
          End;
 
     // Setting up the bot
-    PP.Init;
-    PP.TPercent := 30;
-    PP.NoUdstdRep := DEFAULTREP;
+    PP.Init(30, DEFAULTREP, True);
     PP.Add('hello', 'Greetings!;Hi!;Nice to see you!');
     PP.Add('hi', 'Greetings!;Hi!;Nice to see you!');
     PP.Add('how are you', 'I''m fine! Now, how can I help you?');

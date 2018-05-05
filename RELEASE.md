@@ -1,21 +1,25 @@
-Release Notes for Timmy 1.1.0
+Release Notes for Timmy 1.2.0
 =============================
 
 What's in this release?
 ----------------------------
-This stable release (1.1.0) provides the `TTimmy` object with 3 ways to add keywords clues, and 4 ways to remove keywords clues, along with `TStrArray` - Array of String, and several helper functions like `StrSplit` and `StrTrim` that aren't part of the `TTimmy` object. See the included README file to know all what this Timmy release offers.
+This stable release (1.2.0) provides the `TTimmy` object with 3 ways to add keywords clues, and 4 ways to remove keywords clues, along with `TStrArray` - Array of String, and several helper functions like `StrSplit` and `StrTrim` that aren't part of the `TTimmy` object. See the included README file to know all what this Timmy release offers.
 
-Change log (from 1.0.0 to 1.1.0)
+Change log (from 1.1.0 to 1.2.0)
 --------------------------------
-- Overload two more `TTimmy.Remove()`
-- Add examples (see them in the `examples` folder)
-- Put Release Notes in RELEASE.md
+- Turn `TTimmy.Init()` into a constructor
+- Add methods visibility (public and private)
+- Add `TTimmy.Enable()` and `TTimmy.Disable()`
+- Optimize `StrTrim()` function
+- Remove the `Initialized` boolean variable
+- Examples are updated to the latest changes
+- Remove tables in README.md
 
 What new features will be in the next _major_ release?
 ------------------------------------------------------
 > **Disclaimer**: We do not know exactly what will the next major release offers, we are just expecting.
 
-This release (1.1.0) provides primitive functions that you can do just about anything with it. However, there are a few inconveniences. For example, a typical "What is" question may vary, like "What is GitHub?", "What is an apple?" and "What is FooBar?". To handle that, you may have to add (using `TTimmy.Add()`) multiple times, each time for a different object.
+This release (1.2.0) provides primitive functions that you can do just about anything with it. However, there are a few inconveniences. For example, a typical "What is" question may vary, like "What is GitHub?", "What is an apple?" and "What is FooBar?". To handle that, you may have to add (using `TTimmy.Add()`) multiple times, each time for a different object.
 
 ```pascal
 Uses timmy;

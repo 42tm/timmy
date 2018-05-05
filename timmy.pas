@@ -1,6 +1,6 @@
 {
     timmy - Pascal unit for creating chat bots
-    Version 1.1.0
+    Version 1.2.0
 
     Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
 
@@ -36,8 +36,7 @@ Type
 
     Variables (see also the README file):
 
-      Initialized        : State of initialization
-      Enabled            : Acts like Initialized but used in fewer number of functions
+      Enabled            : Bot's state. If Enabled is True, the bot is ready to work
       NOfEntries         : Number of entries (elements) in MKeywordsList or ReplyList
       DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
       TPercent           : Minimum percentage of the number of keywords over all the words of the message
@@ -46,24 +45,27 @@ Type
       NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given message
     }
     TTimmy = Object
-                 Initialized: Boolean;
+               Constructor Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
+               Public
+                 DupesCheck: Boolean;
+                 TPercent: Integer;
+                 NoUdstdRep: String;
+                 Procedure Enable;
+                 Procedure Disable;
+                 Function Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
+                 Function Add    (KeywordsStr, RepStr: String):                           Integer; overload;
+                 Function Add    (KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
+                 Function Remove (MKeywords: TStrArray):                                  Integer; overload;
+                 Function Remove (KeywordsStr: String):                                   Integer; overload;
+                 Function Remove (KeywordsStr: String; KStrDeli: Char):                   Integer; overload;
+                 Function Remove (AIndex: Integer):                                       Integer; overload;
+                 Function Answer (TMessage: String):                                      String ;
+               Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
                  MKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
-                 DupesCheck: Boolean;
-                 TPercent: Integer;
-                 NoUdstdRep: String;
-                 Function Init: Integer;
-                 Function Add(MKeywords, Replies: TStrArray): Integer; overload;
-                 Function Add(KeywordsStr, RepStr: String): Integer; overload;
-                 Function Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
-                 Function Remove(MKeywords: TStrArray): Integer; overload;
-                 Function Remove(KeywordsStr: String): Integer; overload;
-                 Function Remove(KeywordsStr: String; KStrDeli: Char): Integer; overload;
-                 Function Remove(AIndex: Integer): Integer; overload;
                  Procedure Update;
-                 Function Answer(TMessage: String): String;
              End;
 
 Function StrTrim(S: String): String;
@@ -79,26 +81,24 @@ Implementation
 }
 Function StrTrim(S: String): String;
 Var iter: Integer;
-    FlagStr: String;
     SpaceOn: Boolean;
 Begin
     While S[1] = ' ' do Delete(S, 1, 1);
     While S[Length(S)] = ' ' do Delete(S, Length(S), 1);
-    FlagStr := '';
+    StrTrim := '';
+    SpaceOn := False;
     For iter := 1 to Length(S)
     do If S[iter] <> ' '
-       then Begin FlagStr := FlagStr + S[iter]; SpaceOn := False; End
+       then Begin StrTrim := StrTrim + S[iter]; SpaceOn := False; End
        else Case SpaceOn of
               True: Continue;
-              False: Begin FlagStr := FlagStr + ' '; SpaceOn := True; End;
+              False: Begin StrTrim := StrTrim + ' '; SpaceOn := True; End;
             End;
-
-    StrTrim := FlagStr;
 End;
 
 {
     Given a string, split the string using the delimiter
-    and return an array containing the seperated strings.
+    and return an array containing the separated strings.
 }
 Function StrSplit(S: String; delimiter: Char): TStrArray;
 Var iter, counter: Integer;
@@ -139,34 +139,37 @@ End;
 
 {
     Initialize object with some default values set.
-    Return 101 if object is initialized, 100 otherwise.
 }
-Function TTimmy.Init: Integer;
+Constructor TTimmy.Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
 Begin
-    If Initialized then Exit(101);
-
-    DupesCheck := True;
-    NoUdstdRep := 'Sorry, I didn''t get that';
-    TPercent := 70;
+    DupesCheck := DpCheck;
+    NoUdstdRep := DefaultRep;
+    TPercent := Percent;
     NOfEntries := 0;
     Update;
-    Enabled := True;
-    Initialized := True;
-    Exit(100);
+    Enable;
 End;
+
+{ Enable the instance. }
+Procedure TTimmy.Enable;
+Begin Enabled := True; End;
+
+{ Disable the instance. }
+Procedure TTimmy.Disable;
+Begin Enabled := False; End;
 
 {
     Add data to bot object's metadata base.
     Data include message's keywords and possible replies to the message.
 
-    Return: 102 if object is not initialized or enabled
+    Return: 102 if object is not enabled
             202 if DupesCheck = True and found a match to MKeywords in MKeywordsList
             200 if the adding operation succeed
 }
 Function TTimmy.Add(MKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
-    If (not Initialized) or (not Enabled) then Exit(102);
+    If not Enabled then Exit(102);
     For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     If (DupesCheck) and (NOfEntries > 0)
     then For iter := Low(MKeywordsList) to High(MKeywordsList) do
@@ -205,16 +208,16 @@ End;
     Given a set of keywords, find matches to that set in MKeywordsList,
     remove the matches, and remove the correspondants in ReplyList as well.
     This function simply saves offsets of the matching arrays in MKeywordsList
-    and then call TTimmy.RemoveByIndex().
+    and then call TTimmy.Remove(AIndex: Integer).
 
-    Return: 102 if object is not initialized or not enabled
+    Return: 102 if object is not enabled
             308 if the operation succeed
 }
 Function TTimmy.Remove(MKeywords: TStrArray): Integer;
 Var iter, counter: Integer;
     Indexes: Array of Integer;
 Begin
-    If (not Initialized) or (not Enabled) then Exit(102);
+    If not Enabled then Exit(102);
 
     For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
     counter := -1;  // Matches counter in 0-based
@@ -266,13 +269,13 @@ End;
 {
     Remove data from MKeywordsList at MKeywordsList[AIndex].
 
-    Return - 305 if the given index is invalid (out of bound)
-           - 300 if operation successful
+    Return: 305 if the given index is invalid (out of bound)
+            300 if operation successful
 }
 Function TTimmy.Remove(AIndex: Integer): Integer;
 Var iter: Integer;
 Begin
-    If (not Initialized) or (not Enabled) then Exit(102);
+    If not Enabled then Exit(102);
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
     For iter := AIndex to High(MKeywordsList) - 1
@@ -289,8 +292,6 @@ End;
 }
 Procedure TTimmy.Update;
 Begin
-    If not Initialized then Exit;
-
     SetLength(MKeywordsList, NOfEntries);
     SetLength(ReplyList, NOfEntries);
 End;
@@ -304,7 +305,7 @@ Var MetaIter, MKIter, MWIter, counter, GetAnswer: Integer;
     LastChar: Char;
     FlagWords: TStrArray;
 Begin
-    If (not Initialized) or (not Enabled) then Exit;
+    If not Enabled then Exit;
 
     // Pre-process the message
       FlagM := LowerCase(StrTrim(TMessage));
