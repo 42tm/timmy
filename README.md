@@ -54,7 +54,7 @@ Variables, functions and procedures of `TTimmy`
 **<big>`TTimmy`</big>**
 
 ### <small>constructor</small> `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
-- **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/1.2.0/timmy.pas#L143))
+- **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L143))
 - **Parameters**:
     - `Percent` \[Integer\]: Desired initial value for [`TTimmy.TPercent`](#tpercent)
     - `DefaultRep` \[String\]: Initial value for [`TTimmy.NoUdstdRep`](#noudstdrep)
