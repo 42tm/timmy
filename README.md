@@ -71,7 +71,7 @@ Variables, functions and procedures of `TTimmy`
     - 101: The instance is already initialized
     - 100: The operation is successful
 - **Availability**: v1.0.0 to v1.1.0
-- **Description**: Acts like v1.2.0's `TTimmy.Init()` constructor, but this one is a procedure. `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, `TTimmy.DupesCheck` get assigned to 70, "Sorry, I didn't get that", and `True`, respectively. **You must run this function before performing any other operation with your bot instance, or else the bot won't work properly.**
+- **Description**: Acts like v1.2.0's `TTimmy.Init()` constructor, but this one is a function. `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, `TTimmy.DupesCheck` get assigned to 70, "Sorry, I didn't get that", and `True`, respectively. **You must run this function before performing any other operation with your bot instance, or else the bot won't work properly.**
 
 ### `Enabled`
 - **Type**: Boolean variable
@@ -80,14 +80,14 @@ Variables, functions and procedures of `TTimmy`
 - **Description**: `TTimmy.Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `TTimmy.Enabled` is false, all major functions of `TTimmy` won't perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable`](#procedure-enable) or [`TTimmy.Disable`](#procedure-disable).
 
 ### procedure `Enable()`
-- **Source**: Line 154 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L154))
+- **Source**: Line 154 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L154))
 - **Parameters**: None
 - **Visibility**: Public
 - **Availability**: v1.2.0
 - **Description**: Procedure that sets `TTimmy.Enabled` to true. In other words, it enables the bot.
 
 ### procedure `Disable()`
-- **Source**: Line 158 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L158))
+- **Source**: Line 158 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L158))
 - **Parameters**: None
 - **Visibility**: Public
 - **Availability**: v1.2.0
