@@ -60,7 +60,7 @@ Variables, functions and procedures of `TTimmy`
     - `DefaultRep` \[String\]: Initial value for [`TTimmy.NoUdstdRep`](#noudstdrep)
     - `DpCheck` \[Boolean\]: Initial value for [`TTimmy.DupesCheck`](#dupescheck)
 - **Availability**: v1.2.0
-- **Description**: Constructor of the `TTimmy` instance, which prepares the instance for being used. In this constructor, `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, and `TTimmy.DupesCheck` get assigned to the values of the arguments `Percent`, `DefaultRep` and `DpCheck`, respectively. `TTimmy.Enabled` is set to true, and the bot starts with nothing in its metadata. <mark>You must run this constructor before performing any other operation with your bot instance, or else the bot won't work properly.</mark>
+- **Description**: Constructor of the `TTimmy` instance, which prepares the instance for being used. In this constructor, `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, and `TTimmy.DupesCheck` get assigned to the values of the arguments `Percent`, `DefaultRep` and `DpCheck`, respectively. `TTimmy.Enabled` is set to true, and the bot starts with nothing in its metadata. **You must run this constructor before performing any other operation with your bot instance, or else the bot won't work properly.**
 
 ### function `Init()`
 - **Source**:
@@ -71,7 +71,7 @@ Variables, functions and procedures of `TTimmy`
     - 101: The instance is already initialized
     - 100: The operation is successful
 - **Availability**: v1.0.0 to v1.1.0
-- **Description**: Acts like v1.2.0's `TTimmy.Init()` constructor, but this one is a procedure. `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, `TTimmy.DupesCheck` get assigned to 70, "Sorry, I didn't get that", and `True`, respectively.
+- **Description**: Acts like v1.2.0's `TTimmy.Init()` constructor, but this one is a procedure. `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, `TTimmy.DupesCheck` get assigned to 70, "Sorry, I didn't get that", and `True`, respectively. **You must run this function before performing any other operation with your bot instance, or else the bot won't work properly.**
 
 ### `Enabled`
 - **Type**: Boolean variable
