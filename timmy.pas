@@ -52,14 +52,14 @@ Type
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
-                 Function Add    (KeywordsStr, RepStr: String):                           Integer; overload;
-                 Function Add    (KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
-                 Function Remove (MKeywords: TStrArray):                                  Integer; overload;
-                 Function Remove (KeywordsStr: String):                                   Integer; overload;
-                 Function Remove (KeywordsStr: String; KStrDeli: Char):                   Integer; overload;
-                 Function Remove (AIndex: Integer):                                       Integer; overload;
-                 Function Answer (TMessage: String):                                      String ;
+                 Function  Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
+                 Function  Add    (KeywordsStr, RepStr: String):                           Integer; overload;
+                 Function  Add    (KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
+                 Function  Remove (MKeywords: TStrArray):                                  Integer; overload;
+                 Function  Remove (KeywordsStr: String):                                   Integer; overload;
+                 Function  Remove (KeywordsStr: String; KStrDeli: Char):                   Integer; overload;
+                 Function  Remove (AIndex: Integer):                                       Integer; overload;
+                 Function  Answer (TMessage: String):                                      String ;
                Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
