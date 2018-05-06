@@ -160,7 +160,7 @@ Variables, functions and procedures of `TTimmy`
 - **Return**: The same as the original implementation of `TTimmy.Add()`.
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Yet another function to add new data, but this one takes string arguments instead of `TStrArray`s. These strings will then be delimited using a delimiter with the help of the [`StrSplit()`]() function to form `TStrArray`s, and these `TStrArray`s will be passed over to the original implementation of `TTimmy.Add()`.
+- **Description**: Yet another function to add new data, but this one takes string arguments instead of `TStrArray`s. These strings will then be delimited using a delimiter with the help of the [`StrSplit()`](#function-strsplits-string-delimiter-char) function to form `TStrArray`s, and these `TStrArray`s will be passed over to the original implementation of `TTimmy.Add()`.
 
 ### <small>function</small> `Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char)`
 - **Source**:
