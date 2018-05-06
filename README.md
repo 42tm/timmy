@@ -53,7 +53,7 @@ Variables, functions and procedures of `TTimmy`
 
 **<big>`TTimmy`</big>**
 
-### <small>constructor</small> `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
+### constructor `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
 - **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L143))
 - **Parameters**:
     - `Percent` \[Integer\]: Desired initial value for [`TTimmy.TPercent`](#tpercent)
@@ -62,7 +62,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.2.0
 - **Description**: Constructor of the `TTimmy` instance, which prepares the instance for being used. In this constructor, `TTimmy.TPercent`, `TTimmy.NoUdstdRep`, and `TTimmy.DupesCheck` get assigned to the values of the arguments `Percent`, `DefaultRep` and `DpCheck`, respectively. `TTimmy.Enabled` is set to true, and the bot starts with nothing in its metadata. <mark>You must run this constructor before performing any other operation with your bot instance, or else the bot won't work properly.</mark>
 
-### <small>function</small> `Init()`
+### function `Init()`
 - **Source**:
     - v1.0.0: Line 142 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L142))
     - v1.1.0: Line 144 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/timmy.pas#L144))
@@ -77,16 +77,16 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Boolean variable
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `TTimmy.Enabled` is false, all major functions of `TTimmy` wont' perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable`](#procedure-enable) or [`TTimmy.Disable`](#procedure-disable).
+- **Description**: `TTimmy.Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `TTimmy.Enabled` is false, all major functions of `TTimmy` won't perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable`](#procedure-enable) or [`TTimmy.Disable`](#procedure-disable).
 
-### <small>procedure</small> `Enable()`
+### procedure `Enable()`
 - **Source**: Line 154 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L154))
 - **Parameters**: None
 - **Visibility**: Public
 - **Availability**: v1.2.0
 - **Description**: Procedure that sets `TTimmy.Enabled` to true. In other words, it enables the bot.
 
-### <small>procedure</small> `Disable()`
+### procedure `Disable()`
 - **Source**: Line 158 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L158))
 - **Parameters**: None
 - **Visibility**: Public
@@ -111,7 +111,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `TTimmy.NOfEntries` is the number of element in `TTimmy.MKeywordsList`, or `TTimmy.ReplyList` (the length of `TTimmy.MKeywordsList` is the same as the length of `TTimmy.ReplyList` at all times anyway). We implement this instead of doing `Length(MKeywordsList)` (or `Length(ReplyList)`) because it's more convenient.
 
-### <small>procedure</small> `Update()`
+### procedure `Update()`
 - **Source**:
     - v1.0.0: Line 258 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L258))
     - v1.1.0: Line 290 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/timmy.pas#L290))
@@ -133,7 +133,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `TTimmy.NoUdstdRep` is the default reply of the bot. It is returned to `TTimmy.Answer()` whenever the bot does not "understand" the user's message.
 
-### <small>function</small> `Add(MKeywords, Replies: TStrArray)`
+### function `Add(MKeywords, Replies: TStrArray)`
 - **Source**:
     - v1.0.0: Line 164 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L164))
     - v1.1.0: Line 166 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L166))
@@ -149,7 +149,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `TTimmy.Add()` adds new data to the bot's metadata, which means it adds `MKeywords` to `TTimmy.MKeywordsList` and `Replies` to `TTimmy.ReplyList`. It takes two arguments, one is keywords clue for a message, and two is possible responses to that message. **`TTimmy.Add()` is overloaded and this implementation of it is considered the original implementation.**
 
-### <small>function</small> `Add(KeywordsStr, RepStr: String)`
+### function `Add(KeywordsStr, RepStr: String)`
 - **Source**:
     - v1.0.0: Line 187 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L187))
     - v1.1.0: Line 189 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L189))
@@ -162,7 +162,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: Yet another function to add new data, but this one takes string arguments instead of `TStrArray`s. These strings will then be delimited using a delimiter with the help of the [`StrSplit()`](#function-strsplits-string-delimiter-char) function to form `TStrArray`s, and these `TStrArray`s will be passed over to the original implementation of `TTimmy.Add()`.
 
-### <small>function</small> `Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char)`
+### function `Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char)`
 - **Source**:
     - v1.0.0: Line 197 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L197))
     - v1.1.0: Line 199 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L199))
@@ -183,7 +183,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `TTimmy.DupesCheck` specifies whether `TTimmy.Add()` should check for duplicate before adding new data or not. If the new data matches any of those already persisted in `TTimmy.ReplyList`, `TTimmy.Add()` stops its operation and return 202, indicating that the operation is not successful.
 
-### <small>function</small> `Remove(MKeywords: TStrArray)`
+### function `Remove(MKeywords: TStrArray)`
 - **Source**:
     - v1.0.0: Line 211 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L211))
     - v1.1.0: Line 213 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L213))
@@ -196,7 +196,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `TTimmy.Remove()` removes data from the bot's metadata, and as of version 1.2.0, there are 4 overloaded `TTimmy.Remove()`. This one takes a `TStrArray`, find matching arrays (arrays with the same elements in the same order) in `TTimmy.MKeywordsList`, and delete those matching arrays.
 
-### <small>function</small> `Remove(KeywordsStr: String)`
+### function `Remove(KeywordsStr: String)`
 - **Source**:
     - v1.1.0: Line 250 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L250))
     - v1.2.0: Line 253 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L253))
@@ -206,7 +206,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.1.0 to v1.2.0
 - **Description**: Another overloaded `TTimmy.Remove()`, this one takes one and only string argument. The string is then delimited using the space character to get a `TStrArray` output, and this `TStrArray` is processed by the above `TTimmy.Remove(MKeywords: TStrArray)`.
 
-### <small>function</small> `Remove(KeywordsStr: String; KStrDeli: Char)`
+### function `Remove(KeywordsStr: String; KStrDeli: Char)`
 - **Source**:
     - v1.1.0: Line 261 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L261))
     - v1.2.0: Line 264 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/src/timmy.pas#L264))
@@ -218,7 +218,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.1.0 to v1.2.0
 - **Description**: Yet another overloaded `TTimmy.Remove()` which is quite similar to the above one, but this one allows you to use any delimiter you like instead of the space character.
 
-### <small>function</small> `Remove(AIndex: Integer)`
+### function `Remove(AIndex: Integer)`
 - **Source**:
     - v1.0.0: Line 240 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L240))
     - v1.1.0: Line 272 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L272))
@@ -231,7 +231,7 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: This is the major implementation of `TTimmy.Remove()` due to the fact that other overloaded `TTimmy.Remove()` rely on this one, whether directly or indirectly. This one removes the array at offset `AIndex` in `TTimmy.MKeywordsList` and in `TTimmy.ReplyList`. In other words, it removes `MKeywordsList[AIndex]` and `ReplyList[AIndex]`.
 
-### <small>function</small> `Answer(TMessage: String)`
+### function `Answer(TMessage: String)`
 - **Source**:
     - v1.0.0: Line 269 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L269))
     - v1.1.0: Line 301 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L301))
@@ -247,7 +247,7 @@ Other functions provided by the unit & `TStrArray`
 ### `TStrArray`
 `TStrArray` is `Array of Array of String`. In Timmy, it is used instead of `Array of Array of String` to avoid type incompatible compile error.
 
-### <small>function</small> `StrTrim(S: String)`
+### function `StrTrim(S: String)`
 - **Source**:
     - v1.0.0: Line 78 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L78))
     - v1.1.0: Line 80 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L80))
@@ -257,7 +257,7 @@ Other functions provided by the unit & `TStrArray`
 - **Availability**: v1.0.0 to v1.2.0 (In v1.0.0, it's `StrProcessor()`)
 - **Description**: `StrTrim()` deletes extra white spaces in the string `S`.
 
-### <small>function</small> `StrSplit(S: String; delimiter: Char)`
+### function `StrSplit(S: String; delimiter: Char)`
 - **Source**:
     - v1.0.0: Line 101 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L101))
     - v1.1.0: Line 103 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L103))
@@ -269,7 +269,7 @@ Other functions provided by the unit & `TStrArray`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `StrSplit()` splits the string `S` using `delimiter` as delimiter, and returns a `TStrArray` holding the delimited strings.
 
-### <small>function</small> CompareStrArrays(ArrayA, ArrayB: TStrArray)
+### function CompareStrArrays(ArrayA, ArrayB: TStrArray)
 - **Source**:
     - v1.0.0: Line 130 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L130))
     - v1.1.0: Line 132 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/src/timmy.pas#L132))
