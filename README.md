@@ -1,6 +1,8 @@
 Timmy
 =====
 
+[![Download](https://img.shields.io/sourceforge/dt/timmy-unit.svg)](https://sourceforge.net/projects/timmy-unit/files/latest/download)
+
 Timmy is a Pascal unit for creating chat bots. It provides the `TTimmy` object,
 which is a data type that you can assign your variables to to make bots.
 Once that is done, you can start adding keywords for questions,
