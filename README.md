@@ -56,7 +56,7 @@ Variables, functions and procedures of `TTimmy`
 ### <small>constructor</small> `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
 - **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/1.2.0/timmy.pas#L143))
 - **Parameters**:
-    - `Percent` \[Integer\]: Desired initial value for [`TTimmy.Percent`](#tpercent)
+    - `Percent` \[Integer\]: Desired initial value for [`TTimmy.TPercent`](#tpercent)
     - `DefaultRep` \[String\]: Initial value for [`TTimmy.NoUdstdRep`](#noudstdrep)
     - `DpCheck` \[Boolean\]: Initial value for [`TTimmy.DupesCheck`](#dupescheck)
 - **Availability**: v1.2.0
@@ -121,11 +121,11 @@ Variables, functions and procedures of `TTimmy`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: Procedure that sets the lengths of `TTimmy.MKeywordsList` and `TTimmy.ReplyList` to `TTimmy.NOfEntries`. This procedure is called whenever the bot takes or remove date within its metadata (either by `TTimmy.Add()` or `TTimmy.Remove()`), in which the length of `TTimmy.MKeywordsList` (and `TTimmy.ReplyList` as well) is changed.
 
-### `Percent`
+### `TPercent`
 - **Type**: Integer
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.Percent` specifies the minimum percentage of the number of matching keywords over the total number of words in the message that the bot needs in order to "understand" the message.
+- **Description**: `TTimmy.TPercent` specifies the minimum percentage of the number of matching keywords over the total number of words in the message that the bot needs in order to "understand" the message.
 
 ### `NoUdstdRep`
 - **Type**: String
@@ -240,7 +240,7 @@ Variables, functions and procedures of `TTimmy`
 - **Return**: String. Bot's response to `TMessage`.
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Given the end-user's message, returns the bot instance's response to that message. The message is first pre-processed (like removing extra white-spaces or punctuations like ! or ?). Then, it is splitted into many words using the space character. The function will then iterate through `TTimmy.MKeywordsList`, and compute the percentage of the keywords in each of the array in `TTimmy.MKeywordsList` to the user message's splitted words. If the percentage is larger then `TTimmy.Percent`, a random reply in the corresponding array in `TTimmy.ReplyList` will be returned to `TTimmy.Answer()`. In this case, we say that the bot has "understood" the end-user's message. In the case that it could not understand, `TTimmy.NoUdstdRep` is returned.
+- **Description**: Given the end-user's message, returns the bot instance's response to that message. The message is first pre-processed (like removing extra white-spaces or punctuations like ! or ?). Then, it is splitted into many words using the space character. The function will then iterate through `TTimmy.MKeywordsList`, and compute the percentage of the keywords in each of the array in `TTimmy.MKeywordsList` to the user message's splitted words. If the percentage is larger then `TTimmy.TPercent`, a random reply in the corresponding array in `TTimmy.ReplyList` will be returned to `TTimmy.Answer()`. In this case, we say that the bot has "understood" the end-user's message. In the case that it could not understand, `TTimmy.NoUdstdRep` is returned.
 
 Other functions provided by the unit & `TStrArray`
 --------------------------------------------------
