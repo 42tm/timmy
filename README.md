@@ -46,12 +46,10 @@ The answer is 4
 I gave up.
 ```
 
-For more examples, check out the [`examples`](examples/) folder.
+For more examples, check out the `examples` folder.
 
 Variables, functions and procedures of `TTimmy`
 -----------------------------------------------
-
-**<big>`TTimmy`</big>**
 
 ### constructor `Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean)`
 - **Source**: Line 143 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L143))
@@ -284,4 +282,4 @@ License
 
 ![License logo](https://www.gnu.org/graphics/lgplv3-147x51.png)
 
-Timmy is licensed under the [GNU LGPL v3](COPYING.LESSER).
+Timmy is licensed under the [GNU LGPL v3](http://github.com/IQAndreas/markdown-licenses/blob/master/gnu-lgpl-v3.0.md#gnu-lesser-general-public-license).
