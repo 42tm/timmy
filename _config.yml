@@ -1,2 +1,2 @@
 theme: jekyll-theme-cayman
-github: site.github.zip_url
+zip_url: {{ site.github.zip_url }}
