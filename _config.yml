@@ -1,6 +1,6 @@
 theme: jekyll-theme-cayman
 title: Timmy
 description: Pascal unit for creating chat bots
-site.show_downloads: true
-site.github.zip_url: http://github.com/42tm/timmy/archive/v1.2.0.zip
-site.github.tar_url: http://github.com/42tm/timmy/archive/v1.2.0.tar.gz
+show_downloads: true
+github.zip_url: http://github.com/42tm/timmy/archive/v1.2.0.zip
+github.tar_url: http://github.com/42tm/timmy/archive/v1.2.0.tar.gz
