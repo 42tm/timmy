@@ -75,7 +75,7 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Boolean variable
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `TTimmy.Enabled` is false, all major functions of `TTimmy` won't perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable`](#procedure-enable) or [`TTimmy.Disable`](#procedure-disable).
+- **Description**: `TTimmy.Enabled` tells other functions of `TTimmy` whether if the bot instance is ready to work. If `TTimmy.Enabled` is false, all major functions of `TTimmy` won't perform their operations and will exit right away, usually with the return code 102. The value of this boolean variable can be set by using [`TTimmy.Enable()`](#procedure-enable) or [`TTimmy.Disable()`](#procedure-disable).
 
 ### procedure `Enable()`
 - **Source**: Line 154 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L154))
@@ -95,13 +95,13 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Dynamic array of `TStrArray`
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0 (In v1.0.0, it's `QKeywordsList`)
-- **Description**: This is an array of arrays. Each array in this array holds strings, which are keywords for a question. Keywords help the bot (or more specifically, `TTimmy.Answer()`) to understand the end-user's messages and have replies for the messages.
+- **Description**: This is an array of arrays. Each array in this array holds strings, which are keywords for a question. Keywords help the bot (or more specifically, [`TTimmy.Answer()`](#function-answertmessage-string)) to understand the end-user's messages and have replies for the messages.
 
 ### `ReplyList`
 - **Type**: Dynamic array of `TStrArray`
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Just like `TTimmy.MKeywordsList`, `TTimmy.ReplyList` is an array of arrays. Each array in `TTimmy.ReplyList` holds strings, which are possible replies for a question. If an array in `TTimmy.ReplyList` has more than two strings, the bot will pick one, randomly. Arrays in `TTimmy.ReplyList` are correspond to arrays in `TTimmy.MKeywordsList` if we are speaking in terms of position. For example, the replies at offset 2 of `TTimmy.ReplyList` are replies for the message with the keywords at offset 2 of `TTimmy.MKeywordsList`.
+- **Description**: Just like `TTimmy.MKeywordsList`, `TTimmy.ReplyList` is an array of arrays. Each array in `TTimmy.ReplyList` holds strings, which are possible replies for a question. If an array in `TTimmy.ReplyList` has more than two strings, the bot will pick one, randomly. Arrays in `TTimmy.ReplyList` are correspond to arrays in `TTimmy.MKeywordsList` in terms of position. For example, the replies at offset 2 of `TTimmy.ReplyList` are replies for the message with the keywords at offset 2 of `TTimmy.MKeywordsList`.
 
 ### `NOfEntries`
 - **Type**: Integer
@@ -141,7 +141,7 @@ Variables, functions and procedures of `TTimmy`
     - `Replies` \[`TStrArray`\]: Possible replies to the message that contains the keywords clue in `MKeywords`
 - **Return**: Integer
     - 102: The instance is not enabled (or initialized)
-    - 202: Duplication check is enabled (`TTimmy.DupesCheck` = true) and a match of `MKeywords` is presented in `TTimmy.MKeywordsList`
+    - 202: Duplication check is enabled ([`TTimmy.DupesCheck`](#dupescheck) = true) and a match of `MKeywords` is presented in `TTimmy.MKeywordsList`
     - 200: The operation is successful
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
@@ -179,20 +179,20 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Boolean
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.DupesCheck` specifies whether `TTimmy.Add()` should check for duplicate before adding new data or not. If the new data matches any of those already persisted in `TTimmy.ReplyList`, `TTimmy.Add()` stops its operation and return 202, indicating that the operation is not successful.
+- **Description**: `TTimmy.DupesCheck` specifies whether `TTimmy.Add()` should check for duplicate before adding new data or not. If the new data matches any of those already persisted in `TTimmy.ReplyList`, `TTimmy.Add()` stops its operation and returns 202, indicating that the operation is not successful.
 
 ### function `Remove(MKeywords: TStrArray)`
 - **Source**:
     - v1.0.0: Line 211 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L211))
     - v1.1.0: Line 213 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/timmy.pas#L213))
     - v1.2.0: Line 216 ([reference](http://github.com/42tm/timmy/blob/v1.2.0/timmy.pas#L216))
-- **Parameters**: `MKeywords` (`QKeywords` in v1.0.0) \[`TStrArray`\]: Keywords clue to delete from the bot's metadata (or more specifically, `TTimmy.MKeywordsList`).
+- **Parameters**: `MKeywords` (`QKeywords` in v1.0.0) \[`TStrArray`\]: Keywords clue to delete from the bot's metadata.
 - **Return**: Integer
     - 102: The instance is not enabled (or initialized)
     - 308: The operation is successful
 - **Visibility**: Public
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: `TTimmy.Remove()` removes data from the bot's metadata, and as of version 1.2.0, there are 4 overloaded `TTimmy.Remove()`. This one takes a `TStrArray`, find matching arrays (arrays with the same elements in the same order) in `TTimmy.MKeywordsList`, and delete those matching arrays.
+- **Description**: `TTimmy.Remove()` removes data from the bot's metadata, and as of version 1.2.0, there are 4 overloaded `TTimmy.Remove()`. This one takes a `TStrArray`, find matching arrays (arrays with the same elements in the same order) in `TTimmy.MKeywordsList`, and delete those matching arrays. It also deletes the array(s) in `ReplyList` that is/are bond to those matching array(s) of keywords.
 
 ### function `Remove(KeywordsStr: String)`
 - **Source**:
@@ -267,7 +267,7 @@ Other functions provided by the unit & `TStrArray`
 - **Availability**: v1.0.0 to v1.2.0
 - **Description**: `StrSplit()` splits the string `S` using `delimiter` as delimiter, and returns a `TStrArray` holding the delimited strings.
 
-### function CompareStrArrays(ArrayA, ArrayB: TStrArray)
+### function `CompareStrArrays(ArrayA, ArrayB: TStrArray)`
 - **Source**:
     - v1.0.0: Line 130 ([reference](http://github.com/42tm/timmy/blob/v1.0.0/src/timmy.pas#L130))
     - v1.1.0: Line 132 ([reference](http://github.com/42tm/timmy/blob/v1.1.0/timmy.pas#L132))
