@@ -4,7 +4,7 @@ Timmy
 [![Project on SourceForge](https://sourceforge.net/sflogo.php?type=11&group_id=2954046)](https://sourceforge.net/p/timmy-unit/)
 ![Number of Downloads on SourceForge](https://img.shields.io/sourceforge/dt/timmy-unit.svg)
 
-Timmy is a Pascal unit for creating chat bots. It provides the `TTimmy` object, which is a data type that you can assign your variables to to make bots. Once that is done, you can start adding keywords for questions, and get the bot answers to the end user's questions.
+Timmy is a Pascal unit for creating chat bots. It provides the `TTimmy` object, which is a data type that you can assign your variables to to make bots. Once that is done, you can start adding keywords for messages, and get the bot answers to the end user's messages.
 
 Creating bots with Timmy is as easy as 1 2 3.
 
@@ -95,13 +95,13 @@ Variables, functions and procedures of `TTimmy`
 - **Type**: Dynamic array of `TStrArray`
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0 (In v1.0.0, it's `QKeywordsList`)
-- **Description**: This is an array of arrays. Each array in this array holds strings, which are keywords for a question. Keywords help the bot (or more specifically, [`TTimmy.Answer()`](#function-answertmessage-string)) to understand the end-user's messages and have replies for the messages.
+- **Description**: This is an array of arrays. Each array in this array holds strings, which are keywords for a message. Keywords help the bot (or more specifically, [`TTimmy.Answer()`](#function-answertmessage-string)) to understand the end-user's messages and have replies for the messages.
 
 ### `ReplyList`
 - **Type**: Dynamic array of `TStrArray`
 - **Visibility**: Private
 - **Availability**: v1.0.0 to v1.2.0
-- **Description**: Just like `TTimmy.MKeywordsList`, `TTimmy.ReplyList` is an array of arrays. Each array in `TTimmy.ReplyList` holds strings, which are possible replies for a question. If an array in `TTimmy.ReplyList` has more than two strings, the bot will pick one, randomly. Arrays in `TTimmy.ReplyList` are correspond to arrays in `TTimmy.MKeywordsList` in terms of position. For example, the replies at offset 2 of `TTimmy.ReplyList` are replies for the message with the keywords at offset 2 of `TTimmy.MKeywordsList`.
+- **Description**: Just like `TTimmy.MKeywordsList`, `TTimmy.ReplyList` is an array of arrays. Each array in `TTimmy.ReplyList` holds strings, which are possible replies for a message. If an array in `TTimmy.ReplyList` has more than two strings, the bot will pick one, randomly. Arrays in `TTimmy.ReplyList` are correspond to arrays in `TTimmy.MKeywordsList` in terms of position. For example, the replies at offset 2 of `TTimmy.ReplyList` are replies for the message with the keywords at offset 2 of `TTimmy.MKeywordsList`.
 
 ### `NOfEntries`
 - **Type**: Integer
