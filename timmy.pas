@@ -70,6 +70,7 @@ Type
 
 Function StrTrim(S: String): String;
 Function StrSplit(S: String; delimiter: Char): TStrArray;
+Function StrJoin(StrList: TStrArray; Linker: String): String;
 Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 
 Implementation
@@ -123,6 +124,19 @@ Begin
                            SetLength(StrSplit, 1);
                            StrSplit[0] := S;
                          End;
+End;
+
+{
+    Given an array of string, join them using Linker.
+    StrJoin(['this', 'is', 'an', 'example'], '@@')
+      -> 'this@@is@@an@@example'
+}
+Function StrJoin(StrList: TStrArray; Linker: String): String;
+Var iter: String;
+Begin
+    StrJoin := '';
+    For iter in StrList do StrJoin := StrJoin + iter + Linker;
+    Delete(StrJoin, Length(StrJoin) - Length(Linker) + 1, Length(Linker));
 End;
 
 {
