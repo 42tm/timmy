@@ -33,9 +33,9 @@ Begin
 End.
 ```
 
-This is an inconvenient, and in the next release, we hope to solve this problem by making `TTimmy` aware of certain question structures/types like What questions, Who questions, etc...Developers using Timmy in their programs can add their own question structures too!
+This is an inconvenient, and in the next release, we hope to solve this problem by making `TTimmy` aware of certain message structures/types like What questions, Who questions, etc...Developers using Timmy in their programs can add their own message structures too!
 
-Also, there are questions whose answers may vary over time. For example, "What time is it?". Again, for such questions, you can use the primitive functions of `TTimmy` to help you deal with that. You can do a `Remove` and then `Add` again, like the program below.
+Also, there are messages whose replies may vary over time. For example, "What time is it?". Again, for such messages, you can use the primitive functions of `TTimmy` to help you deal with that. You can do a `Remove` and then `Add` again, like the program below.
 
 ```pascal
 Program TimeBot;
