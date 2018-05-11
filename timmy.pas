@@ -21,7 +21,9 @@ Unit timmy;
 
 Interface
 Type
+    PStr = ^String;
     TStrArray = Array of String;
+    PStrArray = Array of PStr;
 
     {
     Metadata refers to two arrays holding data:
