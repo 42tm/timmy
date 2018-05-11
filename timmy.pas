@@ -26,9 +26,10 @@ Type
     PStrArray = Array of PStr;
 
     {
-    Metadata refers to two arrays holding data:
-    MKeywordsList which holds keywords, and
-    ReplyList which holds replies
+    Metadata refers to three arrays holding data:
+    MKeywordsList which holds keywords,
+    ReplyList which holds replies, and
+    PStrArray which also functions like ReplyList, but holds pointers to replies
 
       MKeywordsList [                                 ReplyList [
                      [*keywords for message 1*],                [*possible answers for message 1*],
@@ -67,6 +68,7 @@ Type
                  NOfEntries: Integer;
                  MKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
+                 PReplyList: Array of PStr;
 
                  Procedure Update;
              End;
