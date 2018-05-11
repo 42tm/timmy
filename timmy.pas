@@ -120,29 +120,39 @@ Var
     SkipLeft: // Number of iteration left to skip (skip by doing Continue)
               Integer;
     Flag: String;
-    Skipping: Boolean;
 Begin
     S := S + Delimiter;
 
+    SkipLeft := 0;
     // Get offset in S where substring that matches Delimiter starts
     For iter := 1 to Length(S) - Length(Delimiter) + 1
       do Begin
-           If Copy(S, iter, Length(Delimiter)) = Delimiter
+           If SkipLeft > 0
            then Begin
-                  SetLength(IndexStore, Length(IndexStore) + 1);
-                  IndexStore[Length(IndexStore) - 1] := iter;
-                End;
+                  // Skip current iteration
+                  // because S[iter] is currently a part of Delimiter
+                  Dec(SkipLeft);
+                  Continue;
+                End
+           else If Copy(S, iter, Length(Delimiter)) = Delimiter
+                then Begin
+                       SetLength(IndexStore, Length(IndexStore) + 1);
+                       IndexStore[Length(IndexStore) - 1] := iter;
+                       // Set number of iteratations to skip next
+                       // (because the following characters are part of Delimiter)
+                         SkipLeft := Length(Delimiter) - 1;
+                     End;
          End;
 
     SetLength(StrSplit, 0);
     counter := 0;
+    SkipLeft := 0;
     Flag := '';
-    Skipping := False;
 
     // Split the string using running and skipping method
     For iter := 1 to Length(S)
       do Begin
-           If (Skipping) and (SkipLeft > 0)
+           If SkipLeft > 0
            then Begin
                   Dec(SkipLeft);
                   Continue;
@@ -154,12 +164,11 @@ Begin
                   then Begin
                          SetLength(StrSplit, Length(StrSplit) + 1);
                          StrSplit[Length(StrSplit) - 1] := Flag;
+                         Flag := '';
                        End;
-                  Flag := '';
                   Inc(counter);
                   // Set number of iteratations to skip next
                   // (because the following characters are part of Delimiter)
-                    Skipping := True;
                     SkipLeft := Length(Delimiter) - 1;
                 End
            else Flag := Flag + S[iter];
