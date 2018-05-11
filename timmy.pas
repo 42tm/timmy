@@ -161,8 +161,6 @@ Begin
                   // (because the following characters are part of Delimiter)
                     Skipping := True;
                     SkipLeft := Length(Delimiter) - 1;
-                  // No out of bound?
-                    If iter < Length(S) then Continue else Exit;
                 End
            else Flag := Flag + S[iter];
          End;
@@ -258,6 +256,10 @@ End;
 Function TTimmy.Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer;
 Begin
     Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
+End;
+
+Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr): Integer;
+Begin
 End;
 
 {
