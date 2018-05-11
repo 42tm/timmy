@@ -115,12 +115,16 @@ End;
 Function StrSplit(S, Delimiter: String): TStrArray;
 Var
     IndexStore: Array of Integer;  // Array that stores offsets where Delimiter starts
-    iter, counter, SkipLeft: Integer;
+    iter,     // String S iterator
+    counter,  // Helper variable in processing the string
+    SkipLeft: // Number of iteration left to skip (skip by doing Continue)
+              Integer;
     Flag: String;
     Skipping: Boolean;
 Begin
     S := S + Delimiter;
 
+    // Get offset in S where substring that matches Delimiter starts
     For iter := 1 to Length(S) - Length(Delimiter) + 1
       do Begin
            If Copy(S, iter, Length(Delimiter)) = Delimiter
@@ -134,6 +138,8 @@ Begin
     counter := 0;
     Flag := '';
     Skipping := False;
+
+    // Split the string using running and skipping method
     For iter := 1 to Length(S)
       do Begin
            If (Skipping) and (SkipLeft > 0)
@@ -144,19 +150,21 @@ Begin
            else
            If iter = IndexStore[counter]
            then Begin
-                  If Flag <> '' then Begin
-                                       SetLength(StrSplit, Length(StrSplit) + 1);
-                                       StrSplit[Length(StrSplit) - 1] := Flag;
-                                     End;
+                  If Flag <> ''
+                  then Begin
+                         SetLength(StrSplit, Length(StrSplit) + 1);
+                         StrSplit[Length(StrSplit) - 1] := Flag;
+                       End;
                   Flag := '';
                   Inc(counter);
-                  Skipping := True;
-                  SkipLeft := Length(Delimiter) - 1;
-                  If iter < Length(S) then Continue else Exit;
+                  // Set number of iteratations to skip next
+                  // (because the following characters are part of Delimiter)
+                    Skipping := True;
+                    SkipLeft := Length(Delimiter) - 1;
+                  // No out of bound?
+                    If iter < Length(S) then Continue else Exit;
                 End
-           else Begin
-                  Flag := Flag + S[iter];
-                End;
+           else Flag := Flag + S[iter];
          End;
 End;
 
