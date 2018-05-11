@@ -67,6 +67,7 @@ Type
                  NOfEntries: Integer;
                  MKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
+
                  Procedure Update;
              End;
 
@@ -338,11 +339,13 @@ Begin
     For MetaIter := 0 to NOfEntries - 1
     do Begin
          counter := 0;
+         // Iterate over each keyword in each array in MKeywordsList
          For MKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
          do For MWIter := Low(FlagWords) to High(FlagWords)
             do If FlagWords[MWiter] = MKeywordsList[MetaIter][MKIter] then Inc(counter);
 
-         If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent  // Start getting answer
+         // Compare to TPercent & Get answer
+         If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent
          then Begin
      	        Randomize;
                 GetAnswer := Random(Length(ReplyList[MetaIter]));
