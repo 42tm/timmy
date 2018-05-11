@@ -58,6 +58,9 @@ Type
                  Function  Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String):                           Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
+                 Function  Add    (MKeywords: TStrArray; PAnswer: PStr):                   Integer; overload;
+                 Function  Add    (KeywordsStr: String; PAnswer: PStr):                    Integer; overload;
+                 Function  Add    (KeywordsStr: String; KStrDeli: Char; PAnswer: PStr):    Integer; overload;
                  Function  Remove (MKeywords: TStrArray):                                  Integer; overload;
                  Function  Remove (KeywordsStr: String):                                   Integer; overload;
                  Function  Remove (KeywordsStr: String; KStrDeli: Char):                   Integer; overload;
@@ -105,30 +108,56 @@ End;
 {
     Given a string, split the string using the delimiter
     and return an array containing the separated strings.
+    If no delimiter Delimiter is found in string S,
+    a TStrArray of only one value is returned, and that
+    only one value is the string S.
 }
-Function StrSplit(S: String; delimiter: Char): TStrArray;
-Var iter, counter: Integer;
-    FlagStr: String;
+Function StrSplit(S, Delimiter: String): TStrArray;
+Var
+    IndexStore: Array of Integer;  // Array that stores offsets where Delimiter starts
+    iter, counter, SkipLeft: Integer;
+    Flag: String;
+    Skipping: Boolean;
 Begin
-    S := S + delimiter;
-    FlagStr := '';
-    counter := -1;
+    S := S + Delimiter;
 
+    For iter := 1 to Length(S) - Length(Delimiter) + 1
+      do Begin
+           If Copy(S, iter, Length(Delimiter)) = Delimiter
+           then Begin
+                  SetLength(IndexStore, Length(IndexStore) + 1);
+                  IndexStore[Length(IndexStore) - 1] := iter;
+                End;
+         End;
+
+    SetLength(StrSplit, 0);
+    counter := 0;
+    Flag := '';
+    Skipping := False;
     For iter := 1 to Length(S)
-    do If S[iter] <> delimiter
-       then FlagStr := FlagStr + S[iter]
-       else Begin
-              If FlagStr = '' then Continue;
-              Inc(counter);
-              SetLength(StrSplit, counter + 1);
-              StrSplit[counter] := FlagStr;
-              FlagStr := '';
-            End;
-
-    If counter = -1 then Begin
-                           SetLength(StrSplit, 1);
-                           StrSplit[0] := S;
-                         End;
+      do Begin
+           If (Skipping) and (SkipLeft > 0)
+           then Begin
+                  Dec(SkipLeft);
+                  Continue;
+                End
+           else
+           If iter = IndexStore[counter]
+           then Begin
+                  If Flag <> '' then Begin
+                                       SetLength(StrSplit, Length(StrSplit) + 1);
+                                       StrSplit[Length(StrSplit) - 1] := Flag;
+                                     End;
+                  Flag := '';
+                  Inc(counter);
+                  Skipping := True;
+                  SkipLeft := Length(Delimiter) - 1;
+                  If iter < Length(S) then Continue else Exit;
+                End
+           else Begin
+                  Flag := Flag + S[iter];
+                End;
+         End;
 End;
 
 {
