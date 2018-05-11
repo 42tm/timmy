@@ -29,13 +29,16 @@ Type
     Metadata refers to three arrays holding data:
     MKeywordsList which holds keywords,
     ReplyList which holds replies, and
-    PStrArray which also functions like ReplyList, but holds pointers to replies
+    PReplyList which also functions like ReplyList, but holds pointers to replies
 
       MKeywordsList [                                 ReplyList [
-                     [*keywords for message 1*],                [*possible answers for message 1*],
-                     [*keywords for message 2*],                [*possible answers for message 2*],
-                                 ...                                             ...
-                                                 ]                                                   ]
+                     [*keywords for message 1*],                 [*possible answers for message 1*],
+                     [*keywords for message 2*],                 [*possible answers for message 2*],
+                                 ...                                             ...                ]
+                                 ...                  PStrArray [
+                     [*keywords for message n*],                 [*pointer points to answer for message n*]
+                     [*keywords of message n + 1*]               [*pointer points to answer for message n + 1*]
+                                 ...              ]                               ...                         ]
 
     Variables (see also the README file):
 
@@ -71,7 +74,7 @@ Type
                  NOfEntries: Integer;
                  MKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
-                 PReplyList: Array of PStr;
+                 PReplyList: PStrArray;
 
                  Procedure Update;
              End;
@@ -267,7 +270,7 @@ Begin
     Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
 End;
 
-Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr): Integer;
+Function TTimmy.Add(MKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
 End;
 
