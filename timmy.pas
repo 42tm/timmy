@@ -272,6 +272,7 @@ End;
 
 Function TTimmy.Add(MKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
+
 End;
 
 {
@@ -363,7 +364,7 @@ End;
 Procedure TTimmy.Update;
 Begin
     SetLength(MKeywordsList, NOfEntries);
-    SetLength(ReplyList, NOfEntries);
+    SetLength(ReplyList, NOfEntries - Length(PReplyList));
 End;
 
 {
