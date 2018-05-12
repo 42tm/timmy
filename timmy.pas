@@ -17,6 +17,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
+{$mode ObjFPC}
 Unit timmy;
 
 Interface
@@ -59,16 +60,15 @@ Type
                  Procedure Enable;
                  Procedure Disable;
                  Function  Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
-                 Function  Add    (KeywordsStr, RepStr: String):                           Integer; overload;
-                 Function  Add    (KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer; overload;
+                 Function  Add    (KeywordsStr, RepStr: String;
+                                   KStrDeli: String = ' '; MStrDeli: String = ';'):        Integer; overload;
                  Function  Add    (MKeywords: TStrArray; PAnswer: PStr):                   Integer; overload;
-                 Function  Add    (KeywordsStr: String; PAnswer: PStr):                    Integer; overload;
-                 Function  Add    (KeywordsStr: String; KStrDeli: Char; PAnswer: PStr):    Integer; overload;
+                 Function  Add    (KeywordsStr: String; PAnswer: PStr;
+                                   KStrDeli: String = ' '):                                Integer; overload;
                  Function  Remove (MKeywords: TStrArray):                                  Integer; overload;
-                 Function  Remove (KeywordsStr: String):                                   Integer; overload;
-                 Function  Remove (KeywordsStr: String; KStrDeli: Char):                   Integer; overload;
+                 Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):           Integer; overload;
                  Function  Remove (AIndex: Integer):                                       Integer; overload;
-                 Function  Answer (TMessage: String):                                      String ;
+                 Function  Answer (TMessage: String):                                      String;
                Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
@@ -80,7 +80,7 @@ Type
              End;
 
 Function StrTrim(S: String): String;
-Function StrSplit(S: String; delimiter: Char): TStrArray;
+Function StrSplit(S: String; Delimiter: String = ' '): TStrArray;
 Function StrJoin(StrList: TStrArray; Linker: String): String;
 Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 
@@ -115,7 +115,7 @@ End;
     a TStrArray of only one value is returned, and that
     only one value is the string S.
 }
-Function StrSplit(S, Delimiter: String): TStrArray;
+Function StrSplit(S: String; Delimiter: String = ' '): TStrArray;
 Var
     iter,     // String S iterator
     SkipLeft: // Number of iteration left to skip (skip by doing Continue)
@@ -223,24 +223,12 @@ Begin
 End;
 
 {
-    Add data to bot but this one gets string inputs instead of TStrArray inputs.
-    This use StrSplit() to split the string inputs (with a space character as the delimiter
-    for the message keywords string input and a semicolon character for the replies string input).
-    The main work is done by the primary implementation of TTimmy.Add().
-
-    Return: TTimmy.Add(MKeywords, Replies: TStrArray)
-}
-Function TTimmy.Add(KeywordsStr, RepStr: String): Integer;
-Begin
-    Exit(Add(StrSplit(KeywordsStr, ' '), StrSplit(RepStr, ';')));
-End;
-
-{
     Just like the above implementation of TTimmy.Add() but this one is with custom delimiters.
 
     Return: TTimmy.Add(MKeywords, Replies: TStrArray)
 }
-Function TTimmy.Add(KeywordsStr, RepStr: String; KStrDeli, MStrDeli: Char): Integer;
+Function TTimmy.Add(KeywordsStr, RepStr: String;
+                    KStrDeli: String = ' '; MStrDeli: String = ';'): Integer;
 Begin
     Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
 End;
@@ -248,6 +236,10 @@ End;
 Function TTimmy.Add(MKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
 
+End;
+
+Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr; KStrDeli: String = ' '): Integer;
+Begin
 End;
 
 {
@@ -289,25 +281,12 @@ Begin
 End;
 
 {
-    An implementation of Remove that uses string as an argument
-    instead of a TStrArray. The string is delimited using the space character
-    to form a TStrArray, and then pass that TStrArray to the
-    common Remove function.
-
-    Return TTimmy.Remove(MKeywords: TStrArray)
-}
-Function TTimmy.Remove(KeywordsStr: String): Integer;
-Begin
-    Exit(Remove(StrSplit(KeywordsStr, ' ')));
-End;
-
-{
     The same as the above implementation of Remove, but allows
     use of custom string delimiter.
 
     Return TTimmy.Remove(MKeywords: TStrArray)
 }
-Function TTimmy.Remove(KeywordsStr: String; KStrDeli: Char): Integer;
+Function TTimmy.Remove(KeywordsStr: String; KStrDeli: String = ' '): Integer;
 Begin
     Exit(Remove(StrSplit(KeywordsStr, KStrDeli)));
 End;
