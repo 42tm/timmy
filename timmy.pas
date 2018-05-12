@@ -117,38 +117,14 @@ End;
 }
 Function StrSplit(S, Delimiter: String): TStrArray;
 Var
-    IndexStore: Array of Integer;  // Array that stores offsets where Delimiter starts
     iter,     // String S iterator
-    counter,  // Helper variable in processing the string
     SkipLeft: // Number of iteration left to skip (skip by doing Continue)
               Integer;
-    Flag: String;
+    Flag: String;  // Medium string
 Begin
     S := S + Delimiter;
 
-    SkipLeft := 0;
-    // Get offset in S where substring that matches Delimiter starts
-    For iter := 1 to Length(S) - Length(Delimiter) + 1
-      do Begin
-           If SkipLeft > 0
-           then Begin
-                  // Skip current iteration
-                  // because S[iter] is currently a part of Delimiter
-                  Dec(SkipLeft);
-                  Continue;
-                End
-           else If Copy(S, iter, Length(Delimiter)) = Delimiter
-                then Begin
-                       SetLength(IndexStore, Length(IndexStore) + 1);
-                       IndexStore[Length(IndexStore) - 1] := iter;
-                       // Set number of iteratations to skip next
-                       // (because the following characters are part of Delimiter)
-                         SkipLeft := Length(Delimiter) - 1;
-                     End;
-         End;
-
     SetLength(StrSplit, 0);
-    counter := 0;
     SkipLeft := 0;
     Flag := '';
 
@@ -161,7 +137,7 @@ Begin
                   Continue;
                 End
            else
-           If iter = IndexStore[counter]
+           If Copy(S, iter, Length(Delimiter)) = Delimiter
            then Begin
                   If Flag <> ''
                   then Begin
@@ -169,7 +145,6 @@ Begin
                          StrSplit[Length(StrSplit) - 1] := Flag;
                          Flag := '';
                        End;
-                  Inc(counter);
                   // Set number of iteratations to skip next
                   // (because the following characters are part of Delimiter)
                     SkipLeft := Length(Delimiter) - 1;
@@ -364,7 +339,7 @@ End;
 Procedure TTimmy.Update;
 Begin
     SetLength(MKeywordsList, NOfEntries);
-    SetLength(ReplyList, NOfEntries - Length(PReplyList));
+
 End;
 
 {
