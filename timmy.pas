@@ -383,7 +383,7 @@ Begin
                       End;
 
     FlagWords := StrSplit(FlagM, ' ');
-    For MetaIter := 0 to NOfEntries - 1
+    For MetaIter := 0 to High(MsgKeywordsList)
       do Begin
            counter := 0;
            // Iterate over each keyword in each array in MsgKeywordsList
@@ -394,11 +394,13 @@ Begin
 
            // Compare to TPercent & Get answer
            If counter / Length(MsgKeywordsList[MetaIter]) * 100 >= TPercent
-             then Begin
-                    Randomize;
-                    GetAnswer := Random(Length(ReplyList[MetaIter]));
-                    Exit(ReplyList[MetaIter][GetAnswer]);
-                  End;
+             then If MetaIter < Length(ReplyList)
+                      then Begin
+                             Randomize;
+                             GetAnswer := Random(Length(ReplyList[MetaIter]));
+                             Exit(ReplyList[MetaIter][GetAnswer]);
+                           End
+                      else Exit(PReplyList[Abs(NOfEntries - Length(PReplyList) - MetaIter)]^);
          End;
 
     Exit(NoUdstdRep);
