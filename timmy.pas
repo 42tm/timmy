@@ -30,7 +30,8 @@ Type
     Metadata refers to three arrays holding data:
     MKeywordsList which holds keywords,
     ReplyList which holds replies, and
-    PReplyList which also functions like ReplyList, but holds pointers to replies
+    PReplyList which also functions like ReplyList,
+    but holds pointers to replies
 
       MKeywordsList [                                 ReplyList [
                      [*keywords for message 1*],                 [*possible answers for message 1*],
@@ -43,13 +44,17 @@ Type
 
     Variables (see also the README file):
 
-      Enabled            : Bot's state. If Enabled is True, the bot is ready to work
-      NOfEntries         : Number of entries (elements) in MKeywordsList or ReplyList
-      DupesCheck         : Check for duplicate or not (might be time-saving if we don't check for duplicate)
-      TPercent           : Minimum percentage of the number of keywords over all the words of the message
-                           so that the bot object can "understand" and have a reply.
+      Enabled            : Bot's state. If Enabled is True, the bot
+                           is ready to work
+      NOfEntries         : Number of entries (elements) in MKeywordsList
+      DupesCheck         : Check for duplicate or not
+                           (might be time-saving if we don't check)
+      TPercent           : Minimum percentage of the number of keywords over
+                           all the words of the message so that the bot object
+                           can "understand" and have a reply.
                            (Sorry I don't have a good way to explain it)
-      NoUdstdRep : String to assign to TTimmy.Answer in case there's no possible answer to the given message
+      NoUdstdRep         : String to assign to TTimmy.Answer() in case
+                           there's no possible answer to the given message
     }
     TTimmy = Object
                Constructor Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
@@ -59,16 +64,16 @@ Type
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function  Add    (MKeywords, Replies: TStrArray):                         Integer; overload;
+                 Function  Add    (MKeywords, Replies: TStrArray):                  Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String;
-                                   KStrDeli: String = ' '; MStrDeli: String = ';'):        Integer; overload;
-                 Function  Add    (MKeywords: TStrArray; PAnswer: PStr):                   Integer; overload;
+                                   KStrDeli: String = ' '; MStrDeli: String = ';'): Integer; overload;
+                 Function  Add    (MKeywords: TStrArray; PAnswer: PStr):            Integer; overload;
                  Function  Add    (KeywordsStr: String; PAnswer: PStr;
-                                   KStrDeli: String = ' '):                                Integer; overload;
-                 Function  Remove (MKeywords: TStrArray):                                  Integer; overload;
-                 Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):           Integer; overload;
-                 Function  Remove (AIndex: Integer):                                       Integer; overload;
-                 Function  Answer (TMessage: String):                                      String;
+                                   KStrDeli: String = ' '):                         Integer; overload;
+                 Function  Remove (MKeywords: TStrArray):                           Integer; overload;
+                 Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):    Integer; overload;
+                 Function  Remove (AIndex: Integer):                                Integer; overload;
+                 Function  Answer (TMessage: String):                               String;
                Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
@@ -98,12 +103,18 @@ Begin
     StrTrim := '';
     SpaceOn := False;
     For iter := 1 to Length(S)
-    do If S[iter] <> ' '
-       then Begin StrTrim := StrTrim + S[iter]; SpaceOn := False; End
-       else Case SpaceOn of
-              True: Continue;
-              False: Begin StrTrim := StrTrim + ' '; SpaceOn := True; End;
-            End;
+      do If S[iter] <> ' '
+           then Begin
+                  StrTrim := StrTrim + S[iter];
+                  SpaceOn := False;
+                End
+           else Case SpaceOn of
+                  True: Continue;
+                  False: Begin
+                           StrTrim := StrTrim + ' ';
+                           SpaceOn := True;
+                         End;
+                End;
 End;
 
 {
@@ -111,7 +122,7 @@ End;
     and return an array containing the separated strings.
     If no delimiter Delimiter is found in string S,
     a TStrArray of only one value is returned, and that
-    only one value is the string S.
+    only one value is the original string S.
 }
 Function StrSplit(S: String; Delimiter: String = ' '): TStrArray;
 Var
@@ -130,24 +141,23 @@ Begin
     For iter := 1 to Length(S)
       do Begin
            If SkipLeft > 0
-           then Begin
-                  Dec(SkipLeft);
-                  Continue;
-                End
-           else
-           If Copy(S, iter, Length(Delimiter)) = Delimiter
-           then Begin
-                  If Flag <> ''
-                  then Begin
-                         SetLength(StrSplit, Length(StrSplit) + 1);
-                         StrSplit[Length(StrSplit) - 1] := Flag;
-                         Flag := '';
-                       End;
-                  // Set number of iteratations to skip next
-                  // (because the following characters are part of Delimiter)
-                    SkipLeft := Length(Delimiter) - 1;
-                End
-           else Flag := Flag + S[iter];
+             then Begin
+                    Dec(SkipLeft);
+                    Continue;
+                  End
+             else If Copy(S, iter, Length(Delimiter)) = Delimiter
+                    then Begin
+                           If Flag <> ''
+                             then Begin
+                                    SetLength(StrSplit, Length(StrSplit) + 1);
+                                    StrSplit[Length(StrSplit) - 1] := Flag;
+                                    Flag := '';
+                                  End;
+                           // Set number of iteratations to skip next
+                           // (because the following characters are part of Delimiter)
+                             SkipLeft := Length(Delimiter) - 1;
+                         End
+             else Flag := Flag + S[iter];
          End;
 End;
 
@@ -172,7 +182,8 @@ Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 Var iter: Integer;
 Begin
     If Length(ArrayA) <> Length(ArrayB) then Exit(False);
-    For iter := 0 to Length(ArrayA) - 1 do If ArrayA[iter] <> ArrayB[iter] then Exit(False);
+    For iter := 0 to Length(ArrayA) - 1
+      do If ArrayA[iter] <> ArrayB[iter] then Exit(False);
     Exit(True);
 End;
 
@@ -211,10 +222,12 @@ Function TTimmy.Add(MKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
     If not Enabled then Exit(102);
-    For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
+    For iter := Low(MKeywords) to High(MKeywords)
+      do MKeywords[iter] := LowerCase(MKeywords[iter]);
     If (DupesCheck) and (NOfEntries > 0)
-    then For iter := Low(MKeywordsList) to High(MKeywordsList) do
-           If CompareStrArrays(MKeywordsList[iter], MKeywords) then Exit(202);
+      then For iter := Low(MKeywordsList) to High(MKeywordsList)
+             do If CompareStrArrays(MKeywordsList[iter], MKeywords)
+                  then Exit(202);
 
     Inc(NOfEntries);
     SetLength(MKeywordsList, NOfEntries);
@@ -225,8 +238,6 @@ Begin
 End;
 
 {
-    Just like the above implementation of TTimmy.Add() but this one is with custom delimiters.
-
     Return: TTimmy.Add(MKeywords, Replies: TStrArray)
 }
 Function TTimmy.Add(KeywordsStr, RepStr: String;
@@ -237,7 +248,7 @@ End;
 
 Function TTimmy.Add(MKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
-    
+
 End;
 
 Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr; KStrDeli: String = ' '): Integer;
@@ -259,26 +270,27 @@ Var iter, counter: Integer;
 Begin
     If not Enabled then Exit(102);
 
-    For iter := Low(MKeywords) to High(MKeywords) do MKeywords[iter] := LowerCase(MKeywords[iter]);
+    For iter := Low(MKeywords) to High(MKeywords)
+      do MKeywords[iter] := LowerCase(MKeywords[iter]);
     counter := -1;  // Matches counter in 0-based
     SetLength(Indexes, Length(MKeywordsList));
 
     // Get offsets of keywords set that match the given MKeywords parameter
     // and later deal with them using TTimmy.RemoveByIndex
-      For iter := Low(MKeywordsList) to High(MKeywordsList) do
-        If CompareStrArrays(MKeywordsList[iter], MKeywords)
-        then Begin
-      	       Inc(counter);
-               Indexes[counter] := iter;
-             End;
+      For iter := Low(MKeywordsList) to High(MKeywordsList)
+        do If CompareStrArrays(MKeywordsList[iter], MKeywords)
+             then Begin
+                    Inc(counter);
+                    Indexes[counter] := iter;
+                  End;
 
     Inc(counter);
     SetLength(Indexes, counter);
-    While counter > 0 do
-    Begin
-      Remove(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
-      Dec(counter);
-    End;
+    While counter > 0
+      do Begin
+           Remove(Indexes[Length(Indexes) - counter] - Length(Indexes) + counter);
+           Dec(counter);
+         End;
     Exit(308);
 End;
 
@@ -340,21 +352,22 @@ Begin
 
     FlagWords := StrSplit(FlagM, ' ');
     For MetaIter := 0 to NOfEntries - 1
-    do Begin
-         counter := 0;
-         // Iterate over each keyword in each array in MKeywordsList
-         For MKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
-         do For MWIter := Low(FlagWords) to High(FlagWords)
-            do If FlagWords[MWiter] = MKeywordsList[MetaIter][MKIter] then Inc(counter);
+      do Begin
+           counter := 0;
+           // Iterate over each keyword in each array in MKeywordsList
+           For MKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
+             do For MWIter := Low(FlagWords) to High(FlagWords)
+                  do If FlagWords[MWiter] = MKeywordsList[MetaIter][MKIter]
+                       then Inc(counter);
 
-         // Compare to TPercent & Get answer
-         If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent
-         then Begin
-     	        Randomize;
-                GetAnswer := Random(Length(ReplyList[MetaIter]));
-                Exit(ReplyList[MetaIter][GetAnswer]);
-     	      End;
-       End;
+           // Compare to TPercent & Get answer
+           If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent
+             then Begin
+                    Randomize;
+                    GetAnswer := Random(Length(ReplyList[MetaIter]));
+                    Exit(ReplyList[MetaIter][GetAnswer]);
+                  End;
+         End;
 
     Exit(NoUdstdRep);
 End;
