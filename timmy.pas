@@ -271,6 +271,7 @@ Begin
     Inc(NOfEntries);
     SetLength(MsgKeywordsList, NOfEntries);
     SetLength(PReplyList, NOfEntries - Length(ReplyList));
+    MsgKeywordsList[High(MsgKeywordsList)] := MsgKeywords;
     PReplyList[High(PReplyList)] := PAnswer;
 End;
 
