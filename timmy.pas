@@ -64,13 +64,13 @@ Type
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function  Add    (MsgKeywords, Replies: TStrArray):                  Integer; overload;
+                 Function  Add    (MsgKeywords, Replies: TStrArray):                Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String;
                                    KStrDeli: String = ' '; MStrDeli: String = ';'): Integer; overload;
-                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr):            Integer; overload;
+                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr):          Integer; overload;
                  Function  Add    (KeywordsStr: String; PAnswer: PStr;
                                    KStrDeli: String = ' '):                         Integer; overload;
-                 Function  Remove (MsgKeywords: TStrArray):                           Integer; overload;
+                 Function  Remove (MsgKeywords: TStrArray):                         Integer; overload;
                  Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):    Integer; overload;
                  Function  Remove (AIndex: Integer):                                Integer; overload;
                  Function  Answer (TMessage: String):                               String;
@@ -222,8 +222,7 @@ Begin Enabled := False; End;
 Function TTimmy.IsDupe(CheckMsgKeywords: TStrArray): Byte;
 Var iter: Integer;
 Begin
-    If (not DupesCheck) or (NOfEntries = 0)
-      then Exit(1);
+    If (not DupesCheck) or (NOfEntries = 0) then Exit(1);
 
     For iter := Low(MsgKeywordsList) to High(MsgKeywordsList)
       do If CompareStrArrays(MsgKeywordsList[iter], CheckMsgKeywords)
@@ -301,8 +300,8 @@ Begin
     SetLength(Indexes, Length(MsgKeywordsList));
 
     // Get offsets of keywords set that match the given MsgKeywords parameter
-    // and later deal with them using TTimmy.RemoveByIndex
-      For iter := Low(MsgKeywordsList) to High(MsgKeywordsList)
+    // and later deal with them using TTimmy.Remove(AIndex: Integer)
+      For iter := Low(ReplyList) to Length(ReplyList) + High(PReplyList)
         do If CompareStrArrays(MsgKeywordsList[iter], MsgKeywords)
              then Begin
                     Inc(counter);
@@ -331,7 +330,8 @@ Begin
 End;
 
 {
-    Remove data from MsgKeywordsList at MsgKeywordsList[AIndex].
+    Remove data from MsgKeywordsList at MsgKeywordsList[AIndex]
+    and answer(s) corresponding to the keywords at that offset.
 
     Return: 305 if the given index is invalid (out of bound)
             300 if operation successful
@@ -342,9 +342,6 @@ Begin
     If not Enabled then Exit(102);
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
-    Dec(NOfEntries);
-    SetLength(MsgKeywordsList, NOfEntries);
-
     If (AIndex < Length(ReplyList))
       then Begin  // Remove target is in ReplyList
              For iter := AIndex to High(ReplyList) - 1
@@ -352,11 +349,13 @@ Begin
              SetLength(ReplyList, Length(ReplyList) - 1);
            End
       else Begin  // Remove target is in PReplyList
-             For iter := Abs(NOfEntries + 1 - Length(PReplyList) - AIndex) to High(PReplyList) - 1
+             For iter := Abs(NOfEntries - Length(PReplyList) - AIndex) to High(PReplyList) - 1
                do PReplyList[iter] := PReplyList[iter + 1];
              SetLength(PReplyList, Length(PReplyList) - 1);
            End;
 
+    Dec(NOfEntries);
+    SetLength(MsgKeywordsList, NOfEntries);
 
     Exit(300);
 End;
