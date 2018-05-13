@@ -342,14 +342,22 @@ Begin
     If not Enabled then Exit(102);
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
-    For iter := AIndex to High(MsgKeywordsList) - 1
-      do MsgKeywordsList[iter] := MsgKeywordsList[iter + 1];
-    For iter := AIndex to High(ReplyList) - 1
-      do ReplyList[iter] := ReplyList[iter + 1];
-
     Dec(NOfEntries);
     SetLength(MsgKeywordsList, NOfEntries);
-    SetLength(ReplyList, NOfEntries);
+
+    If (AIndex < Length(ReplyList))
+      then Begin  // Remove target is in ReplyList
+             For iter := AIndex to High(ReplyList) - 1
+               do ReplyList[iter] := ReplyList[iter + 1];
+             SetLength(ReplyList, Length(ReplyList) - 1);
+           End
+      else Begin  // Remove target is in PReplyList
+             For iter := Abs(NOfEntries + 1 - Length(PReplyList) - AIndex) to High(PReplyList) - 1
+               do PReplyList[iter] := PReplyList[iter + 1];
+             SetLength(PReplyList, Length(PReplyList) - 1);
+           End;
+
+
     Exit(300);
 End;
 
