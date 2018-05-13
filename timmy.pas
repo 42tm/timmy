@@ -28,12 +28,12 @@ Type
 
     {
     Metadata refers to three arrays holding data:
-    MKeywordsList which holds keywords,
+    MsgKeywordsList which holds keywords,
     ReplyList which holds replies, and
     PReplyList which also functions like ReplyList,
     but holds pointers to replies
 
-      MKeywordsList [                                 ReplyList [
+      MsgKeywordsList [                                 ReplyList [
                      [*keywords for message 1*],                 [*possible answers for message 1*],
                      [*keywords for message 2*],                 [*possible answers for message 2*],
                                  ...                                             ...                ]
@@ -46,7 +46,7 @@ Type
 
       Enabled            : Bot's state. If Enabled is True, the bot
                            is ready to work
-      NOfEntries         : Number of entries (elements) in MKeywordsList
+      NOfEntries         : Number of entries (elements) in MsgKeywordsList
       DupesCheck         : Check for duplicate or not
                            (might be time-saving if we don't check)
       TPercent           : Minimum percentage of the number of keywords over
@@ -64,22 +64,23 @@ Type
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function  Add    (MKeywords, Replies: TStrArray):                  Integer; overload;
+                 Function  Add    (MsgKeywords, Replies: TStrArray):                  Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String;
                                    KStrDeli: String = ' '; MStrDeli: String = ';'): Integer; overload;
-                 Function  Add    (MKeywords: TStrArray; PAnswer: PStr):            Integer; overload;
+                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr):            Integer; overload;
                  Function  Add    (KeywordsStr: String; PAnswer: PStr;
                                    KStrDeli: String = ' '):                         Integer; overload;
-                 Function  Remove (MKeywords: TStrArray):                           Integer; overload;
+                 Function  Remove (MsgKeywords: TStrArray):                           Integer; overload;
                  Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):    Integer; overload;
                  Function  Remove (AIndex: Integer):                                Integer; overload;
                  Function  Answer (TMessage: String):                               String;
                Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
-                 MKeywordsList: Array of TStrArray;
+                 MsgKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
                  PReplyList: PStrArray;
+                 Function IsDupe(CheckMsgKeywords: TStrArray): Byte;
              End;
 
 Function StrTrim(S: String): String;
@@ -196,7 +197,7 @@ Begin
     NoUdstdRep := DefaultRep;
     TPercent := Percent;
     NOfEntries := 0;
-    SetLength(MKeywordsList, NOfEntries);
+    SetLength(MsgKeywordsList, NOfEntries);
     SetLength(ReplyList, NOfEntries);
     SetLength(PReplyList, NOfEntries);
     Enable;
@@ -211,34 +212,52 @@ Procedure TTimmy.Disable;
 Begin Enabled := False; End;
 
 {
+    Check if given keywords clue is a duplicate of one
+    that is already presented in MsgKeywordsList.
+
+    Return: 1 if TTimmy.DupesCheck is false or there's zero entry
+            0 if no duplicate is found
+            2 if a duplicate is found
+}
+Function TTimmy.IsDupe(CheckMsgKeywords: TStrArray): Byte;
+Var iter: Integer;
+Begin
+    If (not DupesCheck) or (NOfEntries = 0)
+      then Exit(1);
+
+    For iter := Low(MsgKeywordsList) to High(MsgKeywordsList)
+      do If CompareStrArrays(MsgKeywordsList[iter], CheckMsgKeywords)
+           then Exit(2);
+
+    Exit(0);
+End;
+
+{
     Add data to bot object's metadata base.
     Data include message's keywords and possible replies to the message.
 
     Return: 102 if object is not enabled
-            202 if DupesCheck = True and found a match to MKeywords in MKeywordsList
+            202 if DupesCheck = True and found a match to MsgKeywords in MsgKeywordsList
             200 if the adding operation succeed
 }
-Function TTimmy.Add(MKeywords, Replies: TStrArray): Integer;
+Function TTimmy.Add(MsgKeywords, Replies: TStrArray): Integer;
 Var iter: Integer;
 Begin
     If not Enabled then Exit(102);
-    For iter := Low(MKeywords) to High(MKeywords)
-      do MKeywords[iter] := LowerCase(MKeywords[iter]);
-    If (DupesCheck) and (NOfEntries > 0)
-      then For iter := Low(MKeywordsList) to High(MKeywordsList)
-             do If CompareStrArrays(MKeywordsList[iter], MKeywords)
-                  then Exit(202);
+    For iter := Low(MsgKeywords) to High(MsgKeywords)
+      do MsgKeywords[iter] := LowerCase(MsgKeywords[iter]);
+    If IsDupe(MsgKeywords) = 2 then Exit(202);
 
     Inc(NOfEntries);
-    SetLength(MKeywordsList, NOfEntries);
+    SetLength(MsgKeywordsList, NOfEntries);
     SetLength(ReplyList, NOfEntries);
-    MKeywordsList[High(MKeywordsList)] := MKeywords;
+    MsgKeywordsList[High(MsgKeywordsList)] := MsgKeywords;
     ReplyList[High(ReplyList)] := Replies;
     Exit(200);
 End;
 
 {
-    Return: TTimmy.Add(MKeywords, Replies: TStrArray)
+    Return: TTimmy.Add(MsgKeywords, Replies: TStrArray)
 }
 Function TTimmy.Add(KeywordsStr, RepStr: String;
                     KStrDeli: String = ' '; MStrDeli: String = ';'): Integer;
@@ -246,39 +265,45 @@ Begin
     Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
 End;
 
-Function TTimmy.Add(MKeywords: TStrArray; PAnswer: PStr): Integer;
+Function TTimmy.Add(MsgKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
+    If IsDupe(MsgKeywords) = 2 then Exit(202);
 
+    Inc(NOfEntries);
+    SetLength(MsgKeywordsList, NOfEntries);
+    SetLength(PReplyList, NOfEntries - Length(ReplyList));
+    PReplyList[High(PReplyList)] := PAnswer;
 End;
 
 Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr; KStrDeli: String = ' '): Integer;
 Begin
+    Exit(Add(StrSplit(KeywordsStr, KStrDeli), PAnswer));
 End;
 
 {
-    Given a set of keywords, find matches to that set in MKeywordsList,
+    Given a set of keywords, find matches to that set in MsgKeywordsList,
     remove the matches, and remove the correspondants in ReplyList as well.
-    This function simply saves offsets of the matching arrays in MKeywordsList
+    This function simply saves offsets of the matching arrays in MsgKeywordsList
     and then call TTimmy.Remove(AIndex: Integer).
 
     Return: 102 if object is not enabled
             308 if the operation succeed
 }
-Function TTimmy.Remove(MKeywords: TStrArray): Integer;
+Function TTimmy.Remove(MsgKeywords: TStrArray): Integer;
 Var iter, counter: Integer;
     Indexes: Array of Integer;
 Begin
     If not Enabled then Exit(102);
 
-    For iter := Low(MKeywords) to High(MKeywords)
-      do MKeywords[iter] := LowerCase(MKeywords[iter]);
+    For iter := Low(MsgKeywords) to High(MsgKeywords)
+      do MsgKeywords[iter] := LowerCase(MsgKeywords[iter]);
     counter := -1;  // Matches counter in 0-based
-    SetLength(Indexes, Length(MKeywordsList));
+    SetLength(Indexes, Length(MsgKeywordsList));
 
-    // Get offsets of keywords set that match the given MKeywords parameter
+    // Get offsets of keywords set that match the given MsgKeywords parameter
     // and later deal with them using TTimmy.RemoveByIndex
-      For iter := Low(MKeywordsList) to High(MKeywordsList)
-        do If CompareStrArrays(MKeywordsList[iter], MKeywords)
+      For iter := Low(MsgKeywordsList) to High(MsgKeywordsList)
+        do If CompareStrArrays(MsgKeywordsList[iter], MsgKeywords)
              then Begin
                     Inc(counter);
                     Indexes[counter] := iter;
@@ -298,7 +323,7 @@ End;
     The same as the above implementation of Remove, but allows
     use of custom string delimiter.
 
-    Return TTimmy.Remove(MKeywords: TStrArray)
+    Return TTimmy.Remove(MsgKeywords: TStrArray)
 }
 Function TTimmy.Remove(KeywordsStr: String; KStrDeli: String = ' '): Integer;
 Begin
@@ -306,7 +331,7 @@ Begin
 End;
 
 {
-    Remove data from MKeywordsList at MKeywordsList[AIndex].
+    Remove data from MsgKeywordsList at MsgKeywordsList[AIndex].
 
     Return: 305 if the given index is invalid (out of bound)
             300 if operation successful
@@ -317,13 +342,13 @@ Begin
     If not Enabled then Exit(102);
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
-    For iter := AIndex to High(MKeywordsList) - 1
-      do MKeywordsList[iter] := MKeywordsList[iter + 1];
+    For iter := AIndex to High(MsgKeywordsList) - 1
+      do MsgKeywordsList[iter] := MsgKeywordsList[iter + 1];
     For iter := AIndex to High(ReplyList) - 1
       do ReplyList[iter] := ReplyList[iter + 1];
 
     Dec(NOfEntries);
-    SetLength(MKeywordsList, NOfEntries);
+    SetLength(MsgKeywordsList, NOfEntries);
     SetLength(ReplyList, NOfEntries);
     Exit(300);
 End;
@@ -354,14 +379,14 @@ Begin
     For MetaIter := 0 to NOfEntries - 1
       do Begin
            counter := 0;
-           // Iterate over each keyword in each array in MKeywordsList
-           For MKIter := Low(MKeywordsList[MetaIter]) to High(MKeywordsList[MetaIter])
+           // Iterate over each keyword in each array in MsgKeywordsList
+           For MKIter := Low(MsgKeywordsList[MetaIter]) to High(MsgKeywordsList[MetaIter])
              do For MWIter := Low(FlagWords) to High(FlagWords)
-                  do If FlagWords[MWiter] = MKeywordsList[MetaIter][MKIter]
+                  do If FlagWords[MWiter] = MsgKeywordsList[MetaIter][MKIter]
                        then Inc(counter);
 
            // Compare to TPercent & Get answer
-           If counter / Length(MKeywordsList[MetaIter]) * 100 >= TPercent
+           If counter / Length(MsgKeywordsList[MetaIter]) * 100 >= TPercent
              then Begin
                     Randomize;
                     GetAnswer := Random(Length(ReplyList[MetaIter]));
