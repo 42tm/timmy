@@ -75,8 +75,6 @@ Type
                  MKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
                  PReplyList: PStrArray;
-
-                 Procedure Update;
              End;
 
 Function StrTrim(S: String): String;
@@ -187,7 +185,9 @@ Begin
     NoUdstdRep := DefaultRep;
     TPercent := Percent;
     NOfEntries := 0;
-    Update;
+    SetLength(MKeywordsList, NOfEntries);
+    SetLength(ReplyList, NOfEntries);
+    SetLength(PReplyList, NOfEntries);
     Enable;
 End;
 
@@ -216,7 +216,9 @@ Begin
     then For iter := Low(MKeywordsList) to High(MKeywordsList) do
            If CompareStrArrays(MKeywordsList[iter], MKeywords) then Exit(202);
 
-    Inc(NOfEntries); Update;
+    Inc(NOfEntries);
+    SetLength(MKeywordsList, NOfEntries);
+    SetLength(ReplyList, NOfEntries);
     MKeywordsList[High(MKeywordsList)] := MKeywords;
     ReplyList[High(ReplyList)] := Replies;
     Exit(200);
@@ -235,7 +237,7 @@ End;
 
 Function TTimmy.Add(MKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
-
+    
 End;
 
 Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr; KStrDeli: String = ' '): Integer;
@@ -308,18 +310,10 @@ Begin
     For iter := AIndex to High(ReplyList) - 1
       do ReplyList[iter] := ReplyList[iter + 1];
 
-    Dec(NOfEntries); Update;
-    Exit(300);
-End;
-
-{
-    Update metadata to match up with number of entries
-}
-Procedure TTimmy.Update;
-Begin
+    Dec(NOfEntries);
     SetLength(MKeywordsList, NOfEntries);
-    If NOfEntries - Length(ReplyList) = 0
-    then SetLength(ReplyList, Length(ReplyList))
+    SetLength(ReplyList, NOfEntries);
+    Exit(300);
 End;
 
 {
