@@ -1,5 +1,5 @@
 {
-    timmy - Pascal unit for creating chat bots
+    Timmy - Pascal unit for creating chat bots
     Version 1.2.0
 
     Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
@@ -18,7 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 {$mode ObjFPC}
-Unit timmy;
+Unit Timmy;
 
 Interface
 Type
@@ -304,9 +304,9 @@ Begin
     If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
 
     For iter := AIndex to High(MKeywordsList) - 1
-    do MKeywordsList[iter] := MKeywordsList[iter + 1];
+      do MKeywordsList[iter] := MKeywordsList[iter + 1];
     For iter := AIndex to High(ReplyList) - 1
-    do ReplyList[iter] := ReplyList[iter + 1];
+      do ReplyList[iter] := ReplyList[iter + 1];
 
     Dec(NOfEntries); Update;
     Exit(300);
@@ -318,7 +318,8 @@ End;
 Procedure TTimmy.Update;
 Begin
     SetLength(MKeywordsList, NOfEntries);
-
+    If NOfEntries - Length(ReplyList) = 0
+    then SetLength(ReplyList, Length(ReplyList))
 End;
 
 {
