@@ -234,6 +234,7 @@ End;
 {
     Add data to bot object's metadata base.
     Data include message's keywords and possible replies to the message.
+    *** PRIMARY ADD FUNCTION ***
 
     Return: 102 if object is not enabled
             202 if DupesCheck = True and found a match to MsgKeywords in MsgKeywordsList
@@ -256,7 +257,11 @@ Begin
 End;
 
 {
-    Return: TTimmy.Add(MsgKeywords, Replies: TStrArray)
+    Add data, but this one takes strings instead of TStrArray.
+    The strings are delimited using delimiters to create TStrArray,
+    and these TStrArray are then passed to the primary TTimmy.Add().
+
+    Return: TTimmy.Add(TStrArray, TStrArray)
 }
 Function TTimmy.Add(KeywordsStr, RepStr: String;
                     KStrDeli: String = ' '; MStrDeli: String = ';'): Integer;
@@ -264,8 +269,17 @@ Begin
     Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
 End;
 
+{
+    Add data, takes TStrArray for keywords clue and a pointer which
+    pointes to the possible answer for the messages that contain the keywords.
+
+    Return: 102 if the bot is not enabled
+            202 if dupes check is enabled and a duplication is found
+            203 if the operation is successful
+}
 Function TTimmy.Add(MsgKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
+    If not Enabled then Exit(102);
     If IsDupe(MsgKeywords) = 2 then Exit(202);
 
     Inc(NOfEntries);
@@ -273,8 +287,17 @@ Begin
     SetLength(PReplyList, NOfEntries - Length(ReplyList));
     MsgKeywordsList[High(MsgKeywordsList)] := MsgKeywords;
     PReplyList[High(PReplyList)] := PAnswer;
+
+    Exit(203);
 End;
 
+{
+    Functions like the above one but takes string instead of TStrArray.
+    THe string is delimited using a delimiter to create a TStrArray,
+    and the rest is for TTimmy.Add(TStrArray, PStr)
+
+    Return: TTimmy.Add(TStrArray, PStr)
+}
 Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr; KStrDeli: String = ' '): Integer;
 Begin
     Exit(Add(StrSplit(KeywordsStr, KStrDeli), PAnswer));
@@ -334,7 +357,8 @@ End;
     Remove data from MsgKeywordsList at MsgKeywordsList[AIndex]
     and answer(s) corresponding to the keywords at that offset.
 
-    Return: 305 if the given index is invalid (out of bound)
+    Return: 102 if the bot is not enabled
+            305 if the given index is invalid (out of bound)
             300 if operation successful
 }
 Function TTimmy.Remove(AIndex: Integer): Integer;
@@ -373,7 +397,7 @@ Var MetaIter, MKIter, MWIter, counter, GetAnswer: Integer;
     LastChar: Char;
     FlagWords: TStrArray;
 Begin
-    If not Enabled then Exit;
+    If not Enabled then Exit(102);
 
     // Pre-process the message
       FlagM := LowerCase(StrTrim(TMessage));
