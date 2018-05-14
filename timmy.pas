@@ -355,7 +355,7 @@ Begin
              SetLength(PReplyList, Length(PReplyList) - 1);
            End;
 
-    For iter := Low(MsgKeywordsList) to High(MsgKeywordsList) - 1
+    For iter := AIndex to High(MsgKeywordsList) - 1
       do MsgKeywordsList[iter] := MsgKeywordsList[iter + 1];
 
     Dec(NOfEntries);
