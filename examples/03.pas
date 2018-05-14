@@ -19,6 +19,6 @@ BEGIN
     MyBot.Add('what my string', PMyStr);
     Writeln(MyBot.Answer('what is my string?'));  // -> 'asdf'
 
-    MyString := 'azxc';  // Changing MyString, not PMyStr or PMyStr^
-    Writeln(MyBot.Answer('what is my string?'));  // -> `azxc`
+    MyString := 'something else';  // Changing MyString, not PMyStr or PMyStr^
+    Writeln(MyBot.Answer('what is my string?'));  // -> 'something else'
 END.
