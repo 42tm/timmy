@@ -3,8 +3,9 @@
     Original author: Nguyen Hoang Duong (@NOVAglow).
     This example is similar to the one demonstrated in the README file.
 
-    This example demonstrates all 3 different ways to add data to a TTimmy
-    object's metadata by using the overloaded function Add.
+    This simple example demonstrates the basic usage of Timmy, which involves
+    declaring a TTimmy type, initiating the bot, add data and get the bot
+    to response some messages.
 }
 Program TimmyExample1;
 Uses timmy in '../timmy.pas';
