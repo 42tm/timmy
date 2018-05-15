@@ -397,7 +397,7 @@ Var MetaIter, MKIter, MWIter, counter, GetAnswer: Integer;
     LastChar: Char;
     FlagWords: TStrArray;
 Begin
-    If not Enabled then Exit(102);
+    If not Enabled then Exit;
 
     // Pre-process the message
       FlagM := LowerCase(StrTrim(TMessage));
