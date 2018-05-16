@@ -43,6 +43,8 @@ Type
       NoUdstdRep         : String to assign to TTimmy.Answer() in case
                            there's no possible answer to the given message
     }
+
+    // In Timmy Debug, all class members are public
     TTimmy = Object
                Constructor Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
                Public
@@ -66,7 +68,7 @@ Type
                  Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):    Integer; overload;
                  Function  Remove (AIndex: Integer):                                Integer; overload;
                  Function  Answer (TMessage: String):                               String;
-                 Function IsDupe(CheckMsgKeywords: TStrArray): Byte;
+                 Function  IsDupe(CheckMsgKeywords: TStrArray):                     Byte;
              End;
 
 Function StrTrim(S: String): String;
