@@ -1,8 +1,9 @@
 *
-!examples
 !*.pas
 !*.md
 !COPYING
 !COPYING.LESSER
-!examples/mkexample.sh
+!examples/
+!shell/
+!variants/
 !.gitignore
