@@ -392,7 +392,7 @@ End;
     Answer the given message, using assets in the metadata
 }
 Function TTimmy.Answer(TMessage: String): String;
-Var MetaIter, MKIter, MWIter, counter, GetAnswer: Integer;
+Var MetaIter, MKIter, MWIter, counter, MaxMatch: Integer;
     FlagM: String;
     LastChar: Char;
     FlagWords: TStrArray;
@@ -410,6 +410,7 @@ Begin
                         End;
                       End;
 
+    MaxMatch := -1;
     FlagWords := StrSplit(FlagM, ' ');
     For MetaIter := 0 to High(MsgKeywordsList)
       do Begin
@@ -420,16 +421,21 @@ Begin
                   do If FlagWords[MWiter] = MsgKeywordsList[MetaIter][MKIter]
                        then Inc(counter);
 
-           // Compare to TPercent & Get answer
+           // Compare to TPercent
            If counter / Length(MsgKeywordsList[MetaIter]) * 100 >= TPercent
-             then If MetaIter < Length(ReplyList)
-                      then Begin
-                             Randomize;
-                             GetAnswer := Random(Length(ReplyList[MetaIter]));
-                             Exit(ReplyList[MetaIter][GetAnswer]);
-                           End
-                      else Exit(PReplyList[Abs(NOfEntries - Length(PReplyList) - MetaIter)]^);
+             then MaxMatch := MetaIter;
          End;
+
+    // Not understood
+    If MaxMatch = -1 then Exit(NoUdstdRep);
+
+    // Understood
+    If MaxMatch < Length(ReplyList)
+      then Begin
+             Randomize;
+             Exit(ReplyList[MaxMatch][Random(Length(ReplyList[MaxMatch]))]);
+           End
+      else Exit(PReplyList[Abs(NOfEntries - Length(PReplyList) - MaxMatch)]^);
 
     Exit(NoUdstdRep);
 End;
