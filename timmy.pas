@@ -394,7 +394,6 @@ End;
 Function TTimmy.Answer(TMessage: String): String;
 Var MetaIter, MKIter, MWIter, counter, MaxMatch: Integer;
     FlagM: String;
-    LastChar: Char;
     FlagWords: TStrArray;
 Begin
     If not Enabled then Exit;
@@ -403,8 +402,7 @@ Begin
       FlagM := LowerCase(StrTrim(TMessage));
       // Delete punctuation at the end of the message (like "?" or "!")
         While True do Begin
-                        LastChar := FlagM[Length(FlagM)];
-                        Case LastChar of
+                        Case FlagM[Length(FlagM)] of
                           'a'..'z', 'A'..'Z', '0'..'9': Break;
                         Else Delete(FlagM, Length(FlagM), 1);
                         End;
@@ -412,7 +410,7 @@ Begin
 
     MaxMatch := -1;
     FlagWords := StrSplit(FlagM, ' ');
-    For MetaIter := 0 to High(MsgKeywordsList)
+    For MetaIter := Low(MsgKeywordsList) to High(MsgKeywordsList)
       do Begin
            counter := 0;
            // Iterate over each keyword in each array in MsgKeywordsList
