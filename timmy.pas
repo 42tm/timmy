@@ -80,7 +80,7 @@ Type
                  MsgKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
                  PReplyList: PStrArray;
-                 Function IsDupe(CheckMsgKeywords: TStrArray): Byte;
+                 Function IsDupe(CheckMsgKeywords: TStrArray): Boolean;
              End;
 
 Function StrTrim(S: String): String;
@@ -215,20 +215,19 @@ Begin Enabled := False; End;
     Check if given keywords clue is a duplicate of one
     that is already presented in MsgKeywordsList.
 
-    Return: 1 if TTimmy.DupesCheck is false or there's zero entry
-            0 if no duplicate is found
-            2 if a duplicate is found
+    Return true if duplication check is enabled and
+    a duplicate is found, false otherwise.
 }
-Function TTimmy.IsDupe(CheckMsgKeywords: TStrArray): Byte;
+Function TTimmy.IsDupe(CheckMsgKeywords: TStrArray): Boolean;
 Var iter: Integer;
 Begin
-    If (not DupesCheck) or (NOfEntries = 0) then Exit(1);
+    If (not DupesCheck) or (NOfEntries = 0) then Exit(False);
 
     For iter := Low(MsgKeywordsList) to High(MsgKeywordsList)
       do If CompareStrArrays(MsgKeywordsList[iter], CheckMsgKeywords)
-           then Exit(2);
+           then Exit(True);
 
-    Exit(0);
+    Exit(False);
 End;
 
 {
@@ -246,7 +245,7 @@ Begin
     If not Enabled then Exit(102);
     For iter := Low(MsgKeywords) to High(MsgKeywords)
       do MsgKeywords[iter] := LowerCase(MsgKeywords[iter]);
-    If IsDupe(MsgKeywords) = 2 then Exit(202);
+    If IsDupe(MsgKeywords) then Exit(202);
 
     Inc(NOfEntries);
     SetLength(MsgKeywordsList, NOfEntries);
@@ -280,7 +279,7 @@ End;
 Function TTimmy.Add(MsgKeywords: TStrArray; PAnswer: PStr): Integer;
 Begin
     If not Enabled then Exit(102);
-    If IsDupe(MsgKeywords) = 2 then Exit(202);
+    If IsDupe(MsgKeywords) then Exit(202);
 
     Inc(NOfEntries);
     SetLength(MsgKeywordsList, NOfEntries);
