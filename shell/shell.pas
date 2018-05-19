@@ -18,13 +18,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 Program TimmyInteractiveShell;
-Uses Timmy_Debug in '../variants/timmy_debug.pas';
-Var TestSubject: TTimmy;
-    UserInput, Command: String;
-    Initiated: Boolean;
-    Params: TStrArray;
-
-
+Uses Logger in 'logger/logger.pas',
+     Timmy_Debug in '../variants/timmy_debug.pas';
+Var TestSubject: TTimmy;          // Subject TTimmy instance
+    ShellLogger: TLogger;         // Logger for Timmy Interactive Shell
+    UserInput, Command: String;   // UserInput: user's input. Command: Command (the first word) in user's input
+    Initiated: Boolean;           // State of initialization of the test subject
+    InArgs: TStrArray;            // Arguments (that follows the command) in user's input
 
 BEGIN
     UserInput := '';
@@ -37,7 +37,7 @@ BEGIN
            Command := LowerCase(StrSplit(UserInput)[0]);
            If (Command <> 'init') and (Command <> 'set') and (not Initiated)
              then Begin
-                    
+
                   End;
            Case Command of
              'init': Begin
