@@ -432,7 +432,7 @@ Begin
              Randomize;
              Exit(ReplyList[MaxMatch][Random(Length(ReplyList[MaxMatch]))]);
            End
-      else Exit(PReplyList[Abs(NOfEntries - Length(PReplyList) - MaxMatch)]^);
+      else Exit(PReplyList[MaxMatch - Length(ReplyList)]^);
 
     Exit(NoUdstdRep);
 End;
