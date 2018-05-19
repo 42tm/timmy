@@ -13,8 +13,11 @@ Type TLogger = Object
                  FileOutMin: Integer;
                  Procedure SetLogFilePath(LogFilePath: String);
                  Procedure Log(Severity: Integer; LogMsg: String);
+                 Procedure Enable;
+                 Procedure Disable;
                Private
                  LogPath: String;
+                 Enabled: Boolean;
                Public Const
                  INFO = 0;
                  LIGHTWARNING = 10;
@@ -67,6 +70,14 @@ Begin
     Exit(True);
 End;
 
+{
+    Initiate the logger
+
+    Parameters:
+      ACslOutMin: The minimum level for the logger to write log to console
+      AFileOutMin: The minimum level for the logger to write log to log file
+      ALogPath: The path of the log file to write to
+}
 Constructor TLogger.Init(ACslOutMin: Integer = 0;
                          AFileOutMin: Integer = -1; ALogPath: String = '');
 Begin
@@ -74,10 +85,26 @@ Begin
     FileOutMin := AFileOutMin;
     LogPath := ALogPath;
     LeadingStr := '';
-
-    If (not CreateFile(ALogPath)) then FileOutMin := -1;
+    If (not CreateFile(ALogPath)) then LogPath := '';
+    Enabled := True;
 End;
 
+{ Procedure to enable the logger }
+Procedure TLogger.Enable;
+Begin Enabled := True; End;
+
+{ Procedure to disable the logger }
+Procedure TLogger.Disable;
+Begin Enabled := False; End;
+
+{
+    Set path of file to write output to.
+
+    The function uses CreateFile(), so that means if the specified log file
+    does not exist, it will be created. If parent directory's path is given
+    and it does not exist, no file will be created, and TLogger.LogPath
+    remains the same.
+}
 Procedure TLogger.SetLogFilePath(LogFilePath: String);
 Begin
     If (not CreateFile(LogFilePath)) then Exit;
@@ -85,6 +112,13 @@ Begin
     LogPath := LogFilePath;
 End;
 
+{
+    Log
+
+    Parameters:
+      Severity [Integer]: The severity of the event that needs logging
+      LogMsg [String]: The log message
+}
 Procedure TLogger.Log(Severity: Integer; LogMsg: String);
 Var CslMsgColor: Integer;
     F: Text;
