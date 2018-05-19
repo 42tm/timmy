@@ -32,7 +32,54 @@ Procedure PrintHelp;
 Begin
 End;
 
+Function InputPrompt: String;
+Var Flag: String;
+    InputKey: Char;
+    CursorX, FlagIter: Integer;
+Begin
+    Flag := '';
+    CursorX := 4;
+    While True
+      do Begin
+           Delline; Insline;
+           GoToXY(1, WhereY);
+           TextColor(15);
+           Write('>> ');
+           TextColor(11);
+           Flag := Flag + ' ';
+           For FlagIter := 1 to Pos(' ', Flag) - 1 do Write(Flag[FlagIter]);
+           TextColor(15);
+           For FlagIter := Pos(' ', Flag) to Length(Flag) - 1 do Write(Flag[FlagIter]);
+           Delete(Flag, Length(Flag), 1);
+           GoToXY(CursorX, WhereY);
+           InputKey := Readkey;
+           Case Ord(InputKey) of
+             0: Begin
+                  InputKey := Readkey;
+                  If (InputKey = #75) and (CursorX > 4) then Dec(CursorX); // Left
+                  If (InputKey = #77) and (CursorX < Length(Flag) + 4) then Inc(CursorX); // Right
+                End;
+             13: Exit(Flag);  // Enter key
+             32..126: Begin  // A text character
+                        Flag := Copy(Flag, 1, CursorX - 4)
+                                     + InputKey
+                                     + Copy(Flag, CursorX - 3,
+                                            Length(Flag) - CursorX + 4);
+                        Inc(CursorX);
+                      End;
+             8: Begin  // Backspace key
+                  If CursorX = 4 then Continue;
+                  Delete(Flag, CursorX - 4, 1);
+                  Dec(CursorX);
+                End;
+           End;
+         End;
+
+    InputPrompt := Flag;
+End;
+
 BEGIN
+    CursorBig;
     ShellLogger.Init(TLogger.INFO, TLogger.INFO, 'history.dat');
 
     UserInput := '';
@@ -44,23 +91,31 @@ BEGIN
     Writeln('Type ''help'' for help.');
 
     // Start interface
-    While LowerCase(UserInput) <> 'exit'
+    While True
       do Begin
            TextColor(White);
-           Write('>> '); Readln(UserInput);
-           Command := LowerCase(StrSplit(UserInput)[0]);
+           UserInput := InputPrompt;
+           Writeln;
+           If Length(StrSplit(UserInput)) > 0
+             then Command := LowerCase(StrSplit(UserInput)[0])
+             else Continue;
            If (Command <> 'init') and (Command <> 'set') and (Command <> 'help')
                and (not Initiated)
              then Begin
 
                   End;
            Case Command of
+             'exit': Begin Writeln; Halt; End;
              'help': PrintHelp;
              'init': Begin
                        Initiated := True;
                        ShellLogger.Log(TLogger.INFO, 'Instance initiated.');
                      End;
-           Else Writeln('')
+           Else Begin
+                  ShellLogger.FileOutMin := -1;
+                  ShellLogger.Log(TLogger.ERROR, 'Invalid command. Type ''help'' for help');
+                  ShellLogger.FileOutMin := TLogger.INFO;
+                End;
            End;
          End;
 END.
