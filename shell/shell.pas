@@ -32,10 +32,16 @@ Procedure PrintHelp;
 Begin
 End;
 
+{
+    User command prompt for Timmy Shell.
+    This prompt highlights the command with a blue color.
+}
 Function InputPrompt: String;
-Var Flag: String;
-    InputKey: Char;
-    CursorX, FlagIter: Integer;
+Var Flag: String;      // Current user input string
+    InputKey: Char;    // Character to assign ReadKey to
+    CursorX,           // Current X position of the cursor
+    FlagIter:          // Iteration for the string Flag (local)
+              Integer;
 Begin
     Flag := '';
     CursorX := 4;
@@ -44,12 +50,17 @@ Begin
            Delline; Insline;
            GoToXY(1, WhereY);
            TextColor(15);
-           Write('>> ');
-           TextColor(11);
-           Flag := Flag + ' ';
-           For FlagIter := 1 to Pos(' ', Flag) - 1 do Write(Flag[FlagIter]);
-           TextColor(15);
-           For FlagIter := Pos(' ', Flag) to Length(Flag) - 1 do Write(Flag[FlagIter]);
+           Write('>> ');  // Prompt string
+
+           // Print command with blue color
+             TextColor(11);
+             Flag := Flag + ' ';
+             For FlagIter := 1 to Pos(' ', Flag) - 1 do Write(Flag[FlagIter]);
+           // Print rest of the current user's command string (with white color)
+             TextColor(15);
+             For FlagIter := Pos(' ', Flag) to Length(Flag) - 1
+               do Write(Flag[FlagIter]);
+
            Delete(Flag, Length(Flag), 1);
            GoToXY(CursorX, WhereY);
            InputKey := Readkey;
