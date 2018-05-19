@@ -18,30 +18,47 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 Program TimmyInteractiveShell;
-Uses Logger in 'logger/logger.pas',
-     Timmy_Debug in '../variants/timmy_debug.pas';
+Uses Crt,
+     Timmy in '../timmy.pas',
+     Timmy_Debug in '../variants/timmy_debug.pas',
+     Logger in 'logger/logger.pas';
 Var TestSubject: TTimmy;          // Subject TTimmy instance
     ShellLogger: TLogger;         // Logger for Timmy Interactive Shell
     UserInput, Command: String;   // UserInput: user's input. Command: Command (the first word) in user's input
     Initiated: Boolean;           // State of initialization of the test subject
     InArgs: TStrArray;            // Arguments (that follows the command) in user's input
 
+Procedure PrintHelp;
+Begin
+End;
+
 BEGIN
+    ShellLogger.Init(TLogger.INFO, TLogger.INFO, 'history.dat');
+
     UserInput := '';
     Initiated := False;
+
+    TextColor(White);
+    Writeln('Timmy Interactive Shell');
+    Writeln('Timmy version 1.2.0');
+    Writeln('Type ''help'' for help.');
 
     // Start interface
     While LowerCase(UserInput) <> 'exit'
       do Begin
+           TextColor(White);
            Write('>> '); Readln(UserInput);
            Command := LowerCase(StrSplit(UserInput)[0]);
-           If (Command <> 'init') and (Command <> 'set') and (not Initiated)
+           If (Command <> 'init') and (Command <> 'set') and (Command <> 'help')
+               and (not Initiated)
              then Begin
 
                   End;
            Case Command of
+             'help': PrintHelp;
              'init': Begin
                        Initiated := True;
+                       ShellLogger.Log(TLogger.INFO, 'Instance initiated.');
                      End;
            Else Writeln('')
            End;
