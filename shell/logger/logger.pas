@@ -126,7 +126,7 @@ Begin
     If (Severity >= CslOutMin) and (CslOutMin > -1)
       then Begin
              Case Severity of
-               0..9: CslMsgColor := 15;
+               0..9: CslMsgColor := 10;
                10..19: CslMsgColor := 6;
                20..29: CslMsgColor := 14;
                30..39: CslMsgColor := 4;
