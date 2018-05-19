@@ -5,7 +5,7 @@
     See the included COPYING.LESSER file at the root of the repository.
 }
 {$mode ObjFPC}
-Unit Timmy;
+Unit Timmy_Debug;
 
 Interface
 Type
@@ -419,7 +419,7 @@ Begin
              Randomize;
              Exit(ReplyList[MaxMatch][Random(Length(ReplyList[MaxMatch]))]);
            End
-      else Exit(PReplyList[Abs(NOfEntries - Length(PReplyList) - MaxMatch)]^);
+      else Exit(PReplyList[MaxMatch - Length(ReplyList)]^);
 
     Exit(NoUdstdRep);
 End;
