@@ -64,15 +64,15 @@ Type
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function  Add    (MsgKeywords, Replies: TStrArray):                Integer; overload;
+                 Function  Add    (MsgKeywords, Replies: TStrArray):       Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String;
-                                                RepStrDeli: String = ';'):          Integer; overload;
-                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr):          Integer; overload;
-                 Function  Add    (KeywordsStr: String; PAnswer: PStr):             Integer; overload;
-                 Function  Remove (MsgKeywords: TStrArray):                         Integer; overload;
-                 Function  Remove (KeywordsStr: String):                            Integer; overload;
-                 Function  Remove (AIndex: Integer):                                Integer; overload;
-                 Function  Answer (TMessage: String):                               String;
+                                                RepStrDeli: String = ';'): Integer; overload;
+                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr): Integer; overload;
+                 Function  Add    (KeywordsStr: String; PAnswer: PStr):    Integer; overload;
+                 Function  Remove (MsgKeywords: TStrArray):                Integer; overload;
+                 Function  Remove (KeywordsStr: String):                   Integer; overload;
+                 Function  Remove (AIndex: Integer):                       Integer; overload;
+                 Function  Answer (TMessage: String):                      String;
                Private
                  Enabled: Boolean;
                  NOfEntries: Integer;
@@ -91,8 +91,12 @@ Implementation
 
 {
     Given a string, process it so that the first and the last
-    character are not space, and there is no multiple spaces
-    character in a row.
+    characters are not space, and there is no multiple space
+    characters in a row.
+
+    Example:
+        Input:  '     some    string   '
+        Output: 'some string'
 }
 Function StrTrim(S: String): String;
 Var iter: Integer;
@@ -108,21 +112,20 @@ Begin
                   StrTrim := StrTrim + S[iter];
                   SpaceOn := False;
                 End
-           else Case SpaceOn of
-                  True: Continue;
-                  False: Begin
-                           StrTrim := StrTrim + ' ';
-                           SpaceOn := True;
-                         End;
+           else Begin
+                  If SpaceOn then Continue;
+                  StrTrim := StrTrim + ' ';
+                  SpaceOn := True;
                 End;
 End;
 
 {
-    Given a string, split the string using the delimiter
+    Given a string S, split the string using Delimiter
     and return an array containing the separated strings.
     If no delimiter Delimiter is found in string S,
     a TStrArray of only one value is returned, and that
     only one value is the original string S.
+    Delimiter has a default value of a space character.
 }
 Function StrSplit(S: String; Delimiter: String = ' '): TStrArray;
 Var
@@ -162,7 +165,7 @@ Begin
 End;
 
 {
-    Given an array of string, join them using Linker.
+    Given a TStrArray (array of string), join them using Linker.
     StrJoin(['this', 'is', 'an', 'example'], '@@')
       -> 'this@@is@@an@@example'
 }
@@ -211,8 +214,9 @@ Procedure TTimmy.Disable;
 Begin Enabled := False; End;
 
 {
-    Check if given keywords clue is a duplicate of one
-    that is already presented in MsgKeywordsList.
+    Check if given keywords clue CheckMsgKeywords
+    is a duplicate of one that is already presented
+    in MsgKeywordsList.
 
     Return true if duplication check is enabled and
     a duplicate is found, false otherwise.
@@ -231,7 +235,8 @@ End;
 
 {
     Add data to bot object's metadata base.
-    Data include message's keywords and possible replies to the message.
+    Data include 2 TStrArray: message's keywords (MsgKeywords)
+    and possible replies to the message (Replies).
     *** PRIMARY ADD FUNCTION ***
 
     Return: 102 if object is not enabled
@@ -275,8 +280,9 @@ Begin
 End;
 
 {
-    Add data, takes TStrArray for keywords clue and a pointer which
-    pointes to the possible answer for the messages that contain the keywords.
+    Add data, takes MsgKeywords (a TStrArray) for keywords clue
+    and pointer PAnswer (a String^) which points to the possible answer
+    for the messages that contain the keywords.
 
     Return: 102 if the bot is not enabled
             202 if dupes check is enabled and a duplication is found
@@ -297,9 +303,10 @@ Begin
 End;
 
 {
-    Functions like the above one but takes string instead of TStrArray.
-    THe string is delimited using a delimiter to create a TStrArray,
-    and the rest is for TTimmy.Add(TStrArray, PStr)
+    Functions like the TTimmy.Add(TStrArray, PStr) but takes string
+    instead of TStrArray. The string is delimited using space character
+    to create a TStrArray, and the rest of the work
+    is for TTimmy.Add(TStrArray, PStr)
 
     Return: TTimmy.Add(TStrArray, PStr)
 }
@@ -309,10 +316,11 @@ Begin
 End;
 
 {
-    Given a set of keywords, find matches to that set in MsgKeywordsList,
-    remove the matches, and remove the correspondants in ReplyList as well.
+    Given a set of keywords MsgKeywords, find matches to that set
+    in MsgKeywordsList, remove the matches, and remove the correspondants
+    in ReplyList as well.
     This function simply saves offsets of the matching arrays in MsgKeywordsList
-    and then call TTimmy.Remove(AIndex: Integer).
+    and then call TTimmy.Remove(Integer).
 
     Return: 102 if object is not enabled
             308 if the operation succeed
@@ -348,10 +356,11 @@ Begin
 End;
 
 {
-    The same as the above implementation of Remove, but allows
-    use of custom string delimiter.
+    Remove data, this function takes a string. The string
+    is delimited using the space character to get a TStrArray,
+    and the rest of the task is passed to TTimmy.Remove(TStrArray).
 
-    Return TTimmy.Remove(MsgKeywords: TStrArray)
+    Return TTimmy.Remove(TStrArray)
 }
 Function TTimmy.Remove(KeywordsStr: String): Integer;
 Begin
@@ -394,7 +403,7 @@ Begin
 End;
 
 {
-    Answer the given message, using assets in the metadata
+    Answer the given message TMessage, using assets in the metadata.
 }
 Function TTimmy.Answer(TMessage: String): String;
 Var MetaIter, MKIter, MWIter, counter, MaxMatch: Integer;
