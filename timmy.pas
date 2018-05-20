@@ -66,12 +66,11 @@ Type
                  Procedure Disable;
                  Function  Add    (MsgKeywords, Replies: TStrArray):                Integer; overload;
                  Function  Add    (KeywordsStr, RepStr: String;
-                                   KStrDeli: String = ' '; MStrDeli: String = ';'): Integer; overload;
+                                                RepStrDeli: String = ';'):          Integer; overload;
                  Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr):          Integer; overload;
-                 Function  Add    (KeywordsStr: String; PAnswer: PStr;
-                                   KStrDeli: String = ' '):                         Integer; overload;
+                 Function  Add    (KeywordsStr: String; PAnswer: PStr):             Integer; overload;
                  Function  Remove (MsgKeywords: TStrArray):                         Integer; overload;
-                 Function  Remove (KeywordsStr: String; KStrDeli: String = ' '):    Integer; overload;
+                 Function  Remove (KeywordsStr: String):                            Integer; overload;
                  Function  Remove (AIndex: Integer):                                Integer; overload;
                  Function  Answer (TMessage: String):                               String;
                Private
@@ -260,12 +259,19 @@ End;
     The strings are delimited using delimiters to create TStrArray,
     and these TStrArray are then passed to the primary TTimmy.Add().
 
+    Parameters:
+        KeywordsStr [String]: String input for keywords, will be delimited
+                              using a space character to get a TStrArray
+        RepStr [String]: String input for possible replies for messages
+                         containing those in KeywordsStr, will be delimited
+                         using RStrDeli (semicolon by default) to
+                         form a TStrArray
+        RStrDeli [String]: Delimiter for RepStr, default is a semicolon
     Return: TTimmy.Add(TStrArray, TStrArray)
 }
-Function TTimmy.Add(KeywordsStr, RepStr: String;
-                    KStrDeli: String = ' '; MStrDeli: String = ';'): Integer;
+Function TTimmy.Add(KeywordsStr, RepStr: String; RepStrDeli: String = ';'): Integer;
 Begin
-    Exit(Add(StrSplit(KeywordsStr, KStrDeli), StrSplit(RepStr, MStrDeli)));
+    Exit(Add(StrSplit(KeywordsStr), StrSplit(RepStr, RepStrDeli)));
 End;
 
 {
@@ -297,9 +303,9 @@ End;
 
     Return: TTimmy.Add(TStrArray, PStr)
 }
-Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr; KStrDeli: String = ' '): Integer;
+Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr): Integer;
 Begin
-    Exit(Add(StrSplit(KeywordsStr, KStrDeli), PAnswer));
+    Exit(Add(StrSplit(KeywordsStr), PAnswer));
 End;
 
 {
@@ -347,9 +353,9 @@ End;
 
     Return TTimmy.Remove(MsgKeywords: TStrArray)
 }
-Function TTimmy.Remove(KeywordsStr: String; KStrDeli: String = ' '): Integer;
+Function TTimmy.Remove(KeywordsStr: String): Integer;
 Begin
-    Exit(Remove(StrSplit(KeywordsStr, KStrDeli)));
+    Exit(Remove(StrSplit(KeywordsStr)));
 End;
 
 {
@@ -408,7 +414,7 @@ Begin
                       End;
 
     MaxMatch := -1;
-    FlagWords := StrSplit(FlagM, ' ');
+    FlagWords := StrSplit(FlagM);
     For MetaIter := Low(MsgKeywordsList) to High(MsgKeywordsList)
       do Begin
            counter := 0;
