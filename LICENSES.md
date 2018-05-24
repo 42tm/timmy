@@ -8,8 +8,9 @@ There are two licenses that are used in this repository.
 1. GNU Lesser General Public License, version 3 (GNU LGPL v3)
 2. GNU General Public License, version 3 (GNU GPL v3)
 
-The Timmy library itself (`timmy.pas`) and its variants (found in `variants/`) are all licensed under GNU LGPL v3.  
-The Timmy Interactive Shell & its components (all of which can be found in `shell/`) are licensed under GNU GPL v3.
+The Timmy library itself (`timmy.pas`) and its variants (found in the `variants` folder) are all licensed under GNU LGPL v3.  
+The Timmy Interactive Shell & its components (all of which can be found in the `shell` folder) are licensed under GNU GPL v3.  
+The example programs (found in the `examples` folder) are not licensed.
 
 Links
 -----
