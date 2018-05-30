@@ -227,13 +227,14 @@ Begin
            // on the backslash interpretion.
              If Copy(S, iter, Length(Delim)) = Delim
                then Begin
+                      NOfSkip := Length(Delim) - 1;
                       If ItprBackslash
                         then Begin
                                // Count number of backslashes that precede
                                // the delimiter substring
                                  backiter := iter - 1;
                                  BackslashCount := 0;
-                                 While (S[backiter] = '\') and (backiter > -1)
+                                 While (S[backiter] = '\') and (backiter > 0)
                                    do Begin
                                         Inc(BackslashCount);
                                         Dec(backiter);
@@ -250,7 +251,10 @@ Begin
                                // the delimiter is escaped. Hence, add the
                                // delimiter string to Flag.
                                  If BackslashCount = 1
-                                   then Flag := Flag + Delim;
+                                   then Begin
+                                          Flag := Flag + Delim;
+                                          Continue;
+                                        End;
                            End;
 
                       // If Flag is not nothing, add it to return array
@@ -261,7 +265,6 @@ Begin
                                  StrSplit[Length(StrSplit) - 1] := Flag;
                                  Flag := '';
                                End;
-                    NOfSkip := Length(Delim) - 1;
                   End
              else Begin
                     BackslashCount := 0;
