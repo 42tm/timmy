@@ -19,18 +19,12 @@
 }
 Program TimmyInteractiveShell;
 Uses Crt,
+     Core in 'utils/core.pas',
      Timmy in '../timmy.pas',
      Timmy_Debug in '../variants/timmy_debug.pas',
      Logger in 'logger/logger.pas';
-Var TestSubject: TTimmy;          // Subject TTimmy instance
-    ShellLogger: TLogger;         // Logger for Timmy Interactive Shell
-    UserInput, Command: String;   // UserInput: user's input. Command: Command (the first word) in user's input
-    Initiated: Boolean;           // State of initialization of the test subject
-    InArgs: TStrArray;            // Arguments (that follows the command) in user's input
-
-Procedure PrintHelp;
-Begin
-End;
+Const
+    SHELLVERSION = '1.0.0';
 
 {
     User command prompt for Timmy Shell.
@@ -93,12 +87,11 @@ BEGIN
     CursorBig;
     ShellLogger.Init(TLogger.INFO, TLogger.INFO, 'history.dat');
 
-    UserInput := '';
     Initiated := False;
 
     TextColor(White);
-    Writeln('Timmy Interactive Shell');
-    Writeln('Timmy version 1.2.0');
+    Writeln('Timmy Interactive Shell ' + SHELLVERSION);
+    Writeln('Using Timmy version 1.2.0');
     Writeln('Type ''help'' for help.');
 
     // Start interface
@@ -106,27 +99,6 @@ BEGIN
       do Begin
            TextColor(White);
            UserInput := InputPrompt;
-           Writeln;
-           If Length(StrSplit(UserInput)) > 0
-             then Command := LowerCase(StrSplit(UserInput)[0])
-             else Continue;
-           If (Command <> 'init') and (Command <> 'set') and (Command <> 'help')
-               and (not Initiated)
-             then Begin
-
-                  End;
-           Case Command of
-             'exit': Begin Writeln; Halt; End;
-             'help': PrintHelp;
-             'init': Begin
-                       Initiated := True;
-                       ShellLogger.Log(TLogger.INFO, 'Instance initiated.');
-                     End;
-           Else Begin
-                  ShellLogger.FileOutMin := -1;
-                  ShellLogger.Log(TLogger.ERROR, 'Invalid command. Type ''help'' for help');
-                  ShellLogger.FileOutMin := TLogger.INFO;
-                End;
-           End;
+           ShellExec(UserInput);
          End;
 END.
