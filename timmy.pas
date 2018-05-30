@@ -253,7 +253,9 @@ Begin
                                  If BackslashCount = 1
                                    then Begin
                                           Flag := Flag + Delim;
-                                          Continue;
+                                          // Continue loop. The delimiter
+                                          // does not have effect in this case.
+                                            Continue;
                                         End;
                            End;
 
@@ -267,14 +269,27 @@ Begin
                                End;
                   End
              else Begin
-                    BackslashCount := 0;
-                    backiter := iter;
-                    While (Copy(S, backiter, Length(Delim)) <> Delim)
-                      and (backiter < Length(S) + 1)
-                      do Begin
-                           If S[backiter] <> '\' then Inc(BackslashCount);
-                           Inc(backiter);
-                         End;
+                    // In the below loop, BackslashCount doesn't really count
+                    // the number of backslashes in the iteration, it actually
+                    // counts the number of characters that are NOT backslash.
+                    // We are just utilizing it so we don't have to create
+                    // a new variable.
+                      BackslashCount := 0;
+                    // backiter variable also loses its meaning in this context
+                      backiter := iter;
+                    // This loop makes a meaningful loop only when S[backiter]
+                    // is a backslash. It checks if the current backslash
+                    // character is part of a series of backslashes that come
+                    // right before a delimiter. If BackslashCount is 0, that
+                    // means it is part of the series, and so we leave that for
+                    // the 'then' clause of the parent if statement.
+                      While (Copy(S, backiter, Length(Delim)) <> Delim)
+                        and (backiter < Length(S) + 1)
+                        do Begin
+                             If S[backiter] <> '\' then Inc(BackslashCount);
+                             Inc(backiter);
+                           End;
+
                     If BackslashCount > 0
                       then Flag := Flag + S[iter];
                   End;
