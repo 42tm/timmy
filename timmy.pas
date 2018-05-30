@@ -17,7 +17,7 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
-{$mode ObjFPC}
+{$mode ObjFPC} {$H+}
 Unit Timmy;
 
 Interface
@@ -83,7 +83,8 @@ Type
              End;
 
 Function StrTrim(S: String): String;
-Function StrSplit(S: String; Delimiter: String = ' '): TStrArray;
+Function StrReplace(S, OrgSubStr, NewSubStr: String; CaseSensitive: Boolean = True): String;
+Function StrSplit(S: String; Delim: String = ' '; ItprBackslash: Boolean = False): TStrArray;
 Function StrJoin(StrList: TStrArray; Linker: String): String;
 Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 
@@ -120,47 +121,160 @@ Begin
 End;
 
 {
+    Find OrgSubStr in S and replace them with NewSubStr.
+    Option for case-sensitivity is also allowed, by default
+    the search is not case-sensitive.
+    Note: This function replaces ALL of the occurrences.
+
+    Parameters:
+        S: The string to search in
+        OrgSubStr: Substring in string S to be replaced
+        NewSubStr: Replacement for OrgSubStr in S
+        CaseSensitive: Option to specify whether the search should be case-sensitive
+    Return:
+        The new string
+}
+Function StrReplace(S, OrgSubStr, NewSubStr: String; CaseSensitive: Boolean = True): String;
+Var
+    SIter, SkipLeft, Idx: LongWord;
+    Flag: String;
+    StartPoints: Array of LongWord;
+Begin
+    If not CaseSensitive then OrgSubStr := LowerCase(OrgSubStr);
+    SetLength(StartPoints, 0);
+    SkipLeft := 0;
+
+    // Iterate over string S to find original string (OrgSubStr)
+      For SIter := 1 to Length(S) - Length(OrgSubStr) + 1
+        do Begin
+             // Skip the iteration because the current character at this index
+             // in string S (S[SIter]) is a part of a found original substring.
+               If SkipLeft > 0
+                 then Begin
+                        Dec(SkipLeft);
+                        Continue;
+                      End;
+
+             // Assign Flag, is used later to compare if it matches the
+             // original substring.
+               Flag := Copy(S, SIter, Length(OrgSubStr));
+               If not CaseSensitive then Flag := LowerCase(Flag);
+
+             // Compare Flag to original substring. If the two strings are
+             // the same, save its starting position in S (which is SIter)
+             // and later replace using Delete and Insert methods.
+               If Flag = OrgSubStr
+                 then Begin
+                        SetLength(StartPoints, Length(StartPoints) + 1);
+                        StartPoints[Length(StartPoints) - 1] := SIter;
+                        SkipLeft := Length(OrgSubStr) - 1;
+                      End;
+           End;
+
+    // If no match is found, exit to avoid run-time error
+      If Length(StartPoints) = 0 then Exit(S);
+
+    StrReplace := S;
+    For SIter := 0 to High(StartPoints)
+      do Begin
+           Idx := StartPoints[SIter]
+                + (Length(NewSubStr) - Length(OrgSubStr)) * (SIter);
+           // Delete original sub-string
+             Delete(StrReplace, Idx, Length(OrgSubStr));
+           // Insert new sub-string
+             Insert(NewSubStr, StrReplace, Idx);
+         End;
+End;
+
+{
     Given a string S, split the string using Delimiter
     and return an array containing the separated strings.
     If no delimiter Delimiter is found in string S,
     a TStrArray of only one value is returned, and that
     only one value is the original string S.
     Delimiter has a default value of a space character.
+    Support backslash interpreting. Does not interpret
+    backslash by default.
+
+    Parameters:
+        S: String to be delimited
+	Delimiter: Delimiter for string S
+	ItprBackslash: Option whether to interpret backslash or not
+
+    Return: A TStrArray holding delimited parts of string S
 }
-Function StrSplit(S: String; Delimiter: String = ' '): TStrArray;
+Function StrSplit(S: String; Delim: String = ' '; ItprBackslash: Boolean = False): TStrArray;
 Var
-    iter,     // String S iterator
-    SkipLeft: // Number of iteration left to skip (skip by doing Continue)
-              Integer;
-    Flag: String;  // Medium string
+    iter, backiter, BackslashCount: Integer;
+    NOfSkip: Byte;
+    Flag: String;
 Begin
-    S := S + Delimiter;
+    S := S + Delim;
 
     SetLength(StrSplit, 0);
-    SkipLeft := 0;
+    NOfSkip := 0;
     Flag := '';
 
-    // Split the string using running and skipping method
     For iter := 1 to Length(S)
       do Begin
-           If SkipLeft > 0
-             then Begin
-                    Dec(SkipLeft);
-                    Continue;
+           // Skip current iteration if NOfSkip is not zero
+             If NOfSkip > 0 then Begin
+                                   Dec(NOfSkip);
+                                   Continue;
+                                 End;
+           // If next characters make a delimiter, prepare to skip
+           // Whether to add the delimiter to Flag or not is depended
+           // on the backslash interpretion.
+             If Copy(S, iter, Length(Delim)) = Delim
+               then Begin
+                      If ItprBackslash
+                        then Begin
+                               // Count number of backslashes that precede
+                               // the delimiter substring
+                                 backiter := iter - 1;
+                                 BackslashCount := 0;
+                                 While (S[backiter] = '\') and (backiter > -1)
+                                   do Begin
+                                        Inc(BackslashCount);
+                                        Dec(backiter);
+                                      End;
+
+                               // Add up the escaped backslash to Flag
+                                 While BackslashCount > 1
+                                   do Begin
+                                        Flag := Flag + '\';
+                                        Dec(BackslashCount, 2);
+                                      End;
+
+                               // If BackslashCount is 1 by now, that means
+                               // the delimiter is escaped. Hence, add the
+                               // delimiter string to Flag.
+                                 If BackslashCount = 1
+                                   then Flag := Flag + Delim;
+                           End;
+
+                      // If Flag is not nothing, add it to return array
+                        If Flag <> ''
+                          then Begin
+                                 Flag := StrReplace(Flag, '\\', '\');
+                                 SetLength(StrSplit, Length(StrSplit) + 1);
+                                 StrSplit[Length(StrSplit) - 1] := Flag;
+                                 Flag := '';
+                               End;
+                    NOfSkip := Length(Delim) - 1;
                   End
-             else If Copy(S, iter, Length(Delimiter)) = Delimiter
-                    then Begin
-                           If Flag <> ''
-                             then Begin
-                                    SetLength(StrSplit, Length(StrSplit) + 1);
-                                    StrSplit[Length(StrSplit) - 1] := Flag;
-                                    Flag := '';
-                                  End;
-                           // Set number of iteratations to skip next
-                           // (because the following characters are part of Delimiter)
-                             SkipLeft := Length(Delimiter) - 1;
-                         End
-             else Flag := Flag + S[iter];
+             else Begin
+                    BackslashCount := 0;
+                    backiter := iter;
+                    While (Copy(S, backiter, Length(Delim)) <> Delim)
+                      and (backiter < Length(S) + 1)
+                      do Begin
+                           If S[backiter] <> '\' then Inc(BackslashCount);
+                           Inc(backiter);
+                         End;
+                    If BackslashCount > 0
+                      then Flag := Flag + S[iter];
+                  End;
          End;
 End;
 
