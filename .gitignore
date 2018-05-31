@@ -6,6 +6,6 @@
 !examples/
 !shell/
 !shell/logger/
-!shell/argparse
+!shell/utils
 !variants/
 !.gitignore
