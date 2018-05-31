@@ -24,7 +24,7 @@ Unit Logger;
 
 Interface
 
-Uses Crt, SysUtils, StrUtils, Timmy in '../../timmy.pas';
+Uses Crt, SysUtils, StrUtils, Timmy_Debug in '../../variants/timmy_debug.pas';
 Type TLogger = Object
                  Constructor Init(ACslOutMin: Integer = 0;
                                   AFileOutMin: Integer = -1; ALogPath: String = '');
