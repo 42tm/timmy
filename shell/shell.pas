@@ -21,8 +21,8 @@
 Program TimmyInteractiveShell;
 Uses Crt, SysUtils,
      Core in 'utils/core.pas',
-     Timmy in '../timmy.pas',
      Timmy_Debug in '../variants/timmy_debug.pas',
+     ArgsParser in 'argparse/src/common/ArgsParser.pas',
      Logger in 'logger/logger.pas';
 Const
     SHELLVERSION = '1.0.0';
