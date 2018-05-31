@@ -16,7 +16,7 @@ The example programs (found in the `examples` folder) are not licensed.
 
 Links
 -----
-The copies of the licenses used in this repository (except for the MIT license) are dropped at the root directory. See `COPYING` for GNU GPL v3 license, and `COPYING.LESSER` for GNU LGPL v3 license. For MIT License, see the links below.
+The copies of the licenses used in this repository (except for the MIT license) are dropped at the root directory. See `COPYING` for GNU GPL v3 license, and `COPYING.LESSER` for GNU LGPL v3 license. For the MIT License and some other external links, see below.
 
 - [GNU GPL v3 license in Markdown][1], hosted in [IQAndreas/**markdown-licenses**](http://github.com/IQAndreas/markdown-licenses/) on GitHub
 - [Summary of GNU GPL v3 license][2] on TLDRLegal
