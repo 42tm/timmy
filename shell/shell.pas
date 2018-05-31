@@ -17,14 +17,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
+{$H+}
 Program TimmyInteractiveShell;
-Uses Crt,
+Uses Crt, SysUtils,
      Core in 'utils/core.pas',
      Timmy in '../timmy.pas',
      Timmy_Debug in '../variants/timmy_debug.pas',
      Logger in 'logger/logger.pas';
 Const
     SHELLVERSION = '1.0.0';
+Var
+    CmdF: Text;
+    CmdRead, UserInput: String;
+Label
+    StartIntf;
 
 {
     User command prompt for Timmy Shell.
@@ -85,7 +91,7 @@ End;
 
 BEGIN
     CursorBig;
-    ShellLogger.Init(TLogger.INFO, TLogger.INFO, 'history.dat');
+    ShellLogger.Init(TLogger.INFO, TLogger.WARNING, 'history.dat');
 
     Initiated := False;
 
@@ -94,11 +100,32 @@ BEGIN
     Writeln('Using Timmy version 1.2.0');
     Writeln('Type ''help'' for help.');
 
+    If (ParamStr(1) = '-load') and FileExists(ParamStr(2))
+      then Begin
+             Assign(CmdF, ParamStr(2));
+             {$I-}
+             Reset(CmdF);
+             {$I+}
+             If IOResult <> 0
+               then Begin
+                      ShellLogger.Log(TLogger.ERROR, 'Failed to read commands from file');
+                      Close(CmdF);
+                      GoTo StartIntf;
+                    End;
+             While not EOF(CmdF)
+               do Begin
+                    Readln(CmdF, CmdRead);
+                    ShellExec(CmdRead);
+                  End;
+             Close(CmdF);
+           End;
+
     // Start interface
-    While True
-      do Begin
-           TextColor(White);
-           UserInput := InputPrompt;
-           ShellExec(UserInput);
-         End;
+    StartIntf:
+        While True
+          do Begin
+               TextColor(White);
+               UserInput := InputPrompt;
+               ShellExec(UserInput);
+             End;
 END.
