@@ -20,9 +20,9 @@
 {$H+}
 Program TimmyInteractiveShell;
 Uses Crt, SysUtils,
-     Core in 'utils/core.pas',
      Timmy_Debug in '../variants/timmy_debug.pas',
-     ArgsParser in 'argparse/src/common/ArgsParser.pas',
+     Core in 'utils/core.pas',
+     ArgsParser in 'utils/argsparser.pas',
      Logger in 'logger/logger.pas';
 Const
     SHELLVERSION = '1.0.0';
@@ -90,17 +90,57 @@ Begin
 End;
 
 BEGIN
-    CursorBig;
+    If (ParamStr(1) = '-h') or (ParamStr(1) = '--help')
+      then Begin
+             Writeln('Timmy Interactive Shell - An environment for testing the Timmy unit');
+             Writeln('Version ' + SHELLVERSION);
+             Writeln('Using Timmy version ' + TIMMYVERSION);
+             Writeln('Copyright (C) 2018 42tm Team');
+             Writeln;
+             Writeln('USAGE: shell [options]');
+             Writeln;
+             Writeln('OPTIONS:');
+             Writeln('  -h, --help      : Print this help and exit');
+             Writeln('      --version   : Print the Shell''s version and the version of Timmy it is using');
+             Writeln('  -l, --load=FILE : Load Timmy Interactive Shell commands from FILE');
+             Writeln('      --esc-space : Enable backslash interpretion in shell commands: The space character');
+             Writeln('                    and the backslash character can then be escaped with a backslash.');
+             Writeln('      --quiet     : Only write log messages with severity of TLogger.ERROR and up to console');
+             Writeln('      --less-log  : Only record events with severity of TLogger.ERROR and up to log file');
+             Halt;
+           End;
+
+    If ParamStr(1) = '--version'
+      then Begin
+             Writeln('Timmy Interactive Shell version ' + SHELLVERSION);
+             Writeln('Using Timmy version ' + TIMMYVERSION);
+             Halt;
+           End;
+
     ShellLogger.Init(TLogger.INFO, TLogger.WARNING, 'history.dat');
+
+    ArgParser := TArgumentParser.Create;
+    ArgParser.AddArgument('-l', 'load', saStore);
+    ArgParser.AddArgument('--load', 'load', saStore);
+    ArgParser.AddArgument('--quiet', saBool);
+    ArgParser.AddArgument('--less-log', saBool);
+    ArgParser.AddArgument('--esc-space', saBool);
 
     Initiated := False;
 
+    CursorBig;
     TextColor(White);
     Writeln('Timmy Interactive Shell ' + SHELLVERSION);
-    Writeln('Using Timmy version 1.2.0');
+    Writeln('Using Timmy version ' + TIMMYVERSION);
     Writeln('Type ''help'' for help.');
 
-    If (ParamStr(1) = '-load') and FileExists(ParamStr(2))
+    OutParse := ArgParser.ParseArgs;
+
+    If OutParse.HasArgument('quiet')
+      then ShellLogger.CslOutMin := TLogger.ERROR;
+    If OutParse.HasArgument('less-log')
+      then ShellLogger.FileOutMin := TLogger.ERROR;
+    If (OutParse.HasArgument('load')) and FileExists(OutParse.GetValue('load'))
       then Begin
              Assign(CmdF, ParamStr(2));
              {$I-}
