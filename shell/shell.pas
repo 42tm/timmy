@@ -103,7 +103,8 @@ BEGIN
              Writeln('  -h, --help      : Print this help and exit');
              Writeln('      --version   : Print the Shell''s version and the version of Timmy it is using');
              Writeln('  -l, --load=FILE : Load Timmy Interactive Shell commands from FILE');
-             Writeln('      --esc-space : Enable backslash interpretion in shell commands: The space character');
+             Writeln('      --backslash : Enable backslash interpretation when splitting user''s input')
+             Writeln('      --esc-space : Enable backslash interpretation in shell commands: The space character');
              Writeln('                    and the backslash character can then be escaped with a backslash.');
              Writeln('      --quiet     : Only write log messages with severity of TLogger.ERROR and up to console');
              Writeln('      --less-log  : Only record events with severity of TLogger.ERROR and up to log file');
@@ -122,9 +123,10 @@ BEGIN
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
     ArgParser.AddArgument('--load', 'load', saStore);
+    ArgParser.AddArgument('--backslash', saBool);
+    ArgParser.AddArgument('--esc-space', saBool);
     ArgParser.AddArgument('--quiet', saBool);
     ArgParser.AddArgument('--less-log', saBool);
-    ArgParser.AddArgument('--esc-space', saBool);
 
     Initiated := False;
 
@@ -133,6 +135,8 @@ BEGIN
     Writeln('Timmy Interactive Shell ' + SHELLVERSION);
     Writeln('Using Timmy version ' + TIMMYVERSION);
     Writeln('Type ''help'' for help.');
+    InstanceName := 'TestSubj';
+    ShellLogger.Log(TLogger.INFO, 'Declared an instance with the name ''TestSubj''');
 
     OutParse := ArgParser.ParseArgs;
 
