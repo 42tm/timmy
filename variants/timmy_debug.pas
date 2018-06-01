@@ -179,7 +179,7 @@ End;
     a TStrArray of only one value is returned, and that
     only one value is the original string S.
     Delimiter has a default value of a space character.
-    Support backslash interpreting. Does not interpret
+    Support backslash interpretation. Does not interpret
     backslash by default.
 
     Parameters:
