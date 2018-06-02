@@ -33,7 +33,7 @@ Type TLogger = Object
                  CslOutMin: Integer;
                  FileOutMin: Integer;
                  Procedure SetLogFilePath(LogFilePath: String);
-                 Procedure Log(Severity: Integer; LogMsg: String);
+                 Procedure Log(Severity: Integer; LogMsg: String; ToCslOnly: Boolean = False);
                  Procedure Enable;
                  Procedure Disable;
                Private
@@ -139,8 +139,9 @@ End;
     Parameters:
       Severity [Integer]: The severity of the event that needs logging
       LogMsg [String]: The log message
+      ToCslOnly [Boolean]: The option to write to console only, regardless of FileOutMin
 }
-Procedure TLogger.Log(Severity: Integer; LogMsg: String);
+Procedure TLogger.Log(Severity: Integer; LogMsg: String; ToCslOnly: Boolean = False);
 Var CslMsgColor: Integer;
     F: Text;
 Begin
@@ -158,7 +159,7 @@ Begin
              Writeln(LeadingStr + LogMsg);
            End;
 
-    If (Severity >= FileOutMin) and (FileOutMin > -1) and (LogPath <> '')
+    If (Severity >= FileOutMin) and (FileOutMin > -1) and (LogPath <> '') and (not ToCslOnly)
       then Begin
              Assign(F, LogPath);
              {$I-}
