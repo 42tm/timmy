@@ -44,31 +44,31 @@ Type
                            there's no possible answer to the given message
     }
     TTimmy = Object
-               Constructor Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
+               Constructor Init(Percent: Byte; DefaultRep: String; DpCheck: Boolean);
                Public
                  Enabled: Boolean;
-                 NOfEntries: Integer;
+                 NOfEntries: LongWord;
                  MsgKeywordsList: Array of TStrArray;
                  ReplyList: Array of TStrArray;
                  PReplyList: PStrArray;
                  DupesCheck: Boolean;
-                 TPercent: Integer;
+                 TPercent: Byte;
                  NoUdstdRep: String;
                  Procedure Enable;
                  Procedure Disable;
-                 Function  Add    (MsgKeywords, Replies: TStrArray):       Integer; overload;
+                 Function  Add    (MsgKeywords, Replies: TStrArray):       Word; overload;
                  Function  Add    (KeywordsStr, RepStr: String;
-                                                RepStrDeli: String = ';'): Integer; overload;
-                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr): Integer; overload;
-                 Function  Add    (KeywordsStr: String; PAnswer: PStr):    Integer; overload;
-                 Function  Remove (MsgKeywords: TStrArray):                Integer; overload;
-                 Function  Remove (KeywordsStr: String):                   Integer; overload;
-                 Function  Remove (AIndex: Integer):                       Integer; overload;
+                                                RepStrDeli: String = ';'): Word; overload;
+                 Function  Add    (MsgKeywords: TStrArray; PAnswer: PStr): Word; overload;
+                 Function  Add    (KeywordsStr: String; PAnswer: PStr):    Word; overload;
+                 Function  Remove (MsgKeywords: TStrArray):                Word; overload;
+                 Function  Remove (KeywordsStr: String):                   Word; overload;
+                 Function  Remove (AIndex: LongWord):                      Word; overload;
                  Function  Answer (TMessage: String):                      String;
                  Function IsDupe(CheckMsgKeywords: TStrArray): Boolean;
              End;
 
-Function StrTrim(S: String): String;
+Function StrTrim(S: String; RmMultSpace: Boolean = True): String;
 Function StrReplace(S, OrgSubStr, NewSubStr: String; CaseSensitive: Boolean = True): String;
 Function StrSplit(S: String; Delim: String = ' '; ItprBackslash: Boolean = False): TStrArray;
 Function StrJoin(StrList: TStrArray; Linker: String): String;
@@ -77,20 +77,23 @@ Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 Implementation
 
 {
-    Given a string, process it so that the first and the last
-    characters are not space, and there is no multiple space
-    characters in a row.
+    Given string S, process it so that the first and the last
+    characters are not space.
+    If RmMultSpace parameter is true (by default it is), remove
+    multiple space characters in a row within the string too.
 
     Example:
         Input:  '     some    string   '
-        Output: 'some string'
+        Output (with RmMultSpace = True): 'some string'
+        Output (with RmMultSpace = False): 'some    string'
 }
-Function StrTrim(S: String): String;
+Function StrTrim(S: String; RmMultSpace: Boolean = True): String;
 Var iter: Integer;
     SpaceOn: Boolean;
 Begin
     While S[1] = ' ' do Delete(S, 1, 1);
     While S[Length(S)] = ' ' do Delete(S, Length(S), 1);
+    If not RmMultSpace then Exit(S);
     StrTrim := '';
     SpaceOn := False;
     For iter := 1 to Length(S)
@@ -191,8 +194,8 @@ End;
 }
 Function StrSplit(S: String; Delim: String = ' '; ItprBackslash: Boolean = False): TStrArray;
 Var
-    iter, backiter, BackslashCount: Integer;
-    NOfSkip: Byte;
+    iter, backiter, BackslashCount: LongWord;
+    NOfSkip: LongWord;
     Flag: String;
 Begin
     S := S + Delim;
@@ -304,7 +307,7 @@ End;
     Return true if they are the same, false otherwise.
 }
 Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
-Var iter: Integer;
+Var iter: LongWord;
 Begin
     If Length(ArrayA) <> Length(ArrayB) then Exit(False);
     For iter := 0 to Length(ArrayA) - 1
@@ -315,7 +318,7 @@ End;
 {
     Initialize object with some default values set.
 }
-Constructor TTimmy.Init(Percent: Integer; DefaultRep: String; DpCheck: Boolean);
+Constructor TTimmy.Init(Percent: Byte; DefaultRep: String; DpCheck: Boolean);
 Begin
     DupesCheck := DpCheck;
     NoUdstdRep := DefaultRep;
@@ -344,11 +347,11 @@ Begin Enabled := False; End;
     a duplicate is found, false otherwise.
 }
 Function TTimmy.IsDupe(CheckMsgKeywords: TStrArray): Boolean;
-Var iter: Integer;
+Var iter: LongWord;
 Begin
     If (not DupesCheck) or (NOfEntries = 0) then Exit(False);
 
-    For iter := Low(MsgKeywordsList) to High(MsgKeywordsList)
+    For iter := 0 to High(MsgKeywordsList)
       do If CompareStrArrays(MsgKeywordsList[iter], CheckMsgKeywords)
            then Exit(True);
 
@@ -365,11 +368,11 @@ End;
             202 if DupesCheck = True and found a match to MsgKeywords in MsgKeywordsList
             200 if the adding operation succeed
 }
-Function TTimmy.Add(MsgKeywords, Replies: TStrArray): Integer;
-Var iter: Integer;
+Function TTimmy.Add(MsgKeywords, Replies: TStrArray): Word;
+Var iter: LongWord;
 Begin
     If not Enabled then Exit(102);
-    For iter := Low(MsgKeywords) to High(MsgKeywords)
+    For iter := 0 to High(MsgKeywords)
       do MsgKeywords[iter] := LowerCase(MsgKeywords[iter]);
     If IsDupe(MsgKeywords) then Exit(202);
 
@@ -396,7 +399,7 @@ End;
         RStrDeli [String]: Delimiter for RepStr, default is a semicolon
     Return: TTimmy.Add(TStrArray, TStrArray)
 }
-Function TTimmy.Add(KeywordsStr, RepStr: String; RepStrDeli: String = ';'): Integer;
+Function TTimmy.Add(KeywordsStr, RepStr: String; RepStrDeli: String = ';'): Word;
 Begin
     Exit(Add(StrSplit(KeywordsStr), StrSplit(RepStr, RepStrDeli)));
 End;
@@ -410,7 +413,7 @@ End;
             202 if dupes check is enabled and a duplication is found
             203 if the operation is successful
 }
-Function TTimmy.Add(MsgKeywords: TStrArray; PAnswer: PStr): Integer;
+Function TTimmy.Add(MsgKeywords: TStrArray; PAnswer: PStr): Word;
 Begin
     If not Enabled then Exit(102);
     If IsDupe(MsgKeywords) then Exit(202);
@@ -432,7 +435,7 @@ End;
 
     Return: TTimmy.Add(TStrArray, PStr)
 }
-Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr): Integer;
+Function TTimmy.Add(KeywordsStr: String; PAnswer: PStr): Word;
 Begin
     Exit(Add(StrSplit(KeywordsStr), PAnswer));
 End;
@@ -447,27 +450,26 @@ End;
     Return: 102 if object is not enabled
             308 if the operation succeed
 }
-Function TTimmy.Remove(MsgKeywords: TStrArray): Integer;
-Var iter, counter: Integer;
+Function TTimmy.Remove(MsgKeywords: TStrArray): Word;
+Var iter, counter: LongWord;
     Indexes: Array of Integer;
 Begin
     If not Enabled then Exit(102);
 
-    For iter := Low(MsgKeywords) to High(MsgKeywords)
+    For iter := 0 to High(MsgKeywords)
       do MsgKeywords[iter] := LowerCase(MsgKeywords[iter]);
-    counter := -1;  // Matches counter in 0-based
+    counter := 0;
     SetLength(Indexes, Length(MsgKeywordsList));
 
     // Get offsets of keywords set that match the given MsgKeywords parameter
     // and later deal with them using TTimmy.Remove(AIndex: Integer)
-      For iter := Low(ReplyList) to Length(ReplyList) + High(PReplyList)
+      For iter := 0 to Length(ReplyList) + High(PReplyList)
         do If CompareStrArrays(MsgKeywordsList[iter], MsgKeywords)
              then Begin
-                    Inc(counter);
                     Indexes[counter] := iter;
+                    Inc(counter);
                   End;
 
-    Inc(counter);
     SetLength(Indexes, counter);
     While counter > 0
       do Begin
@@ -484,7 +486,7 @@ End;
 
     Return TTimmy.Remove(TStrArray)
 }
-Function TTimmy.Remove(KeywordsStr: String): Integer;
+Function TTimmy.Remove(KeywordsStr: String): Word;
 Begin
     Exit(Remove(StrSplit(KeywordsStr)));
 End;
@@ -497,11 +499,11 @@ End;
             305 if the given index is invalid (out of bound)
             300 if operation successful
 }
-Function TTimmy.Remove(AIndex: Integer): Integer;
-Var iter: Integer;
+Function TTimmy.Remove(AIndex: LongWord): Word;
+Var iter: LongWord;
 Begin
     If not Enabled then Exit(102);
-    If (AIndex < 0) or (AIndex >= NOfEntries) then Exit(305);
+    If AIndex >= NOfEntries then Exit(305);
 
     If (AIndex < Length(ReplyList))
       then Begin  // Remove target is in ReplyList
@@ -528,9 +530,10 @@ End;
     Answer the given message TMessage, using assets in the metadata.
 }
 Function TTimmy.Answer(TMessage: String): String;
-Var MetaIter, MKIter, MWIter, counter, MaxMatch: Integer;
+Var MetaIter, MKIter, MWIter, counter, MaxMatch: LongWord;
     FlagM: String;
     FlagWords: TStrArray;
+    FoundReply: Boolean;
 Begin
     If not Enabled then Exit;
 
@@ -544,7 +547,8 @@ Begin
                         End;
                       End;
 
-    MaxMatch := -1;
+    MaxMatch := 0;
+    FoundReply := False;
     FlagWords := StrSplit(FlagM);
     For MetaIter := Low(MsgKeywordsList) to High(MsgKeywordsList)
       do Begin
@@ -557,11 +561,14 @@ Begin
 
            // Compare to TPercent
            If counter / Length(MsgKeywordsList[MetaIter]) * 100 >= TPercent
-             then MaxMatch := MetaIter;
+             then Begin
+                    MaxMatch := MetaIter;
+                    FoundReply := True;
+                  End;
          End;
 
     // Not understood
-    If MaxMatch = -1 then Exit(NoUdstdRep);
+    If not FoundReply then Exit(NoUdstdRep);
 
     // Understood
     If MaxMatch < Length(ReplyList)

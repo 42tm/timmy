@@ -82,7 +82,7 @@ Type
                  Function IsDupe(CheckMsgKeywords: TStrArray): Boolean;
              End;
 
-Function StrTrim(S: String): String;
+Function StrTrim(S: String; RmMultSpace: Boolean = True): String;
 Function StrReplace(S, OrgSubStr, NewSubStr: String; CaseSensitive: Boolean = True): String;
 Function StrSplit(S: String; Delim: String = ' '; ItprBackslash: Boolean = False): TStrArray;
 Function StrJoin(StrList: TStrArray; Linker: String): String;
@@ -91,20 +91,23 @@ Function CompareStrArrays(ArrayA, ArrayB: TStrArray): Boolean;
 Implementation
 
 {
-    Given a string, process it so that the first and the last
-    characters are not space, and there is no multiple space
-    characters in a row.
+    Given string S, process it so that the first and the last
+    characters are not space.
+    If RmMultSpace parameter is true (by default it is), remove
+    multiple space characters in a row within the string too.
 
     Example:
         Input:  '     some    string   '
-        Output: 'some string'
+        Output (with RmMultSpace = True): 'some string'
+        Output (with RmMultSpace = False): 'some    string'
 }
-Function StrTrim(S: String): String;
-Var iter: LongWord;
+Function StrTrim(S: String; RmMultSpace: Boolean = True): String;
+Var iter: Integer;
     SpaceOn: Boolean;
 Begin
     While S[1] = ' ' do Delete(S, 1, 1);
     While S[Length(S)] = ' ' do Delete(S, Length(S), 1);
+    If not RmMultSpace then Exit(S);
     StrTrim := '';
     SpaceOn := False;
     For iter := 1 to Length(S)
