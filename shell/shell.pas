@@ -37,16 +37,20 @@ Label
     This prompt highlights the command with a blue color.
 }
 Function InputPrompt: String;
-Var Flag: String;      // Current user input string
-    InputKey: Char;    // Character to assign ReadKey to
-    CursorX,           // Current X position of the cursor
-    FlagIter:          // Iteration for the string Flag (local)
-              Integer;
+Var Flag,                 // String on display
+    FlagCurrent: String;  // Current user input string
+    InputKey: Char;       // Character to assign ReadKey to
+    CursorX,              // Current X position of the cursor
+    HistoryPos,           // Position in CmdHistory, used when user press up/down
+    FlagIter:             // Iteration for the string Flag (local)
+              LongWord;
 Begin
-    Flag := '';
+    Flag := ''; FlagCurrent := '';
     CursorX := 4;
+    HistoryPos := Length(CmdHistory);
     While True
       do Begin
+           If (HistoryPos = Length(CmdHistory)) then Flag := FlagCurrent;
            Delline; Insline;
            GoToXY(1, WhereY);
            TextColor(15);
@@ -67,8 +71,33 @@ Begin
            Case Ord(InputKey) of
              0: Begin
                   InputKey := Readkey;
-                  If (InputKey = #75) and (CursorX > 4) then Dec(CursorX); // Left
-                  If (InputKey = #77) and (CursorX < Length(Flag) + 4) then Inc(CursorX); // Right
+                  Case InputKey of
+                    #75: If CursorX > 4 then Dec(CursorX);
+                    #77: If CursorX < Length(Flag) + 4 then Inc(CursorX);
+                    #72: // Go back to previous command only if
+                         // the input history is not empty
+                           If Length(CmdHistory) > 0
+                             then Begin
+                                    If HistoryPos = Length(CmdHistory)
+                                      then FlagCurrent := Flag;  // Save the current input
+                                    If HistoryPos > 0
+                                      then Begin
+                                             Dec(HistoryPos);
+                                             Flag := CmdHistory[HistoryPos];
+                                             CursorX := 4 + Length(Flag);
+                                           End;
+                                  End;
+                    #80: If HistoryPos < Length(CmdHistory)
+                           then Begin
+                                  Inc(HistoryPos);
+                                  If HistoryPos = Length(CmdHistory)
+                                    then CursorX := 4 + Length(FlagCurrent)
+                                    else Begin
+                                           Flag := CmdHistory[HistoryPos];
+                                           CursorX := 4 + Length(Flag);
+                                         End;
+                                End;
+                  End;
                 End;
              13: Exit(Flag);  // Enter key
              32..126: Begin  // A text character
@@ -76,17 +105,18 @@ Begin
                                      + InputKey
                                      + Copy(Flag, CursorX - 3,
                                             Length(Flag) - CursorX + 4);
+                        If HistoryPos = Length(CmdHistory)
+                          then FlagCurrent := Flag;
                         Inc(CursorX);
                       End;
              8: Begin  // Backspace key
                   If CursorX = 4 then Continue;
                   Delete(Flag, CursorX - 4, 1);
+                  If HistoryPos = Length(CmdHistory) then FlagCurrent := Flag;
                   Dec(CursorX);
                 End;
            End;
          End;
-
-    InputPrompt := Flag;
 End;
 
 BEGIN
@@ -103,11 +133,12 @@ BEGIN
              Writeln('  -h, --help      : Print this help and exit');
              Writeln('      --version   : Print the Shell''s version and the version of Timmy it is using');
              Writeln('  -l, --load=FILE : Load Timmy Interactive Shell commands from FILE');
-             Writeln('      --backslash : Enable backslash interpretation when splitting user''s input')
+             Writeln('      --backslash : Enable backslash interpretation when splitting user''s input');
              Writeln('      --esc-space : Enable backslash interpretation in shell commands: The space character');
              Writeln('                    and the backslash character can then be escaped with a backslash.');
              Writeln('      --quiet     : Only write log messages with severity of TLogger.ERROR and up to console');
              Writeln('      --less-log  : Only record events with severity of TLogger.ERROR and up to log file');
+             Writeln('                    (not recommended)');
              Halt;
            End;
 
@@ -118,7 +149,7 @@ BEGIN
              Halt;
            End;
 
-    ShellLogger.Init(TLogger.INFO, TLogger.WARNING, 'history.dat');
+    ShellLogger.Init(TLogger.CORRECT, TLogger.CORRECT, 'history.dat');
 
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
@@ -164,12 +195,16 @@ BEGIN
              Close(CmdF);
            End;
 
+    SetLength(CmdHistory, 0);
     // Start interface
     StartIntf:
         While True
           do Begin
                TextColor(White);
                UserInput := InputPrompt;
+               If UserInput = '' then Continue;
+               SetLength(CmdHistory, Length(CmdHistory) + 1);
+               CmdHistory[High(CmdHistory)] := UserInput;
                ShellExec(UserInput);
              End;
 END.
