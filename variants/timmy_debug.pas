@@ -91,7 +91,8 @@ Function StrTrim(S: String; RmMultSpace: Boolean = True): String;
 Var iter: Integer;
     SpaceOn: Boolean;
 Begin
-    While S[1] = ' ' do Delete(S, 1, 1);
+    While Pos(' ', S) = 1 do Delete(S, 1, 1);
+    If S = '' then Exit(S);
     While S[Length(S)] = ' ' do Delete(S, Length(S), 1);
     If not RmMultSpace then Exit(S);
     StrTrim := '';
