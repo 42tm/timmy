@@ -153,9 +153,9 @@ Begin
                10..19: CslMsgColor := 15;
                20..29: CslMsgColor := 6;
                30..39: CslMsgColor := 14;
-               40..49: CslMsgColor := 4;
-               50..59: CslMsgColor := 20;
-               Else CslMsgColor := 12;
+               40..49: CslMsgColor := 12;
+               50..59: CslMsgColor := 28;
+               Else CslMsgColor := 4;
              End;
              TextColor(CslMsgColor);
              Writeln(LeadingStr + LogMsg);
