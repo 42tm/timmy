@@ -40,12 +40,13 @@ Type TLogger = Object
                  LogPath: String;
                  Enabled: Boolean;
                Public Const
-                 INFO = 0;
-                 LIGHTWARNING = 10;
-                 WARNING = 20;
-                 ERROR = 30;
-                 CRITICAL = 40;
-                 FATAL = 50;
+                 CORRECT = 0;
+                 INFO = 10;
+                 LIGHTWARNING = 20;
+                 WARNING = 30;
+                 ERROR = 40;
+                 CRITICAL = 50;
+                 FATAL = 60;
                End;
 
 Function CreateFile(FilePath: String): Boolean;
@@ -149,10 +150,11 @@ Begin
       then Begin
              Case Severity of
                0..9: CslMsgColor := 10;
-               10..19: CslMsgColor := 6;
-               20..29: CslMsgColor := 14;
-               30..39: CslMsgColor := 4;
-               40..49: CslMsgColor := 20
+               10..19: CslMsgColor := 15;
+               20..29: CslMsgColor := 6;
+               30..39: CslMsgColor := 14;
+               40..49: CslMsgColor := 4;
+               50..59: CslMsgColor := 20;
                Else CslMsgColor := 12;
              End;
              TextColor(CslMsgColor);
