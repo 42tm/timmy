@@ -28,13 +28,14 @@ Const
     SHELLVERSION = '1.0.0';
 Var
     CmdF: Text;
-    CmdRead, UserInput: String;
+    CmdRead: String;
 Label
     StartIntf;
 
 {
     User command prompt for Timmy Shell.
     This prompt highlights the command with a blue color.
+    Also let the user go to previous/next command.
 }
 Function InputPrompt: String;
 Var Flag,                 // String on display
@@ -87,16 +88,17 @@ Begin
                                              CursorX := 4 + Length(Flag);
                                            End;
                                   End;
-                    #80: If HistoryPos < Length(InputHistory)
-                           then Begin
-                                  Inc(HistoryPos);
-                                  If HistoryPos = Length(InputHistory)
-                                    then CursorX := 4 + Length(FlagCurrent)
-                                    else Begin
-                                           Flag := InputHistory[HistoryPos];
-                                           CursorX := 4 + Length(Flag);
-                                         End;
-                                End;
+                    #80: // Go to next command
+                           If HistoryPos < Length(InputHistory)
+                             then Begin
+                                    Inc(HistoryPos);
+                                    If HistoryPos = Length(InputHistory)
+                                      then CursorX := 4 + Length(FlagCurrent)
+                                      else Begin
+                                             Flag := InputHistory[HistoryPos];
+                                             CursorX := 4 + Length(Flag);
+                                           End;
+                                  End;
                   End;
                 End;
              13: Exit(Flag);  // Enter key
@@ -130,15 +132,17 @@ BEGIN
              Writeln('USAGE: shell [options]');
              Writeln;
              Writeln('OPTIONS:');
-             Writeln('  -h, --help      : Print this help and exit');
-             Writeln('      --version   : Print the Shell''s version and the version of Timmy it is using');
-             Writeln('  -l, --load=FILE : Load Timmy Interactive Shell commands from FILE');
-             Writeln('      --backslash : Enable backslash interpretation when splitting user''s input');
-             Writeln('      --esc-space : Enable backslash interpretation in shell commands: The space character');
-             Writeln('                    and the backslash character can then be escaped with a backslash.');
-             Writeln('      --quiet     : Only write log messages with severity of TLogger.ERROR and up to console');
-             Writeln('      --less-log  : Only record events with severity of TLogger.ERROR and up to log file');
-             Writeln('                    (not recommended)');
+             Writeln('  -h, --help       : Print this help and exit');
+             Writeln('      --version    : Print the Shell''s version and the version of Timmy it is using');
+             Writeln('  -l, --load=FILE  : Load Timmy Interactive Shell commands from FILE');
+             Writeln('      --backslash  : Enable backslash interpretation when splitting user''s input');
+             Writeln('      --esc-space  : Enable backslash interpretation in shell commands: The space character');
+             Writeln('                     and the backslash character can then be escaped with a backslash.');
+             Writeln('      --quiet      : Only write log messages with severity of TLogger.ERROR and up to console');
+             Writeln('      --less-log   : Only record events with severity of TLogger.ERROR and up to log file');
+             Writeln('                     (not recommended)');
+             Writeln('      --record-all : Record all inputs to temporary input history, even the ones');
+             Writeln('                     that are erroneous');
              Halt;
            End;
 
@@ -158,6 +162,7 @@ BEGIN
     ArgParser.AddArgument('--esc-space', saBool);
     ArgParser.AddArgument('--quiet', saBool);
     ArgParser.AddArgument('--less-log', saBool);
+    ArgParser.AddArgument('--record-all', saBool);
 
     Initiated := False;
 
@@ -201,7 +206,7 @@ BEGIN
         While True
           do Begin
                TextColor(White);
-               UserInput := InputPrompt;
+               UserInput := StrTrim(InputPrompt, False);
                If UserInput = '' then Continue;
                SetLength(InputHistory, Length(InputHistory) + 1);
                InputHistory[High(InputHistory)] := UserInput;
