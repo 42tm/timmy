@@ -37,12 +37,12 @@ Type
 Const
     TIMMYVERSION = '1.2.0';
 Var
-    TestSubj: TTimmy;   // Subject TTimmy instance
-    ShellLogger: TLogger;  // Logger for Timmy Interactive Shell
-    InputRec: TUserCmd;    // User input data record
-    InstanceName: String;  // Name of the test subject instance
-    Initiated: Boolean;    // State of initialization of the test subject
-    CmdHistory: TStrArray;
+    TestSubj: TTimmy;         // Subject TTimmy instance
+    ShellLogger: TLogger;     // Logger for Timmy Interactive Shell
+    InputRec: TUserCmd;       // User input data record
+    InstanceName: String;     // Name of the test subject instance
+    Initiated: Boolean;       // State of initialization of the test subject
+    InputHistory: TStrArray;  // Array to store user's entered inputs (in current session)
 
     // Arguments parsing mechanisms
       ArgParser: TArgumentParser;
@@ -81,7 +81,7 @@ Begin
       Else Begin
              ShellLogger.Log(TLogger.ERROR, 'Invalid command ''' + InputRec.Command + '''', True);
              // Remove command from command history because it's invalid
-               SetLength(CmdHistory, Length(CmdHistory) - 1);
+               SetLength(InputHistory, Length(InputHistory) - 1);
            End;
     End;
 End;

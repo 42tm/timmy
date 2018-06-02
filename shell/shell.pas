@@ -41,16 +41,16 @@ Var Flag,                 // String on display
     FlagCurrent: String;  // Current user input string
     InputKey: Char;       // Character to assign ReadKey to
     CursorX,              // Current X position of the cursor
-    HistoryPos,           // Position in CmdHistory, used when user press up/down
+    HistoryPos,           // Position in InputHistory, used when user press up/down
     FlagIter:             // Iteration for the string Flag (local)
               LongWord;
 Begin
     Flag := ''; FlagCurrent := '';
     CursorX := 4;
-    HistoryPos := Length(CmdHistory);
+    HistoryPos := Length(InputHistory);
     While True
       do Begin
-           If (HistoryPos = Length(CmdHistory)) then Flag := FlagCurrent;
+           If (HistoryPos = Length(InputHistory)) then Flag := FlagCurrent;
            Delline; Insline;
            GoToXY(1, WhereY);
            TextColor(15);
@@ -76,24 +76,24 @@ Begin
                     #77: If CursorX < Length(Flag) + 4 then Inc(CursorX);
                     #72: // Go back to previous command only if
                          // the input history is not empty
-                           If Length(CmdHistory) > 0
+                           If Length(InputHistory) > 0
                              then Begin
-                                    If HistoryPos = Length(CmdHistory)
+                                    If HistoryPos = Length(InputHistory)
                                       then FlagCurrent := Flag;  // Save the current input
                                     If HistoryPos > 0
                                       then Begin
                                              Dec(HistoryPos);
-                                             Flag := CmdHistory[HistoryPos];
+                                             Flag := InputHistory[HistoryPos];
                                              CursorX := 4 + Length(Flag);
                                            End;
                                   End;
-                    #80: If HistoryPos < Length(CmdHistory)
+                    #80: If HistoryPos < Length(InputHistory)
                            then Begin
                                   Inc(HistoryPos);
-                                  If HistoryPos = Length(CmdHistory)
+                                  If HistoryPos = Length(InputHistory)
                                     then CursorX := 4 + Length(FlagCurrent)
                                     else Begin
-                                           Flag := CmdHistory[HistoryPos];
+                                           Flag := InputHistory[HistoryPos];
                                            CursorX := 4 + Length(Flag);
                                          End;
                                 End;
@@ -105,14 +105,14 @@ Begin
                                      + InputKey
                                      + Copy(Flag, CursorX - 3,
                                             Length(Flag) - CursorX + 4);
-                        If HistoryPos = Length(CmdHistory)
+                        If HistoryPos = Length(InputHistory)
                           then FlagCurrent := Flag;
                         Inc(CursorX);
                       End;
              8: Begin  // Backspace key
                   If CursorX = 4 then Continue;
                   Delete(Flag, CursorX - 4, 1);
-                  If HistoryPos = Length(CmdHistory) then FlagCurrent := Flag;
+                  If HistoryPos = Length(InputHistory) then FlagCurrent := Flag;
                   Dec(CursorX);
                 End;
            End;
@@ -195,7 +195,7 @@ BEGIN
              Close(CmdF);
            End;
 
-    SetLength(CmdHistory, 0);
+    SetLength(InputHistory, 0);
     // Start interface
     StartIntf:
         While True
@@ -203,8 +203,8 @@ BEGIN
                TextColor(White);
                UserInput := InputPrompt;
                If UserInput = '' then Continue;
-               SetLength(CmdHistory, Length(CmdHistory) + 1);
-               CmdHistory[High(CmdHistory)] := UserInput;
+               SetLength(InputHistory, Length(InputHistory) + 1);
+               InputHistory[High(InputHistory)] := UserInput;
                ShellExec(UserInput);
              End;
 END.
