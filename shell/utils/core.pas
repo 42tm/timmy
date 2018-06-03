@@ -29,11 +29,6 @@ Uses
      ArgsParser,
      Timmy_Debug in '../../variants/timmy_debug.pas',
      Logger in '../logger/logger.pas';
-Type
-    TUserCmd = Record
-                 Command: String;
-                 Args: TStrArray;
-               End;
 Const
     TIMMYVERSION = '1.2.0';
 Var
@@ -44,7 +39,10 @@ Var
     UserInput: String;     // User's input to the shell
     TestSubj: TTimmy;      // Subject TTimmy instance
     ShellLogger: TLogger;  // Logger for Timmy Interactive Shell
-    InputRec: TUserCmd;    // User input data record
+    InputRec: Record       // User input data record
+                Command: String;
+                Args: TStrArray;
+              End;
     InstanceName: String;  // Name of the test subject instance
     Initiated: Boolean;    // State of initialization of the test subject
 
@@ -54,6 +52,7 @@ Var
 
 Function BoolToStr(AnyBool: Boolean): String;
 Procedure ShellExec(ShellInput: String);
+Procedure PrintHelp;
 Procedure Init;
 
 Implementation
@@ -80,6 +79,7 @@ Begin
     Case InputRec.Command of
       'exit', 'quit': Begin TextColor(7); Halt; End;
       'clear': ClrScr;
+      'help': PrintHelp;
       'init': If not Initiated then Init
                 else ShellLogger.Log(TLogger.INFO, 'Instance already initiated', True);
       'add': Begin
@@ -92,6 +92,40 @@ Begin
                  then SetLength(Env.InputHistory, Length(Env.InputHistory) - 1);
            End;
     End;
+End;
+
+Procedure PrintHelp;
+Var
+    ManFileName, ManLine: String;
+    ManF: Text;
+Begin
+    If Length(InputRec.Args) = 0
+      then ManFileName := 'shell'
+      else ManFileName := InputRec.Args[0];
+
+    If not FileExists('man/' + ManFileName + '.txt')
+      then Begin
+             ShellLogger.Log(TLogger.ERROR, 'Could not find the manual entry for that');
+             Exit;
+           End
+      else Begin
+             Assign(ManF, 'man/' + ManFileName + '.txt');
+             {$I-}
+             Reset(ManF);
+             {$I+}
+             If IOResult <> 0
+               then Begin
+                      ShellLogger.Log(TLogger.ERROR, 'Failed to read manual entry');
+                      Exit;
+                    End;
+             TextColor(7);
+             While not EOF(ManF)
+               do Begin
+                    Readln(ManF, ManLine);
+                    Writeln(ManLine);
+                  End;
+             Close(ManF);
+           End;
 End;
 
 {
