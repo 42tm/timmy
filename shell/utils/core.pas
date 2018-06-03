@@ -37,13 +37,16 @@ Type
 Const
     TIMMYVERSION = '1.2.0';
 Var
-    UserInput: String;        // User's input to the shell
-    TestSubj: TTimmy;         // Subject TTimmy instance
-    ShellLogger: TLogger;     // Logger for Timmy Interactive Shell
-    InputRec: TUserCmd;       // User input data record
-    InstanceName: String;     // Name of the test subject instance
-    Initiated: Boolean;       // State of initialization of the test subject
-    InputHistory: TStrArray;  // Array to store user's entered inputs (in current session)
+    Env: Record  // Shell environment variables
+           InputHistory: TStrArray;  // Array to store user's entered inputs (in current session)
+           ItprBackslash: Boolean;  // Option whether to interpret backslash in user's input
+         End;
+    UserInput: String;     // User's input to the shell
+    TestSubj: TTimmy;      // Subject TTimmy instance
+    ShellLogger: TLogger;  // Logger for Timmy Interactive Shell
+    InputRec: TUserCmd;    // User input data record
+    InstanceName: String;  // Name of the test subject instance
+    Initiated: Boolean;    // State of initialization of the test subject
 
     // Arguments parsing mechanisms
       ArgParser: TArgumentParser;
@@ -70,14 +73,12 @@ Procedure ShellExec(ShellInput: String);
 Var
     FlagSplit: TStrArray;  // Command split result
 Begin
-    If OutParse.HasArgument('esc-space')
-      then FlagSplit := StrSplit(ShellInput, ' ', True)
-      else FlagSplit := StrSplit(ShellInput, ' ', False);
+    FlagSplit := StrSplit(ShellInput, ' ', Env.ItprBackslash);
     InputRec.Command := FlagSplit[0];
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
     Writeln;
     Case InputRec.Command of
-      'exit', 'quit': Begin Writeln; Halt; End;
+      'exit', 'quit': Begin TextColor(7); Halt; End;
       'clear': ClrScr;
       'init': If not Initiated then Init
                 else ShellLogger.Log(TLogger.INFO, 'Instance already initiated', True);
@@ -88,7 +89,7 @@ Begin
              ShellLogger.Log(TLogger.ERROR, 'Invalid command ''' + InputRec.Command + '''', True);
              // Remove command from command history because it's invalid
                If not OutParse.HasArgument('record-all')
-                 then SetLength(InputHistory, Length(InputHistory) - 1);
+                 then SetLength(Env.InputHistory, Length(Env.InputHistory) - 1);
            End;
     End;
 End;

@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
-{$H+}
+{$mode ObjFPC} {$H+}
 Program TimmyInteractiveShell;
 Uses Crt, SysUtils,
      Timmy_Debug in '../variants/timmy_debug.pas',
@@ -42,16 +42,16 @@ Var Flag,                 // String on display
     FlagCurrent: String;  // Current user input string
     InputKey: Char;       // Character to assign ReadKey to
     CursorX,              // Current X position of the cursor
-    HistoryPos,           // Position in InputHistory, used when user press up/down
+    HistoryPos,           // Position in Env.InputHistory, used when user press up/down
     FlagIter:             // Iteration for the string Flag (local)
               LongWord;
 Begin
     Flag := ''; FlagCurrent := '';
     CursorX := 4;
-    HistoryPos := Length(InputHistory);
+    HistoryPos := Length(Env.InputHistory);
     While True
       do Begin
-           If (HistoryPos = Length(InputHistory)) then Flag := FlagCurrent;
+           If (HistoryPos = Length(Env.InputHistory)) then Flag := FlagCurrent;
            Delline; Insline;
            GoToXY(1, WhereY);
            TextColor(15);
@@ -77,25 +77,25 @@ Begin
                     #77: If CursorX < Length(Flag) + 4 then Inc(CursorX);
                     #72: // Go back to previous command only if
                          // the input history is not empty
-                           If Length(InputHistory) > 0
+                           If Length(Env.InputHistory) > 0
                              then Begin
-                                    If HistoryPos = Length(InputHistory)
+                                    If HistoryPos = Length(Env.InputHistory)
                                       then FlagCurrent := Flag;  // Save the current input
                                     If HistoryPos > 0
                                       then Begin
                                              Dec(HistoryPos);
-                                             Flag := InputHistory[HistoryPos];
+                                             Flag := Env.InputHistory[HistoryPos];
                                              CursorX := 4 + Length(Flag);
                                            End;
                                   End;
                     #80: // Go to next command
-                           If HistoryPos < Length(InputHistory)
+                           If HistoryPos < Length(Env.InputHistory)
                              then Begin
                                     Inc(HistoryPos);
-                                    If HistoryPos = Length(InputHistory)
+                                    If HistoryPos = Length(Env.InputHistory)
                                       then CursorX := 4 + Length(FlagCurrent)
                                       else Begin
-                                             Flag := InputHistory[HistoryPos];
+                                             Flag := Env.InputHistory[HistoryPos];
                                              CursorX := 4 + Length(Flag);
                                            End;
                                   End;
@@ -107,14 +107,14 @@ Begin
                                      + InputKey
                                      + Copy(Flag, CursorX - 3,
                                             Length(Flag) - CursorX + 4);
-                        If HistoryPos = Length(InputHistory)
+                        If HistoryPos = Length(Env.InputHistory)
                           then FlagCurrent := Flag;
                         Inc(CursorX);
                       End;
              8: Begin  // Backspace key
                   If CursorX = 4 then Continue;
                   Delete(Flag, CursorX - 4, 1);
-                  If HistoryPos = Length(InputHistory) then FlagCurrent := Flag;
+                  If HistoryPos = Length(Env.InputHistory) then FlagCurrent := Flag;
                   Dec(CursorX);
                 End;
            End;
@@ -135,9 +135,7 @@ BEGIN
              Writeln('  -h, --help       : Print this help and exit');
              Writeln('      --version    : Print the Shell''s version and the version of Timmy it is using');
              Writeln('  -l, --load=FILE  : Load Timmy Interactive Shell commands from FILE');
-             Writeln('      --backslash  : Enable backslash interpretation when splitting user''s input');
-             Writeln('      --esc-space  : Enable backslash interpretation in shell commands: The space character');
-             Writeln('                     and the backslash character can then be escaped with a backslash.');
+             Writeln('      --no-esc     : Disable backslash interpretation in Shell inputs');
              Writeln('      --quiet      : Only write log messages with severity of TLogger.ERROR and up to console');
              Writeln('      --less-log   : Only record events with severity of TLogger.ERROR and up to log file');
              Writeln('                     (not recommended)');
@@ -158,28 +156,43 @@ BEGIN
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
     ArgParser.AddArgument('--load', 'load', saStore);
-    ArgParser.AddArgument('--backslash', saBool);
-    ArgParser.AddArgument('--esc-space', saBool);
+    ArgParser.AddArgument('--no-esc', saBool);
     ArgParser.AddArgument('--quiet', saBool);
     ArgParser.AddArgument('--less-log', saBool);
     ArgParser.AddArgument('--record-all', saBool);
-
-    Initiated := False;
 
     CursorBig;
     TextColor(White);
     Writeln('Timmy Interactive Shell ' + SHELLVERSION);
     Writeln('Using Timmy version ' + TIMMYVERSION);
     Writeln('Type ''help'' for help.');
+
+    Try
+        OutParse := ArgParser.ParseArgs;
+    Except
+      On EInvalidArgument
+        Do Begin
+             ShellLogger.Log(TLogger.FATAL, 'Found invalid option', True);
+             TextColor(7); Halt;
+           End;
+      On Exception
+        Do Begin
+             ShellLogger.Log(TLogger.FATAL, 'Argument parser: Something went wrong', True);
+             TextColor(7); Halt;
+           End;
+    End;
+
+    Initiated := False;
     InstanceName := 'TestSubj';
-    ShellLogger.Log(TLogger.INFO, 'Declared an instance with the name ''TestSubj''');
 
-    OutParse := ArgParser.ParseArgs;
-
+    ShellLogger.Log(TLogger.INFO, 'Declared an instance with the name ''' + InstanceName + '''.');
     If OutParse.HasArgument('quiet')
       then ShellLogger.CslOutMin := TLogger.ERROR;
     If OutParse.HasArgument('less-log')
       then ShellLogger.FileOutMin := TLogger.ERROR;
+
+    Env.ItprBackslash := Not OutParse.HasArgument('no-esc');
+
     If (OutParse.HasArgument('load')) and FileExists(OutParse.GetValue('load'))
       then Begin
              Assign(CmdF, ParamStr(2));
@@ -200,7 +213,7 @@ BEGIN
              Close(CmdF);
            End;
 
-    SetLength(InputHistory, 0);
+    SetLength(Env.InputHistory, 0);
     // Start interface
     StartIntf:
         While True
@@ -208,8 +221,8 @@ BEGIN
                TextColor(White);
                UserInput := StrTrim(InputPrompt, False);
                If UserInput = '' then Continue;
-               SetLength(InputHistory, Length(InputHistory) + 1);
-               InputHistory[High(InputHistory)] := UserInput;
+               SetLength(Env.InputHistory, Length(Env.InputHistory) + 1);
+               Env.InputHistory[High(Env.InputHistory)] := UserInput;
                ShellExec(UserInput);
              End;
 END.
