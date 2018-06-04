@@ -144,6 +144,7 @@ Var
     Flag: String;
     StartPoints: Array of LongWord;
 Begin
+    If S = '' then Exit(S);
     If not CaseSensitive then OrgSubStr := LowerCase(OrgSubStr);
     SetLength(StartPoints, 0);
     SkipLeft := 0;
