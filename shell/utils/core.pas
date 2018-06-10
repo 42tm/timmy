@@ -94,6 +94,14 @@ Begin
     End;
 End;
 
+{
+    The help command.
+    If there's no argument, it prints the shell's overall guides.
+    If an argument is specified, and it's the name of a command,
+    then print the manual page of that command.
+
+    Manual pages are found in /shell/man.
+}
 Procedure PrintHelp;
 Var
     ManFileName, ManLine: String;
