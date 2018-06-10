@@ -196,99 +196,87 @@ End;
 }
 Function StrSplit(S: String; Delim: String = ' '; ItprBackslash: Boolean = False): TStrArray;
 Var
-    iter, backiter, BackslashCount: LongWord;
-    NOfSkip: LongWord;
+    jiter, backiter: LongWord;
     Flag: String;
 Begin
-    S := S + Delim;
-
     SetLength(StrSplit, 0);
-    NOfSkip := 0;
     Flag := '';
 
-    For iter := 1 to Length(S)
+    // Jump to the first delimiter substring of string S
+    // The characters preceding the it will be processed
+      jiter := Pos(Delim, S);
+    While jiter <> 0
       do Begin
-           // Skip current iteration if NOfSkip is not zero
-             If NOfSkip > 0 then Begin
-                                   Dec(NOfSkip);
-                                   Continue;
-                                 End;
-           // If next characters make a delimiter, prepare to skip
-           // Whether to add the delimiter to Flag or not is depended
-           // on the backslash interpretion.
-             If Copy(S, iter, Length(Delim)) = Delim
-               then Begin
-                      NOfSkip := Length(Delim) - 1;
-                      If ItprBackslash
+           backiter := jiter - 1;
+           // Add all the characters preceding the delimiter to Flag
+             Flag := Flag + Copy(S, 1, backiter);
+
+           If ItprBackslash
+             then Begin
+                    // backiter helps count the number of backslashes
+                    // that precede the delimiter
+                      While (backiter > 0) and (S[backiter] = '\')
+                        do Dec(backiter);
+
+                    // jiter - 1 - backiter is the number of backslashes that
+                    // precede the delimiter. A backslash escapes a backslash,
+                    // hence, 2 backslashes make only 1 backslash. If the number
+                    // of backslashes is even, that means there's actually no
+                    // backslash that escapes the delimiter, only backslashes
+                    // that escape other backslashes, thus add them (the
+                    // backslashes) to Flag. If the number of backslashes is odd
+                    // , however, that means there's one backslash that escapes
+                    // the delimiter. Thus, add the delimiter to Flag.
+                      If (jiter - 1 - backiter) mod 2 = 1
                         then Begin
-                               // Count number of backslashes that precede
-                               // the delimiter substring
-                                 backiter := iter - 1;
-                                 BackslashCount := 0;
-                                 While (S[backiter] = '\') and (backiter > 0)
-                                   do Begin
-                                        Inc(BackslashCount);
-                                        Dec(backiter);
-                                      End;
-
-                               // Add up the escaped backslash to Flag
-                                 While BackslashCount > 1
-                                   do Begin
-                                        Flag := Flag + '\';
-                                        Dec(BackslashCount, 2);
-                                      End;
-
-                               // If BackslashCount is 1 by now, that means
-                               // the delimiter is escaped. Hence, add the
-                               // delimiter string to Flag.
-                                 If BackslashCount = 1
+                               // There's a backslash character that escapes the
+                               // delimiter, and it is not supposed to get added
+                               // to Flag. However, we did add it in a previous
+                               // Copy() statement. So we need to remove it.
+                                 Delete(Flag, Length(Flag), 1);
+                               // Delimiter is escaped by backslash.
+                               // Add the delimiter to Flag, then.
+                                 Flag := Flag + Delim;
+                               // This is special case
+                                 If jiter = Length(S)
                                    then Begin
-                                          Flag := Flag + Delim;
-                                          // Continue loop. The delimiter
-                                          // does not have effect in this case.
-                                            Continue;
+                                          SetLength(StrSplit, Length(StrSplit) + 1);
+                                          StrSplit[High(StrSplit)] := Flag;
+                                          Exit;
                                         End;
-                           End;
-
-                      // If Flag is not nothing, add it to return array
-                        If Flag <> ''
-                          then Begin
-                                 Flag := StrReplace(Flag, '\\', '\');
-                                 SetLength(StrSplit, Length(StrSplit) + 1);
-                                 StrSplit[Length(StrSplit) - 1] := Flag;
-                                 Flag := '';
-                               End;
-                  End
-             else Begin
-                    // In the below loop, BackslashCount doesn't really count
-                    // the number of backslashes in the iteration, it actually
-                    // counts the number of characters that are NOT backslash.
-                    // We are just utilizing it so we don't have to create
-                    // a new variable.
-                      BackslashCount := 0;
-                    // backiter variable also loses its meaning in this context
-                      backiter := iter;
-                    // If current character (S[backiter]) is a backslash,
-                    // check if it is part of a series of backslashes that come
-                    // right before a delimiter. If BackslashCount is 0, that
-                    // means it is part of the series, and so we leave that for
-                    // the 'then' clause of the parent if statement.
-                      If S[backiter] = '\'
-                        then Begin
-                               While (Copy(S, backiter, Length(Delim)) <> Delim)
-                                 and (backiter < Length(S) + 1)
-                                 do Begin
-                                      If S[backiter] <> '\'
-                                        then Inc(BackslashCount);
-                                      Inc(backiter);
-                                    End;
-                             End
-                        else BackslashCount := 1;
-
-                    If BackslashCount > 0
-                      then Flag := Flag + S[iter];
+                               Delete(S, 1, jiter + Length(Delim) - 1);
+                               jiter := Pos(Delim, S);
+                               Continue;
+                             End;
                   End;
+
+           // Delete the first substring of the original string S, so that the
+           // delimiter that is the closest to the head of the string (S[1])
+           // is gone. jiter later gets assigned to the index of the
+           // delimiter (closest to head) in the partly-deleted S string.
+           // The process begins again.
+             Delete(S, 1, jiter + Length(Delim) - 1);
+           // A backslash escapes a backslash if backslash interpretation is on
+             If ItprBackslash then Flag := StrReplace(Flag, '\\', '\');
+           // If Flag is not an empty string, add it to output TStrArray
+             If Flag <> ''
+               then Begin
+                      SetLength(StrSplit, Length(StrSplit) + 1);
+                      StrSplit[High(StrSplit)] := Flag;
+                    End;
+           Flag := '';
+           // The string was previously partly-deleted. Now jiter gets assigned
+           // to the index of the new delimiter in the new string S.
+             jiter := Pos(Delim, S);
          End;
+
+    // Add the rest of the string to the output TStrArray
+      If S <> ''
+        then Begin
+               If ItprBackslash then S := StrReplace(S, '\\', '\');
+               SetLength(StrSplit, Length(StrSplit) + 1);
+               StrSplit[High(StrSplit)] := S;
+             End;
 End;
 
 {
