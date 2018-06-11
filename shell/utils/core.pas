@@ -26,16 +26,18 @@ Interface
 
 Uses
      Crt, SysUtils, StrUtils,
-     ArgsParser,
-     Timmy_Debug in '../../variants/timmy_debug.pas',
-     Logger in '../logger/logger.pas';
+     ArgsParser, Logger in '../logger/logger.pas',
+     Timmy_Debug in '../../variants/timmy_debug.pas';
 Const
     TIMMYVERSION = '1.2.0';
 Var
     Env: Record  // Shell environment variables
-           InputHistory: TStrArray;  // Array to store user's entered inputs (in current session)
-           ItprBackslash: Boolean;  // Option whether to interpret backslash in user's input
+           // Array to store user's entered inputs (in current session)
+             InputHistory: TStrArray;
+           // Option whether to interpret backslash in user's input
+             ItprBackslash: Boolean;
          End;
+
     UserInput: String;     // User's input to the shell
     TestSubj: TTimmy;      // Subject TTimmy instance
     ShellLogger: TLogger;  // Logger for Timmy Interactive Shell
@@ -46,7 +48,12 @@ Var
     InstanceName: String;  // Name of the test subject instance
     Initiated: Boolean;    // State of initialization of the test subject
 
-    // Arguments parsing mechanisms
+    Recorder: Record  // Input recording mechanism
+                Recording: Boolean;
+                RecdInps: TStrArray;
+              End;
+
+    // Arguments parsing variables
       ArgParser: TArgumentParser;
       OutParse: TParseResult;
 
@@ -54,6 +61,7 @@ Function BoolToStr(AnyBool: Boolean): String;
 Procedure ShellExec(ShellInput: String);
 Procedure PrintHelp;
 Procedure Init;
+Procedure ProcessRecord;
 
 Implementation
 
@@ -80,16 +88,21 @@ Begin
       'exit', 'quit': Begin TextColor(7); Halt; End;
       'clear': ClrScr;
       'help': PrintHelp;
+      'record': ProcessRecord;
       'init': If not Initiated then Init
                 else ShellLogger.Log(TLogger.INFO, 'Instance already initiated', True);
       'add': Begin
 
              End;
       Else Begin
-             ShellLogger.Log(TLogger.ERROR, 'Invalid command ''' + InputRec.Command + '''', True);
-             // Remove command from command history because it's invalid
+             ShellLogger.Log(TLogger.ERROR, 'Invalid command '''
+                           + InputRec.Command + '''', True);
+             // Remove input from input history and recorded inputs
+             // because it's invalid
                If not OutParse.HasArgument('record-all')
                  then SetLength(Env.InputHistory, Length(Env.InputHistory) - 1);
+               If Recorder.Recording
+                 then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
            End;
     End;
 End;
@@ -134,6 +147,108 @@ Begin
                   End;
              Close(ManF);
            End;
+End;
+
+Procedure ProcessRecord;
+Const
+    ROutFilename = 'inputs.rec';
+Var
+    RecordOutF: Text;
+    Flag: String;
+Begin
+    If Length(InputRec.Args) > 1
+      then Begin
+             ShellLogger.Log(TLogger.ERROR,
+                             'record: Wrong number of arguments', True);
+             SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+             Exit;
+           End;
+
+    If Length(InputRec.Args) = 0
+      then Begin
+             Recorder.Recording := Not Recorder.Recording;
+             If Recorder.Recording
+               then Begin
+                      Writeln('Input recording started, type ''record'' again ',
+                              'or ''record --end'' to stop recording.');
+                      Exit;
+                    End
+           End
+      else Begin
+             Case InputRec.Args[0] of
+               'status':
+                  Begin
+                    If Recorder.Recording
+                      then Writeln('Recorded ', Length(Recorder.RecdInps),
+                                   ' and still recording...')
+                      else Writeln('Not recording.');
+                    Exit;
+                  End;
+                'start', 'begin':
+                  Begin
+                    If Recorder.Recording
+                      then ShellLogger.Log(TLogger.WARNING,
+                                           'Already recording', True)
+                      else Begin
+                             Recorder.Recording := True;
+                             Writeln('Input recording started, type ''record''',
+                                     ' again or ''record --end'' to stop ',
+                                     'recording.');
+                           End;
+                    Exit;
+                  End;
+               'stop', 'quit', 'end': Recorder.Recording := False;
+               Else Begin
+                      ShellLogger.Log(TLogger.ERROR, 'record: Invalid argument'
+                                    + ' ''' + InputRec.Args[0] + '''.', True);
+                      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+                      Exit;
+                    End;
+             End;
+           End;
+
+    // Stop recording
+    // By now, if the user wants to start recording, the procedure
+    // should have quitted.
+    If Length(Recorder.RecdInps) = 0
+      then Begin
+             ShellLogger.Log(TLogger.LIGHTWARNING, 'No recorded input.', True);
+             Exit;
+           End;
+
+    Assign(RecordOutF, ROutFilename);
+    {$I-}
+
+    If FileExists(ROutFilename)
+      then Begin
+             ShellLogger.Log(TLogger.LIGHTWARNING,
+                             ROutFilename + ' exists.');
+             Writeln('Do you want to append or overwrite it? [a|o] ');
+             Readln(Flag);
+             Case Flag of
+               'a', 'append': Append(RecordOutF);
+               'o', 'overwrite': Rewrite(RecordOutF);
+               else Begin
+                      {$I+}
+                      Close(RecordOutF);
+                      Exit;
+                    End;
+             End;
+           End
+      else Rewrite(RecordOutF);
+
+    {$I+}
+    If IOResult <> 0
+      then Begin
+             ShellLogger.Log(TLogger.ERROR, 'record: Failed to write recorded '
+                           + 'inputs to ' + ROutFilename);
+             Close(RecordOutF);
+             Exit;
+           End;
+
+    For Flag in Recorder.RecdInps do Writeln(RecordOutF, Flag);
+
+    Close(RecordOutF);
 End;
 
 {
@@ -202,6 +317,7 @@ Begin
            If (Length(InputRec.Args) < 3)
              then Begin
                     ShellLogger.Log(TLogger.ERROR, 'init: Wrong number of arguments to init', True);
+                    SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
                     Exit;
                   End;
            // Get value for TTimmy.TPercent
@@ -211,6 +327,7 @@ Begin
                       ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
                                                    + InstanceName
                                                    + '.TPercent', True);
+                      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
                       Exit;
                     End;
            // Modify UserInput to get the user's input for default reply
@@ -232,6 +349,7 @@ Begin
                       ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
                                                    + InstanceName
                                                    + '.DupesCheck', True);
+                      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
                       Exit;
                     End;
            End;

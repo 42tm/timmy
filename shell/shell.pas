@@ -19,11 +19,13 @@
 }
 {$mode ObjFPC} {$H+}
 Program TimmyInteractiveShell;
-Uses Crt, SysUtils,
-     Timmy_Debug in '../variants/timmy_debug.pas',
+
+Uses
+     Crt, SysUtils,
      Core in 'utils/core.pas',
      ArgsParser in 'utils/argsparser.pas',
-     Logger in 'logger/logger.pas';
+     Logger in 'logger/logger.pas',
+     Timmy_Debug in '../variants/timmy_debug.pas';
 Const
     SHELLVERSION = '1.0.0';
 Var
@@ -213,6 +215,7 @@ BEGIN
              Close(CmdF);
            End;
 
+    Recorder.Recording := False;
     SetLength(Env.InputHistory, 0);
     // Start interface
     StartIntf:
@@ -221,8 +224,16 @@ BEGIN
                TextColor(White);
                UserInput := StrTrim(InputPrompt, False);
                If UserInput = '' then Continue;
-               SetLength(Env.InputHistory, Length(Env.InputHistory) + 1);
-               Env.InputHistory[High(Env.InputHistory)] := UserInput;
-               ShellExec(UserInput);
+               // Add command to input history
+                 SetLength(Env.InputHistory, Length(Env.InputHistory) + 1);
+                 Env.InputHistory[High(Env.InputHistory)] := UserInput;
+               If Recorder.Recording
+                 then Begin  // Record input
+                        SetLength(Recorder.RecdInps,
+                                  Length(Recorder.RecdInps) + 1);
+                        Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
+                      End;
+               // Pass input over to Core to process
+                 ShellExec(UserInput);
              End;
 END.
