@@ -6,6 +6,8 @@
 !examples/
 !shell/
 !shell/logger/
+!shell/man/
+!shell/man/*.txt
 !shell/utils
 !variants/
 !.gitignore
