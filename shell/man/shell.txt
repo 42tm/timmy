@@ -1,0 +1,34 @@
+SHELL INPUT PROMPT
+==================
+
+  When you enter Timmy Interactive Shell, you are greeted with the input prompt.
+  It's a field where you type in your Shell input. It starts with two greater
+  than sign ('>'), following by a space. Once you've typed something, you can
+  use the left arrow key to move the cursor to the left. Pressing the right
+  arrow key has the opposite effect; it moves the cursor to the right. Hit Enter
+  to submit your input. Once you've submitted at least one input, you can press
+  the up arrow key to go to the previous input. The down arrow key moves you to
+  the next input in the input history.
+
+COMMANDS AND ARGUMENTS
+======================
+
+  In Timmy Interactive Shell, an input can have two parts: the command and the
+  argument(s). The command is the first word of the input, and is highlighted
+  with a blue color in the input prompt. The arguments are all the things that
+  follow the command (plus a space character that succeed the command). The
+  arguments act as options to the command; They tell what the command must use
+  to do the intended operation, or how the command should behave.
+
+  Example:
+    record -f inputcast.txt
+
+  In the above input, "record" is the command, "-f" and "inputcast.txt" are the
+  arguments. A command may not need an argument (such as the "exit" command).
+  Below are all the available commands in Timmy Interactive Shell:
+
+    exit, quit, clear, help, record, stat, set, init, add, remove, enable,
+    disable, answer, strtrim, strreplace, strsplit, strjoin, comparestrarrays
+
+  To get help with a command, type "help COMMAND", replacing COMMAND with the
+  name of the command that you want to get help with.
