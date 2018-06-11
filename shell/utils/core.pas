@@ -192,7 +192,7 @@ Begin
                       else Begin
                              Recorder.Recording := True;
                              Writeln('Input recording started, type ''record''',
-                                     ' again or ''record --end'' to stop ',
+                                     ' again or ''record end'' to stop ',
                                      'recording.');
                            End;
                     Exit;
@@ -210,6 +210,10 @@ Begin
     // Stop recording
     // By now, if the user wants to start recording, the procedure
     // should have quitted.
+
+    // Exclude the input that quits the recorder
+      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+
     If Length(Recorder.RecdInps) = 0
       then Begin
              ShellLogger.Log(TLogger.LIGHTWARNING, 'No recorded input.', True);
@@ -249,6 +253,8 @@ Begin
     For Flag in Recorder.RecdInps do Writeln(RecordOutF, Flag);
 
     Close(RecordOutF);
+
+    Writeln('record: Input record has been written to ', ROutFilename, '.');
 End;
 
 {
