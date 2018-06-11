@@ -16,7 +16,7 @@ COMMANDS AND ARGUMENTS
   In Timmy Interactive Shell, an input can have two parts: the command and the
   argument(s). The command is the first word of the input, and is highlighted
   with a blue color in the input prompt. The arguments are all the things that
-  follow the command (plus a space character that succeed the command). The
+  follow the command and a space character that succeed the command. The
   arguments act as options to the command; They tell what the command must use
   to do the intended operation, or how the command should behave.
 
@@ -25,7 +25,7 @@ COMMANDS AND ARGUMENTS
 
   In the above input, "record" is the command, "-f" and "inputcast.txt" are the
   arguments. A command may not need an argument (such as the "exit" command).
-  Below are all the available commands in Timmy Interactive Shell:
+  These are all the available commands in Timmy Interactive Shell:
 
     exit, quit, clear, help, record, stat, set, init, add, remove, enable,
     disable, answer, strtrim, strreplace, strsplit, strjoin, comparestrarrays
