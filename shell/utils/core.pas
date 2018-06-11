@@ -160,7 +160,8 @@ Begin
       then Begin
              ShellLogger.Log(TLogger.ERROR,
                              'record: Wrong number of arguments', True);
-             SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+             If Recorder.Recording
+               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
              Exit;
            End;
 
@@ -201,7 +202,9 @@ Begin
                Else Begin
                       ShellLogger.Log(TLogger.ERROR, 'record: Invalid argument'
                                     + ' ''' + InputRec.Args[0] + '''.', True);
-                      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+                      If Recorder.Recording
+                        then SetLength(Recorder.RecdInps,
+                                       Length(Recorder.RecdInps) - 1);
                       Exit;
                     End;
              End;
@@ -322,8 +325,12 @@ Begin
     else Begin
            If (Length(InputRec.Args) < 3)
              then Begin
-                    ShellLogger.Log(TLogger.ERROR, 'init: Wrong number of arguments to init', True);
-                    SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+                    ShellLogger.Log(TLogger.ERROR,
+                                    'init: Wrong number of arguments to init',
+                                    True);
+                    If Recorder.Recording
+                      then SetLength(Recorder.RecdInps,
+                                     Length(Recorder.RecdInps) - 1);
                     Exit;
                   End;
            // Get value for TTimmy.TPercent
@@ -333,7 +340,9 @@ Begin
                       ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
                                                    + InstanceName
                                                    + '.TPercent', True);
-                      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+                      If Recorder.Recording
+                        then SetLength(Recorder.RecdInps,
+                                       Length(Recorder.RecdInps) - 1);
                       Exit;
                     End;
            // Modify UserInput to get the user's input for default reply
@@ -355,7 +364,9 @@ Begin
                       ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
                                                    + InstanceName
                                                    + '.DupesCheck', True);
-                      SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+                      If Recorder.Recording
+                        then SetLength(Recorder.RecdInps,
+                                       Length(Recorder.RecdInps) - 1);
                       Exit;
                     End;
            End;
