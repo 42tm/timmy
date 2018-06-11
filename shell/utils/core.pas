@@ -188,8 +188,12 @@ Begin
                 'start', 'begin':
                   Begin
                     If Recorder.Recording
-                      then ShellLogger.Log(TLogger.WARNING,
-                                           'Already recording', True)
+                      then Begin
+                             ShellLogger.Log(TLogger.WARNING,
+                                             'Already recording', True);
+                             SetLength(Recorder.RecdInps,
+                                       Length(Recorder.RecdInps) - 1);
+                           End
                       else Begin
                              Recorder.Recording := True;
                              Writeln('Input recording started, type ''record''',
