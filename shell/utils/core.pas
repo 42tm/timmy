@@ -234,16 +234,13 @@ Begin
       then Begin
              ShellLogger.Log(TLogger.LIGHTWARNING,
                              ROutFilename + ' exists.');
-             Writeln('Do you want to append or overwrite it? [a|o] ');
+             TextColor(White);
+             Write('Do you want to append or overwrite it? [a|o] ');
              Readln(Flag);
              Case Flag of
                'a', 'append': Append(RecordOutF);
                'o', 'overwrite': Rewrite(RecordOutF);
-               else Begin
-                      {$I+}
-                      Close(RecordOutF);
-                      Exit;
-                    End;
+               else {$I+} Exit;
              End;
            End
       else Rewrite(RecordOutF);

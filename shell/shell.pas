@@ -174,12 +174,12 @@ BEGIN
     Except
       On EInvalidArgument
         Do Begin
-             ShellLogger.Log(TLogger.FATAL, 'Found invalid option', True);
+             ShellLogger.Log(TLogger.FATAL, 'Found invalid option.', True);
              TextColor(7); Halt;
            End;
-      On Exception
+      On EParameterMissing
         Do Begin
-             ShellLogger.Log(TLogger.FATAL, 'Argument parser: Something went wrong', True);
+             ShellLogger.Log(TLogger.FATAL, 'Missing argument.', True);
              TextColor(7); Halt;
            End;
     End;
@@ -187,17 +187,26 @@ BEGIN
     Initiated := False;
     InstanceName := 'TestSubj';
 
-    ShellLogger.Log(TLogger.INFO, 'Declared an instance with the name ''' + InstanceName + '''.');
+    ShellLogger.Log(TLogger.INFO, 'Declared an instance with the name '''
+                  + InstanceName + '''.');
     If OutParse.HasArgument('quiet')
       then ShellLogger.CslOutMin := TLogger.ERROR;
     If OutParse.HasArgument('less-log')
       then ShellLogger.FileOutMin := TLogger.ERROR;
 
     Env.ItprBackslash := Not OutParse.HasArgument('no-esc');
+    Recorder.Recording := False;
 
-    If (OutParse.HasArgument('load')) and FileExists(OutParse.GetValue('load'))
+    If OutParse.HasArgument('load')
       then Begin
-             Assign(CmdF, ParamStr(2));
+             If not FileExists(OutParse.GetValue('load'))
+               then Begin
+                      ShellLogger.Log(TLogger.ERROR, 'File '''
+                                    + OutParse.GetValue('load') + ''' does not'
+                                    + ' exist, ignoring...', True);
+                      GoTo StartIntf;
+                    End;
+             Assign(CmdF, OutParse.GetValue('load'));
              {$I-}
              Reset(CmdF);
              {$I+}
@@ -215,10 +224,9 @@ BEGIN
              Close(CmdF);
            End;
 
-    Recorder.Recording := False;
-    SetLength(Env.InputHistory, 0);
     // Start interface
     StartIntf:
+        SetLength(Env.InputHistory, 0);
         While True
           do Begin
                TextColor(White);
