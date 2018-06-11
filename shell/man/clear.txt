@@ -1,0 +1,10 @@
+clear
+=====
+
+Description
+-----------
+  Clear the console screen, using ClrScr() method in the Crt unit.
+
+Arguments
+---------
+  None.
