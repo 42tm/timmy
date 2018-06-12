@@ -7,7 +7,7 @@ Description
   by the user to the Shell is recorded, as long as the input is valid.
   When the user terminates the record session, all recorded inputs are then
   written to a text file with the name "inputs.rec", placed in the shell/
-  directory.
+  directory. At any time, only ONE record session is running at most.
 
 Arguments
 ---------
@@ -20,11 +20,13 @@ Arguments
     1. status
         Print out the status of the recorder. The status includes whether if
         there's an active recording process running or not, and if there's
-        a recording session running, print out how many inputs have been
-        recorded.
+        a record session running, print out how many inputs have been recorded.
     2. start, begin
-        Start a recording session. Print a warning if a recording session is
-        running.
+        Start a record session. Print a warning if a record session is running.
     3. stop, quit, end
-        End recording session and write the record to inputs.rec.
-        If there's no recording session, print a warning.
+        End record session and write the record to inputs.rec. If inputs.rec
+        exists, a prompt will appear and ask the user whether if the user
+        wants to append or overwrite the existing inputs.rec. Entering "a" or
+        "append" will append the file. Entering "o" or "overwrite" will
+        overwrite the file. Entering anything else will cancel the file writing
+        operation. If there's no record session, print a warning.
