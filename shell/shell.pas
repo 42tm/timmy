@@ -233,9 +233,16 @@ BEGIN
                TextColor(White);
                UserInput := StrTrim(InputPrompt, False);
                If UserInput = '' then Continue;
-               // Add command to input history
-                 SetLength(Env.InputHistory, Length(Env.InputHistory) + 1);
-                 Env.InputHistory[High(Env.InputHistory)] := UserInput;
+               // Add command to input history, if this input is not the same
+               // as the previous input
+                 If ((Length(Env.InputHistory) > 0)
+                     and (not (UserInput = Env.InputHistory[High(Env.InputHistory)])))
+                     or (Length(Env.InputHistory) = 0)
+                          then Begin
+                                 SetLength(Env.InputHistory,
+                                           Length(Env.InputHistory) + 1);
+                                 Env.InputHistory[High(Env.InputHistory)] := UserInput;
+                               End;
                If Recorder.Recording
                  then Begin  // Record input
                         SetLength(Recorder.RecdInps,
