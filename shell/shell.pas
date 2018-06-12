@@ -153,7 +153,7 @@ BEGIN
              Halt;
            End;
 
-    ShellLogger.Init(TLogger.CORRECT, TLogger.CORRECT, 'history.dat');
+    ShellLogger.Init(TLogger.CORRECT, TLogger.CORRECT, 'log.dat');
 
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
@@ -174,12 +174,12 @@ BEGIN
     Except
       On EInvalidArgument
         Do Begin
-             ShellLogger.Log(TLogger.FATAL, 'Found invalid option.', True);
+             ShellLogger.Put(TLogger.FATAL, 'Found invalid option.');
              TextColor(7); Halt;
            End;
       On EParameterMissing
         Do Begin
-             ShellLogger.Log(TLogger.FATAL, 'Missing argument.', True);
+             ShellLogger.Put(TLogger.FATAL, 'Missing argument.');
              TextColor(7); Halt;
            End;
     End;
@@ -201,9 +201,9 @@ BEGIN
       then Begin
              If not FileExists(OutParse.GetValue('load'))
                then Begin
-                      ShellLogger.Log(TLogger.ERROR, 'File '''
+                      ShellLogger.Put(TLogger.ERROR, 'File '''
                                     + OutParse.GetValue('load') + ''' does not'
-                                    + ' exist, ignoring...', True);
+                                    + ' exist, ignoring...');
                       GoTo StartIntf;
                     End;
              Assign(CmdF, OutParse.GetValue('load'));

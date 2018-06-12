@@ -90,13 +90,13 @@ Begin
       'help': PrintHelp;
       'record': ProcessRecord;
       'init': If not Initiated then Init
-                else ShellLogger.Log(TLogger.INFO, 'Instance already initiated', True);
+                else ShellLogger.Put(TLogger.INFO, 'Instance already initiated');
       'add': Begin
 
              End;
       Else Begin
-             ShellLogger.Log(TLogger.ERROR, 'Invalid command '''
-                           + InputRec.Command + '''', True);
+             ShellLogger.Put(TLogger.ERROR, 'Invalid command '''
+                           + InputRec.Command + '''');
              // Remove input from input history and recorded inputs
              // because it's invalid
                If not OutParse.HasArgument('record-all')
@@ -158,8 +158,7 @@ Var
 Begin
     If Length(InputRec.Args) > 1
       then Begin
-             ShellLogger.Log(TLogger.ERROR,
-                             'record: Wrong number of arguments', True);
+             ShellLogger.Put(TLogger.ERROR, 'record: Wrong number of arguments');
              If Recorder.Recording
                then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
              Exit;
@@ -189,8 +188,8 @@ Begin
                   Begin
                     If Recorder.Recording
                       then Begin
-                             ShellLogger.Log(TLogger.WARNING,
-                                             'Already recording', True);
+                             ShellLogger.Put(TLogger.WARNING,
+                                             'Already recording');
                              SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
                            End
@@ -205,15 +204,14 @@ Begin
                'stop', 'quit', 'end':
                  If not Recorder.Recording
                    then Begin
-                          ShellLogger.Log(TLogger.WARNING,
-                                          'No active recording session running.'
-                                          , True);
+                          ShellLogger.Put(TLogger.WARNING,
+                                        'No active recording session running.');
                           Exit;
                         End
                    else Recorder.Recording := False;
                Else Begin
-                      ShellLogger.Log(TLogger.ERROR, 'record: Invalid argument'
-                                    + ' ''' + InputRec.Args[0] + '''.', True);
+                      ShellLogger.Put(TLogger.ERROR, 'record: Invalid argument'
+                                    + ' ''' + InputRec.Args[0] + '''.');
                       If Recorder.Recording
                         then SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
@@ -231,7 +229,7 @@ Begin
 
     If Length(Recorder.RecdInps) = 0
       then Begin
-             ShellLogger.Log(TLogger.LIGHTWARNING, 'No recorded input.', True);
+             ShellLogger.Put(TLogger.LIGHTWARNING, 'No recorded input.');
              Exit;
            End;
 
@@ -302,7 +300,9 @@ Begin
                         then Exit
                         else Val(Input, FlagPercent, ValErrorCode);
                       If ValErrorCode <> 0
-                        then ShellLogger.Log(TLogger.WARNING, 'Invalid value for ' + InstanceName + '.TPercent', True);
+                        then ShellLogger.Put(TLogger.WARNING,
+                                             'Invalid value for ' + InstanceName
+                                           + '.TPercent');
                     End;
              // Get value for TTimmy.NoUdstdRep
                TextColor(1); Write(InstanceName);
@@ -312,7 +312,8 @@ Begin
                Readln(Input);
                FlagDefaultRep := Input;
                If Input = ''
-                 then ShellLogger.Log(TLogger.LIGHTWARNING, 'Default reply should not be empty', True);
+                 then ShellLogger.Put(TLogger.LIGHTWARNING,
+                                      'Default reply should not be empty');
              // Get value for TTimmy.DupesCheck
                Input := '';
                While (Input <> 'true') and (Input <> 'false')
@@ -325,7 +326,8 @@ Begin
                       If Input = '' then Exit;
                       Input := LowerCase(Input);
                       If (Input <> 'true') and (Input <> 'false')
-                        then ShellLogger.Log(TLogger.WARNING, 'Expected a boolean value (true|false)', True);
+                        then ShellLogger.Put(TLogger.WARNING,
+                                       'Expected a boolean value (true|false)');
                     End;
                If Input = 'true'
                  then FlagDpCheck := True
@@ -334,9 +336,8 @@ Begin
     else Begin
            If (Length(InputRec.Args) < 3)
              then Begin
-                    ShellLogger.Log(TLogger.ERROR,
-                                    'init: Wrong number of arguments to init',
-                                    True);
+                    ShellLogger.Put(TLogger.ERROR,
+                                    'init: Wrong number of arguments to init');
                     If Recorder.Recording
                       then SetLength(Recorder.RecdInps,
                                      Length(Recorder.RecdInps) - 1);
@@ -346,9 +347,8 @@ Begin
              Val(InputRec.Args[0], FlagPercent, ValErrorCode);
              If ValErrorCode <> 0
                then Begin
-                      ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
-                                                   + InstanceName
-                                                   + '.TPercent', True);
+                      ShellLogger.Put(TLogger.ERROR, 'Invalid value for '
+                                    + InstanceName + '.TPercent');
                       If Recorder.Recording
                         then SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
@@ -371,8 +371,7 @@ Begin
                'false': FlagDpCheck := False;
                Else Begin
                       ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
-                                                   + InstanceName
-                                                   + '.DupesCheck', True);
+                                    + InstanceName + '.DupesCheck');
                       If Recorder.Recording
                         then SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
