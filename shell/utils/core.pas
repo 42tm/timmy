@@ -85,7 +85,10 @@ Begin
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
     Writeln;
     Case InputRec.Command of
-      'exit', 'quit': Begin TextColor(7); Halt; End;
+      'exit', 'quit': Begin
+                        ShellLogger.Log(TLogger.INFO, 'Quitting Shell session');
+                        TextColor(7); Halt;
+                      End;
       'clear': ClrScr;
       'help': PrintHelp;
       'record': ProcessRecord;

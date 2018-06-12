@@ -227,6 +227,7 @@ BEGIN
     // Start interface
     StartIntf:
         SetLength(Env.InputHistory, 0);
+        ShellLogger.Log(TLogger.INFO, 'New Shell session started');
         While True
           do Begin
                TextColor(White);
