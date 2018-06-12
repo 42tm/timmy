@@ -72,7 +72,7 @@ Var
     FlagSplit: TStrArray;  // Command split result
 Begin
     FlagSplit := StrSplit(ShellInput, ' ', Env.ItprBackslash);
-    InputRec.Command := FlagSplit[0];
+    InputRec.Command := LowerCase(FlagSplit[0]);
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
     Writeln;
     Case InputRec.Command of
