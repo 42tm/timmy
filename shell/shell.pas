@@ -153,7 +153,7 @@ BEGIN
              Halt;
            End;
 
-    ShellLg.Init(TLogger.CORRECT, TLogger.CORRECT, 'log.dat');
+    ShellLg.Init(TLogger.CORRECT, TLogger.CORRECT, 'log');
 
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);

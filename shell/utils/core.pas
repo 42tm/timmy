@@ -33,7 +33,7 @@ Var
     TestSubj: TTimmy;      // Subject TTimmy instance
     ShellLg: TLogger;  // Logger for Timmy Interactive Shell
     InputRec: Record       // User input data record
-                Command: String;
+                Cmd: String;
                 Args: TStrArray;
               End;
     InstanceName: String;  // Name of the test subject instance
@@ -72,10 +72,10 @@ Var
     FlagSplit: TStrArray;  // Command split result
 Begin
     FlagSplit := StrSplit(ShellInput, ' ', Env.ItprBackslash);
-    InputRec.Command := LowerCase(FlagSplit[0]);
+    InputRec.Cmd := LowerCase(FlagSplit[0]);
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
     Writeln;
-    Case InputRec.Command of
+    Case InputRec.Cmd of
       'exit', 'quit': Begin
                         ShellLg.Log(TLogger.INFO, 'Quitting Shell session');
                         TextColor(7); Halt;
@@ -89,7 +89,7 @@ Begin
 
              End;
       Else Begin
-             ShellLg.Put(TLogger.ERROR, 'Invalid command ''' + InputRec.Command
+             ShellLg.Put(TLogger.ERROR, 'Invalid command ''' + InputRec.Cmd
                        + '''');
              // Remove input from input history and recorded inputs
              // because it's invalid
