@@ -5,7 +5,7 @@
 !*.pp
 !*.inc
 
-# Markdown files in the project
+# Markdown files in the project and the license copies
 !*.md
 !COPYING
 !COPYING.LESSER
@@ -15,11 +15,9 @@
 
 # Shell folders & files
 !shell/
-!shell/inc/
-!shell/logger/
-!shell/man/
+!shell/**/
+!shell/inc/**
 !shell/man/*.txt
-!shell/utils
 
 # Put variants of Timmy in
 !variants/
