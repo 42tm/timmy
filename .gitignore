@@ -1,13 +1,28 @@
 *
+
+# Source files
 !*.pas
+!*.pp
+!*.inc
+
+# Markdown files in the project
 !*.md
 !COPYING
 !COPYING.LESSER
+
+# Put examples in
 !examples/
+
+# Shell folders & files
 !shell/
+!shell/inc/
 !shell/logger/
 !shell/man/
 !shell/man/*.txt
 !shell/utils
+
+# Put variants of Timmy in
 !variants/
+
+# Don't ignore .gitignore itself :/
 !.gitignore
