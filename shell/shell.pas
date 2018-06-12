@@ -30,7 +30,7 @@ Const
     SHELLVERSION = '1.0.0';
 Var
     CmdF: Text;
-    CmdRead: String;
+    LoadFilename, CmdRead: String;
 Label
     StartIntf;
 
@@ -114,14 +114,14 @@ BEGIN
 
     If OutParse.HasArgument('load')
       then Begin
-             If not FileExists(OutParse.GetValue('load'))
+             LoadFilename := OutParse.GetValue('load');
+             If not FileExists(LoadFilename)
                then Begin
-                      ShellLg.Put(TLogger.ERROR, 'File '''
-                                + OutParse.GetValue('load') + ''' does not'
-                                + ' exist, ignoring...');
+                      ShellLg.Put(TLogger.ERROR, 'File ''' + LoadFilename
+                                + ''' does not exist, ignoring...');
                       GoTo StartIntf;
                     End;
-             Assign(CmdF, OutParse.GetValue('load'));
+             Assign(CmdF, LoadFilename);
              {$I-}
              Reset(CmdF);
              {$I+}
@@ -131,12 +131,17 @@ BEGIN
                       Close(CmdF);
                       GoTo StartIntf;
                     End;
+             ShellLg.Log(TLogger.INFO, 'Reading and executing commands from file...');
+             Writeln('===========================================');
              While not EOF(CmdF)
                do Begin
                     Readln(CmdF, CmdRead);
                     ShellExec(CmdRead);
                   End;
              Close(CmdF);
+             Writeln('===========================================');
+             ShellLg.Log(TLogger.INFO, 'Finished reading and executing commands'
+                       + ' from file');
            End;
 
     // Start interface
