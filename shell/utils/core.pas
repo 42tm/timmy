@@ -202,7 +202,15 @@ Begin
                            End;
                     Exit;
                   End;
-               'stop', 'quit', 'end': Recorder.Recording := False;
+               'stop', 'quit', 'end':
+                 If not Recorder.Recording
+                   then Begin
+                          ShellLogger.Log(TLogger.WARNING,
+                                          'No active recording session running.'
+                                          , True);
+                          Exit;
+                        End
+                   else Recorder.Recording := False;
                Else Begin
                       ShellLogger.Log(TLogger.ERROR, 'record: Invalid argument'
                                     + ' ''' + InputRec.Args[0] + '''.', True);
