@@ -19,12 +19,14 @@
     along with Timmy Interactive Shell.
     If not, see <http://www.gnu.org/licenses/>.
 }
-{$mode ObjFPC}
+{$mode ObjFPC} {$H+}
 Unit Logger;
 
 Interface
 
-Uses Crt, SysUtils, StrUtils, Timmy_Debug in '../../variants/timmy_debug.pas';
+Uses
+    Crt, SysUtils, StrUtils,
+    Timmy_Debug in '../../variants/timmy_debug.pas';
 Type TLogger = Object
                  Constructor Init(ACslOutMin: Integer = 0;
                                   AFileOutMin: Integer = -1; ALogPath: String = '');
@@ -33,7 +35,8 @@ Type TLogger = Object
                  CslOutMin: Integer;
                  FileOutMin: Integer;
                  Procedure SetLogFilePath(LogFilePath: String);
-                 Procedure Log(Severity: Integer; LogMsg: String; ToCslOnly: Boolean = False);
+                 Procedure Log(Severity: Integer; LogMsg: String);
+                 Procedure Put(Severity: Integer; Msg: String);
                  Procedure Enable;
                  Procedure Disable;
                Private
@@ -140,10 +143,9 @@ End;
     Parameters:
       Severity [Integer]: The severity of the event that needs logging
       LogMsg [String]: The log message
-      ToCslOnly [Boolean]: The option to write to console only, regardless of FileOutMin
 }
-Procedure TLogger.Log(Severity: Integer; LogMsg: String; ToCslOnly: Boolean = False);
-Var CslMsgColor: Integer;
+Procedure TLogger.Log(Severity: Integer; LogMsg: String);
+Var CslMsgColor: Byte;
     F: Text;
 Begin
     If (Severity >= CslOutMin) and (CslOutMin > -1)
@@ -161,7 +163,7 @@ Begin
              Writeln(LeadingStr + LogMsg);
            End;
 
-    If (Severity >= FileOutMin) and (FileOutMin > -1) and (LogPath <> '') and (not ToCslOnly)
+    If (Severity >= FileOutMin) and (FileOutMin > -1) and (LogPath <> '')
       then Begin
              Assign(F, LogPath);
              {$I-}
@@ -177,6 +179,27 @@ Begin
                              + '] ' + LogMsg);
              Close(F);
            End;
+End;
+
+{
+    Print out a message to the console with text color
+    that hints the severity, regardless of CslOutMin.
+}
+Procedure TLogger.Put(Severity: Integer; Msg: String);
+Var MsgColor: Byte;
+Begin
+    Case Severity of
+      0..9: MsgColor := 10;
+      10..19: MsgColor := 15;
+      20..29: MsgColor := 6;
+      30..39: MsgColor := 14;
+      40..49: MsgColor := 12;
+      50..59: MsgColor := 28;
+      Else MsgColor := 4;
+    End;
+
+    TextColor(MsgColor);
+    Writeln(Msg);
 End;
 
 End.
