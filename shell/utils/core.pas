@@ -24,14 +24,14 @@ Const
 Var
     Env: Record  // Shell environment variables
            // Array to store user's entered inputs (in current session)
-             InputHistory: TStrArray;
+             InputHis: TStrArray;
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
          End;
 
     UserInput: String;     // User's input to the shell
     TestSubj: TTimmy;      // Subject TTimmy instance
-    ShellLogger: TLogger;  // Logger for Timmy Interactive Shell
+    ShellLg: TLogger;  // Logger for Timmy Interactive Shell
     InputRec: Record       // User input data record
                 Command: String;
                 Args: TStrArray;
@@ -77,24 +77,24 @@ Begin
     Writeln;
     Case InputRec.Command of
       'exit', 'quit': Begin
-                        ShellLogger.Log(TLogger.INFO, 'Quitting Shell session');
+                        ShellLg.Log(TLogger.INFO, 'Quitting Shell session');
                         TextColor(7); Halt;
                       End;
       'clear': ClrScr;
       'help': PrintHelp;
       'record': ProcessRecord;
       'init': If not Initiated then Init
-                else ShellLogger.Put(TLogger.INFO, 'Instance already initiated');
+                else ShellLg.Put(TLogger.INFO, 'Instance already initiated');
       'add': Begin
 
              End;
       Else Begin
-             ShellLogger.Put(TLogger.ERROR, 'Invalid command '''
-                           + InputRec.Command + '''');
+             ShellLg.Put(TLogger.ERROR, 'Invalid command ''' + InputRec.Command
+                       + '''');
              // Remove input from input history and recorded inputs
              // because it's invalid
                If not OutParse.HasArgument('record-all')
-                 then SetLength(Env.InputHistory, Length(Env.InputHistory) - 1);
+                 then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
                If Recorder.Recording
                  then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
            End;

@@ -44,16 +44,16 @@ Var Flag,                 // String on display
     FlagCurrent: String;  // Current user input string
     InputKey: Char;       // Character to assign ReadKey to
     CursorX,              // Current X position of the cursor
-    HistoryPos,           // Position in Env.InputHistory, used when user press up/down
+    HistoryPos,           // Position in Env.InputHis, used when user press up/down
     FlagIter:             // Iteration for the string Flag (local)
               LongWord;
 Begin
     Flag := ''; FlagCurrent := '';
     CursorX := 4;
-    HistoryPos := Length(Env.InputHistory);
+    HistoryPos := Length(Env.InputHis);
     While True
       do Begin
-           If (HistoryPos = Length(Env.InputHistory)) then Flag := FlagCurrent;
+           If (HistoryPos = Length(Env.InputHis)) then Flag := FlagCurrent;
            Delline; Insline;
            GoToXY(1, WhereY);
            TextColor(15);
@@ -79,25 +79,25 @@ Begin
                     #77: If CursorX < Length(Flag) + 4 then Inc(CursorX);
                     #72: // Go back to previous command only if
                          // the input history is not empty
-                           If Length(Env.InputHistory) > 0
+                           If Length(Env.InputHis) > 0
                              then Begin
-                                    If HistoryPos = Length(Env.InputHistory)
+                                    If HistoryPos = Length(Env.InputHis)
                                       then FlagCurrent := Flag;  // Save the current input
                                     If HistoryPos > 0
                                       then Begin
                                              Dec(HistoryPos);
-                                             Flag := Env.InputHistory[HistoryPos];
+                                             Flag := Env.InputHis[HistoryPos];
                                              CursorX := 4 + Length(Flag);
                                            End;
                                   End;
                     #80: // Go to next command
-                           If HistoryPos < Length(Env.InputHistory)
+                           If HistoryPos < Length(Env.InputHis)
                              then Begin
                                     Inc(HistoryPos);
-                                    If HistoryPos = Length(Env.InputHistory)
+                                    If HistoryPos = Length(Env.InputHis)
                                       then CursorX := 4 + Length(FlagCurrent)
                                       else Begin
-                                             Flag := Env.InputHistory[HistoryPos];
+                                             Flag := Env.InputHis[HistoryPos];
                                              CursorX := 4 + Length(Flag);
                                            End;
                                   End;
@@ -109,14 +109,14 @@ Begin
                                      + InputKey
                                      + Copy(Flag, CursorX - 3,
                                             Length(Flag) - CursorX + 4);
-                        If HistoryPos = Length(Env.InputHistory)
+                        If HistoryPos = Length(Env.InputHis)
                           then FlagCurrent := Flag;
                         Inc(CursorX);
                       End;
              8: Begin  // Backspace key
                   If CursorX = 4 then Continue;
                   Delete(Flag, CursorX - 4, 1);
-                  If HistoryPos = Length(Env.InputHistory) then FlagCurrent := Flag;
+                  If HistoryPos = Length(Env.InputHis) then FlagCurrent := Flag;
                   Dec(CursorX);
                 End;
            End;
@@ -153,7 +153,7 @@ BEGIN
              Halt;
            End;
 
-    ShellLogger.Init(TLogger.CORRECT, TLogger.CORRECT, 'log.dat');
+    ShellLg.Init(TLogger.CORRECT, TLogger.CORRECT, 'log.dat');
 
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
@@ -174,12 +174,12 @@ BEGIN
     Except
       On EInvalidArgument
         Do Begin
-             ShellLogger.Put(TLogger.FATAL, 'Found invalid option.');
+             ShellLg.Put(TLogger.FATAL, 'Found invalid option.');
              TextColor(7); Halt;
            End;
       On EParameterMissing
         Do Begin
-             ShellLogger.Put(TLogger.FATAL, 'Missing argument.');
+             ShellLg.Put(TLogger.FATAL, 'Missing argument.');
              TextColor(7); Halt;
            End;
     End;
@@ -187,12 +187,12 @@ BEGIN
     Initiated := False;
     InstanceName := 'TestSubj';
 
-    ShellLogger.Log(TLogger.INFO, 'Declared an instance with the name '''
-                  + InstanceName + '''.');
+    ShellLg.Log(TLogger.INFO, 'Declared an instance with the name '''
+              + InstanceName + '''.');
     If OutParse.HasArgument('quiet')
-      then ShellLogger.CslOutMin := TLogger.ERROR;
+      then ShellLg.CslOutMin := TLogger.ERROR;
     If OutParse.HasArgument('less-log')
-      then ShellLogger.FileOutMin := TLogger.ERROR;
+      then ShellLg.FileOutMin := TLogger.ERROR;
 
     Env.ItprBackslash := Not OutParse.HasArgument('no-esc');
     Recorder.Recording := False;
@@ -201,9 +201,9 @@ BEGIN
       then Begin
              If not FileExists(OutParse.GetValue('load'))
                then Begin
-                      ShellLogger.Put(TLogger.ERROR, 'File '''
-                                    + OutParse.GetValue('load') + ''' does not'
-                                    + ' exist, ignoring...');
+                      ShellLg.Put(TLogger.ERROR, 'File '''
+                                + OutParse.GetValue('load') + ''' does not'
+                                + ' exist, ignoring...');
                       GoTo StartIntf;
                     End;
              Assign(CmdF, OutParse.GetValue('load'));
@@ -212,7 +212,7 @@ BEGIN
              {$I+}
              If IOResult <> 0
                then Begin
-                      ShellLogger.Log(TLogger.ERROR, 'Failed to read commands from file');
+                      ShellLg.Log(TLogger.ERROR, 'Failed to read commands from file');
                       Close(CmdF);
                       GoTo StartIntf;
                     End;
@@ -226,8 +226,8 @@ BEGIN
 
     // Start interface
     StartIntf:
-        SetLength(Env.InputHistory, 0);
-        ShellLogger.Log(TLogger.INFO, 'New Shell session started');
+        SetLength(Env.InputHis, 0);
+        ShellLg.Log(TLogger.INFO, 'New Shell session started');
         While True
           do Begin
                TextColor(White);
@@ -235,13 +235,13 @@ BEGIN
                If UserInput = '' then Continue;
                // Add command to input history, if this input is not the same
                // as the previous input
-                 If ((Length(Env.InputHistory) > 0)
-                     and (not (UserInput = Env.InputHistory[High(Env.InputHistory)])))
-                     or (Length(Env.InputHistory) = 0)
+                 If ((Length(Env.InputHis) > 0)
+                     and (not (UserInput = Env.InputHis[High(Env.InputHis)])))
+                     or (Length(Env.InputHis) = 0)
                           then Begin
-                                 SetLength(Env.InputHistory,
-                                           Length(Env.InputHistory) + 1);
-                                 Env.InputHistory[High(Env.InputHistory)] := UserInput;
+                                 SetLength(Env.InputHis,
+                                           Length(Env.InputHis) + 1);
+                                 Env.InputHis[High(Env.InputHis)] := UserInput;
                                End;
                If Recorder.Recording
                  then Begin  // Record input

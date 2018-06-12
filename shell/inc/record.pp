@@ -21,7 +21,7 @@ Var
 Begin
     If Length(InputRec.Args) > 1
       then Begin
-             ShellLogger.Put(TLogger.ERROR, 'record: Wrong number of arguments');
+             ShellLg.Put(TLogger.ERROR, 'record: Wrong number of arguments');
              If Recorder.Recording
                then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
              Exit;
@@ -51,8 +51,7 @@ Begin
                   Begin
                     If Recorder.Recording
                       then Begin
-                             ShellLogger.Put(TLogger.WARNING,
-                                             'Already recording');
+                             ShellLg.Put(TLogger.WARNING, 'Already recording');
                              SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
                            End
@@ -67,14 +66,14 @@ Begin
                'stop', 'quit', 'end':
                  If not Recorder.Recording
                    then Begin
-                          ShellLogger.Put(TLogger.WARNING,
-                                        'No active recording session running.');
+                          ShellLg.Put(TLogger.WARNING,
+                                      'No active recording session running.');
                           Exit;
                         End
                    else Recorder.Recording := False;
                Else Begin
-                      ShellLogger.Put(TLogger.ERROR, 'record: Invalid argument'
-                                    + ' ''' + InputRec.Args[0] + '''.');
+                      ShellLg.Put(TLogger.ERROR, 'record: Invalid argument'
+                                + ' ''' + InputRec.Args[0] + '''.');
                       If Recorder.Recording
                         then SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
@@ -92,7 +91,7 @@ Begin
 
     If Length(Recorder.RecdInps) = 0
       then Begin
-             ShellLogger.Put(TLogger.LIGHTWARNING, 'No recorded input.');
+             ShellLg.Put(TLogger.LIGHTWARNING, 'No recorded input.');
              Exit;
            End;
 
@@ -101,8 +100,7 @@ Begin
 
     If FileExists(ROutFilename)
       then Begin
-             ShellLogger.Log(TLogger.LIGHTWARNING,
-                             ROutFilename + ' exists.');
+             ShellLg.Log(TLogger.LIGHTWARNING, ROutFilename + ' exists.');
              TextColor(White);
              Write('Do you want to append or overwrite it? [a|o] ');
              Readln(Flag);
@@ -117,8 +115,8 @@ Begin
     {$I+}
     If IOResult <> 0
       then Begin
-             ShellLogger.Log(TLogger.ERROR, 'record: Failed to write recorded '
-                           + 'inputs to ' + ROutFilename);
+             ShellLg.Log(TLogger.ERROR, 'record: Failed to write recorded '
+                       + 'inputs to ' + ROutFilename);
              Close(RecordOutF);
              Exit;
            End;
@@ -127,7 +125,6 @@ Begin
 
     Close(RecordOutF);
 
-    ShellLogger.Log(TLogger.INFO,
-                    'record: Input record has been written to ' +
-                    ROutFilename + '.');
+    ShellLg.Log(TLogger.INFO, 'record: Input record has been written to '
+              + ROutFilename + '.');
 End;

@@ -44,9 +44,8 @@ Begin
                         then Exit
                         else Val(Input, FlagPercent, ValErrorCode);
                       If ValErrorCode <> 0
-                        then ShellLogger.Put(TLogger.WARNING,
-                                             'Invalid value for ' + InstanceName
-                                           + '.TPercent');
+                        then ShellLg.Put(TLogger.WARNING, 'Invalid value for '
+                                       + InstanceName + '.TPercent');
                     End;
              // Get value for TTimmy.NoUdstdRep
                TextColor(1); Write(InstanceName);
@@ -56,8 +55,8 @@ Begin
                Readln(Input);
                FlagDefaultRep := Input;
                If Input = ''
-                 then ShellLogger.Put(TLogger.LIGHTWARNING,
-                                      'Default reply should not be empty');
+                 then ShellLg.Put(TLogger.LIGHTWARNING,
+                                  'Default reply should not be empty');
              // Get value for TTimmy.DupesCheck
                Input := '';
                While (Input <> 'true') and (Input <> 'false')
@@ -70,7 +69,7 @@ Begin
                       If Input = '' then Exit;
                       Input := LowerCase(Input);
                       If (Input <> 'true') and (Input <> 'false')
-                        then ShellLogger.Put(TLogger.WARNING,
+                        then ShellLg.Put(TLogger.WARNING,
                                        'Expected a boolean value (true|false)');
                     End;
                If Input = 'true'
@@ -80,8 +79,8 @@ Begin
     else Begin
            If (Length(InputRec.Args) < 3)
              then Begin
-                    ShellLogger.Put(TLogger.ERROR,
-                                    'init: Wrong number of arguments to init');
+                    ShellLg.Put(TLogger.ERROR,
+                                'init: Wrong number of arguments to init');
                     If Recorder.Recording
                       then SetLength(Recorder.RecdInps,
                                      Length(Recorder.RecdInps) - 1);
@@ -91,8 +90,8 @@ Begin
              Val(InputRec.Args[0], FlagPercent, ValErrorCode);
              If ValErrorCode <> 0
                then Begin
-                      ShellLogger.Put(TLogger.ERROR, 'Invalid value for '
-                                    + InstanceName + '.TPercent');
+                      ShellLg.Put(TLogger.ERROR, 'Invalid value for '
+                                + InstanceName + '.TPercent');
                       If Recorder.Recording
                         then SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
@@ -114,8 +113,8 @@ Begin
                'true': FlagDpCheck := True;
                'false': FlagDpCheck := False;
                Else Begin
-                      ShellLogger.Log(TLogger.ERROR, 'Invalid value for '
-                                    + InstanceName + '.DupesCheck');
+                      ShellLg.Log(TLogger.ERROR, 'Invalid value for '
+                                + InstanceName + '.DupesCheck');
                       If Recorder.Recording
                         then SetLength(Recorder.RecdInps,
                                        Length(Recorder.RecdInps) - 1);
@@ -126,21 +125,21 @@ Begin
 
     TestSubj.Init(FlagPercent, FlagDefaultRep, FlagDpCheck);
     Initiated := True;
-    ShellLogger.Log(TLogger.INFO, 'Instance initiated');
+    ShellLg.Log(TLogger.INFO, 'Instance initiated');
 
     // Check if TTimmy.Init works fine
-    ShellLogger.Log(TLogger.INFO, 'Expected: ' + InstanceName + '.TPercent = '
-                  + IntToStr(FlagPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
-                  + FlagDefaultRep + '''; ' + InstanceName + '.DupesCheck = '
-                  + BoolToStr(FlagDpCheck));
+    ShellLg.Log(TLogger.INFO, 'Expected: ' + InstanceName + '.TPercent = '
+              + IntToStr(FlagPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
+              + FlagDefaultRep + '''; ' + InstanceName + '.DupesCheck = '
+              + BoolToStr(FlagDpCheck));
 
     FlagSeverity := TLogger.CORRECT;
     If (TestSubj.TPercent <> FlagPercent) or (TestSubj.NoUdstdRep <> FlagDefaultRep)
        or (TestSubj.DupesCheck <> FlagDpCheck)
       then FlagSeverity := TLogger.ERROR;
 
-    ShellLogger.Log(FlagSeverity, 'Got:      ' + InstanceName + '.TPercent = '
-                  + IntToStr(TestSubj.TPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
-                  + TestSubj.NoUdstdRep + '''; ' + InstanceName + '.DupesCheck = '
-                  + BoolToStr(TestSubj.DupesCheck));
+    ShellLg.Log(FlagSeverity, 'Got:      ' + InstanceName + '.TPercent = '
+              + IntToStr(TestSubj.TPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
+              + TestSubj.NoUdstdRep + '''; ' + InstanceName + '.DupesCheck = '
+              + BoolToStr(TestSubj.DupesCheck));
 End;
