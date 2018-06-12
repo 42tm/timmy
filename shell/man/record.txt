@@ -1,0 +1,30 @@
+record
+======
+
+Description
+-----------
+  Start or end a record session. During a record session, any input submitted
+  by the user to the Shell is recorded, as long as the input is valid.
+  When the user terminates the record session, all recorded inputs are then
+  written to a text file with the name "inputs.rec", placed in the shell/
+  directory.
+
+Arguments
+---------
+    record [status|start|begin|stop|quit|end]
+
+  If no argument is passed over, start a record session if none hasn't started,
+  or end the current record session if recording.
+
+  Take at most 1 argument. There are 6 valid arguments. They are:
+    1. status
+        Print out the status of the recorder. The status includes whether if
+        there's an active recording process running or not, and if there's
+        a recording session running, print out how many inputs have been
+        recorded.
+    2. start, begin
+        Start a recording session. Print a warning if a recording session is
+        running.
+    3. stop, quit, end
+        End recording session and write the record to inputs.rec.
+        If there's no recording session, print a warning.
