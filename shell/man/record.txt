@@ -30,3 +30,10 @@ Arguments
         "append" will append the file. Entering "o" or "overwrite" will
         overwrite the file. Entering anything else will cancel the file writing
         operation. If there's no record session, print a warning.
+
+Errors
+------
+  The record command asks for at most 1 argument only. If you give it 2 or more
+  arguments, an error is thrown.
+  If you specify invalid argument, an error is thrown.
+  If the IO file check (IOResult) is not 0, an error is thrown too.

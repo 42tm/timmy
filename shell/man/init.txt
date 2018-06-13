@@ -13,8 +13,10 @@ Arguments
     init [PERCENT DEFAULTREP DUPECHECK]
 
   If no argument is specified, there will be prompts asking for value of each
-  of the required inputs to TTimmy.Init() and you have to manually enter them
-  in.
+  of the required inputs to TTimmy.Init() and you have to manually enter them.
+  For the first and last prompt (out of 3 prompts), if you enter an empty
+  string, the procedure stops and you are back with the Shell input prompt
+  with the instance yet to be initialized.
 
   If you do specify arguments, however, you have to specify all the arguments to
   TTimmy.Init(), namely, values for 'Percent', 'DefaultRep', and 'DpCheck' of
@@ -32,3 +34,12 @@ Arguments
   other arguments.
 
   If you specify only two arguments, the command will throw an error.
+
+Errors
+------
+  If no argument is specified, prompts will ask you for the arguments. If you
+  enter invalid values to the prompts, a warning will be thrown and you have to
+  enter again.
+
+  If you specify arguments but specify only two arguments, an error is thrown.
+  If you enter invalid values for 'Percent' and 'DpCheck', an error is thrown.
