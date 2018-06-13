@@ -1,0 +1,34 @@
+init
+====
+
+Description
+-----------
+Initialize the test instance. This is the test command for 'TTimmy.Init()'.
+
+Arguments
+---------
+  Just as TTimmy.Init() requires parameters, so does the init command requires
+  arguments. The usage goes as follow:
+
+    init [PERCENT DEFAULTREP DUPECHECK]
+
+  If no argument is specified, there will be prompts asking for value of each
+  of the required inputs to TTimmy.Init() and you have to manually enter them
+  in.
+
+  If you do specify arguments, however, you have to specify all the arguments to
+  TTimmy.Init(), namely, values for 'Percent', 'DefaultRep', and 'DpCheck' of
+  constructor Init(). The first argument is regarded as value for 'Percent',
+  and, of course, it must be a whole number. The last argument is considered
+  the value for 'DpCheck', which, you should enter either "true" or "false".
+  Anything between the first and the last argument is regarded as the value
+  for 'DefaultRep'. Even the space counts. For example:
+
+    init 70    Sorry,    it seems like I don't understand that     False
+
+  In the example above, 70 is value for 'Percent', 'False' is value for DpCheck,
+  and '   Sorry,    it seems like I don't understand that    ' is value for
+  DefaultRep. 1 space is used to delimit between the value of DefaultRep and
+  other arguments.
+
+  If you specify only two arguments, the command will throw an error.
