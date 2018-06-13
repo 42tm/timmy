@@ -36,7 +36,7 @@ Label
 
 // InputPrompt() function is here
 // Later used in the main program of shell.pas
-{$Include inc/inputprompt.pp}
+{$Include inc/frontend/inputprompt.pp}
 
 BEGIN
     If (ParamStr(1) = '-h') or (ParamStr(1) = '--help')
@@ -102,6 +102,7 @@ BEGIN
     Initiated := False;
     InstanceName := 'TestSubj';
 
+    Jam(10);
     ShellLg.Log(TLogger.INFO, 'Declared an instance with the name '''
               + InstanceName + '''.');
     If OutParse.HasArgument('quiet')
@@ -131,6 +132,8 @@ BEGIN
                       Close(CmdF);
                       GoTo StartIntf;
                     End;
+             Jam(9);
+             Env.SfFReading := True;
              ShellLg.Log(TLogger.INFO, 'Reading and executing commands from file...');
              Writeln('===========================================');
              While not EOF(CmdF)
@@ -139,7 +142,10 @@ BEGIN
                     ShellExec(CmdRead);
                   End;
              Close(CmdF);
+             TextColor(15);
              Writeln('===========================================');
+             Env.SfFReading := False;
+             Jam(9);
              ShellLg.Log(TLogger.INFO, 'Finished reading and executing commands'
                        + ' from file');
            End;
@@ -147,7 +153,7 @@ BEGIN
     // Start interface
     StartIntf:
         SetLength(Env.InputHis, 0);
-        ShellLg.Log(TLogger.INFO, 'New Shell session started');
+        Jam(10); ShellLg.Log(TLogger.INFO, 'New Shell session started');
         While True
           do Begin
                TextColor(White);
