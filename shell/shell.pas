@@ -139,13 +139,14 @@ BEGIN
              While not EOF(CmdF)
                do Begin
                     Readln(CmdF, CmdRead);
+                    Jam(11); Writeln(CmdRead);
                     ShellExec(CmdRead);
                   End;
              Close(CmdF);
              TextColor(15);
              Writeln('===========================================');
              Env.SfFReading := False;
-             Jam(9);
+             Jam(10);
              ShellLg.Log(TLogger.INFO, 'Finished reading and executing commands'
                        + ' from file');
            End;
@@ -175,6 +176,7 @@ BEGIN
                                   Length(Recorder.RecdInps) + 1);
                         Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
                       End;
+               Writeln;
                // Pass input over to Core to process
                  ShellExec(UserInput);
              End;

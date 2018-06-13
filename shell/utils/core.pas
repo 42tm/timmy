@@ -83,7 +83,6 @@ Begin
     FlagSplit := StrSplit(ShellInput, ' ', Env.ItprBackslash);
     InputRec.Cmd := LowerCase(FlagSplit[0]);
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
-    Writeln;
     Case InputRec.Cmd of
       'exit', 'quit': Begin
                         ShellLg.Log(TLogger.INFO, 'Quitting Shell session');
