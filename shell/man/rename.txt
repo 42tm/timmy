@@ -1,0 +1,11 @@
+rename
+======
+
+Description
+-----------
+  Rename the test instance. By default. the test instance's name is "TestSubj".
+  You can change this with the 'rename' command.
+
+Arguments
+---------
+  None. Any argument specified to it is ignored.

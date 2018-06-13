@@ -27,8 +27,9 @@ COMMANDS AND ARGUMENTS
   arguments. A command may not need an argument (such as the "exit" command).
   These are all the available commands in Timmy Interactive Shell:
 
-    exit, quit, clear, help, record, stat, set, init, add, remove, enable,
-    disable, answer, strtrim, strreplace, strsplit, strjoin, comparestrarrays
+    exit, quit, clear, help, record, stat, set, rename, init, add, remove,
+    enable, disable, answer, strtrim, strreplace, strsplit, strjoin,
+    comparestrarrays
 
   To get help with a command, type "help COMMAND", replacing COMMAND with the
   name of the command that you want to get help with.
