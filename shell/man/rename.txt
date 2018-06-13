@@ -8,11 +8,17 @@ Description
 
 Arguments
 ---------
-  None. Any argument specified to it is ignored.
+    rename [NEWNAME]
+
+  The rename command takes at most 1 argument. If there's no argument, a prompt
+  will ask the user for the new name. If there's 1 argument, the command will
+  set that argument as the new name for the test instance (only if it's valid).
+  To know what makes a name invalid, see the below section.
 
 Errors
 ------
   An error is thrown when at least 1 of the following is true:
-  - The new name is more than 15 characters in length
+  - There are 2 or more arguments
+  - The new name is 0 character or more than 15 characters in length
   - The new name contains at least 1 space character (or whitespace)
   - The new name starts with a character that is not alphabetical in ASCII

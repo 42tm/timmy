@@ -102,7 +102,7 @@ Begin
                        + '''');
              // Remove input from input history and recorded inputs
              // because it's invalid
-               If (not OutParse.HasArgument('record-all')) and (not Env.SfFReading)
+               If (OutParse.HasArgument('record-less')) and (not Env.SfFReading)
                  then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
                If Recorder.Recording
                  then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);

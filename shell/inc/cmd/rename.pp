@@ -22,36 +22,39 @@ Const
 Var
     SIter: Byte;
 Begin
-    Write('New name for test instance: ');
-    Readln(UserInput);
+    If Length(InputRec.Args) > 1
+      then Begin
+             ShellLg.Log(TLogger.ERROR, 'rename: Too many arguments');
+             If Recorder.Recording
+               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+             Exit;
+           End;
+
+    If Length(InputRec.Args) = 1
+      then UserInput := InputRec.Args[0]
+      else Begin
+             Write('New name for test instance: ');
+             Readln(UserInput);
+           End;
 
     UserInput := StrTrim(UserInput);
 
-    If Length(UserInput) > 15
-      then Begin
-             ShellLg.Put(TLogger.ERROR, 'rename: Name too long. '
-                       + 'At most 15 characters only.');
-             Exit;
-           End;
-
-    If Pos(' ', UserInput) <> 0
-      then Begin
-             ShellLg.Put(TLogger.ERROR, 'rename: Invalid name for test instance;'
-                       + ' Space character is not allowed');
-             Exit;
-           End;
-
     SIter := Length(Alpha);
-    While SIter > 0
-      do Begin
-           If Alpha[SIter] = UserInput[1] then Break;
-           Dec(SIter);
-         End;
+    If Length(UserInput) > 0  // To avoid run-time error
+      then While SIter > 0
+             do Begin
+                  If Alpha[SIter] = UserInput[1] then Break;
+                  Dec(SIter);
+                End;
 
-    If SIter = 0
+    If (SIter = 0) or (Pos(' ', UserInput) <> 0)
+       or (Length(UserInput) > 15) or (Length(UserInput) = 0)
       then Begin
-             ShellLg.Put(TLogger.ERROR, 'rename: Name must start with '
-                       + 'an alphabetical ASCII character');
+             ShellLg.Put(TLogger.ERROR, 'rename: Invalid name');
+             Jam(2); TextColor(White); Write('See manual entry for rename');
+             Writeln(', section "Errors" to see why');
+             If Recorder.Recording
+               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
              Exit;
            End;
 

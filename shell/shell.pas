@@ -61,7 +61,7 @@ BEGIN
     ArgParser.AddArgument('--no-esc', saBool);
     ArgParser.AddArgument('--quiet', saBool);
     ArgParser.AddArgument('--less-log', saBool);
-    ArgParser.AddArgument('--record-all', saBool);
+    ArgParser.AddArgument('--record-less', saBool);
 
     CursorBig;
     TextColor(White);
