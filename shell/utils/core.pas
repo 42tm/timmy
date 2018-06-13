@@ -27,6 +27,8 @@ Var
              InputHis: TStrArray;
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
+           // Variable used to check if Shell is reading inputs from file
+             SfFReading: Boolean;
          End;
 
     UserInput: String;     // User's input to the shell
@@ -48,11 +50,16 @@ Var
       ArgParser: TArgumentParser;
       OutParse: TParseResult;
 
+(* Miscellaneous stuff *)
 Function BoolToStr(AnyBool: Boolean): String;
+Procedure Jam(DotColor: Byte);
+
+(* Main stuff *)
 Procedure ShellExec(ShellInput: String);
 Procedure PrintHelp;
-Procedure Init;
 Procedure ProcessRecord;
+Procedure Init;
+Procedure RenameBot;
 
 Implementation
 
@@ -65,6 +72,8 @@ Begin
     If AnyBool then Exit('True');
     Exit('False');
 End;
+
+{$Include ../inc/frontend/jam.pp}
 
 { Execute command ShellInput. }
 Procedure ShellExec(ShellInput: String);
@@ -83,6 +92,7 @@ Begin
       'clear': ClrScr;
       'help': PrintHelp;
       'record': ProcessRecord;
+      'rename': RenameBot;
       'init': If not Initiated then Init
                 else ShellLg.Put(TLogger.INFO, 'Instance already initiated');
       'add': Begin
@@ -93,7 +103,7 @@ Begin
                        + '''');
              // Remove input from input history and recorded inputs
              // because it's invalid
-               If not OutParse.HasArgument('record-all')
+               If (not OutParse.HasArgument('record-all')) and (not Env.SfFReading)
                  then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
                If Recorder.Recording
                  then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
@@ -101,10 +111,9 @@ Begin
     End;
 End;
 
-{$Include ../inc/help.pp}  // The help command
-
-{$Include ../inc/record.pp}  // The record command
-
-{$Include ../inc/init.pp}  // The init command
+{$Include ../inc/cmd/help.pp}  // The help command
+{$Include ../inc/cmd/record.pp}  // The record command
+{$Include ../inc/cmd/rename.pp}  // The rename command
+{$Include ../inc/cmd/init.pp}  // The init command
 
 End.
