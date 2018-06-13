@@ -1,0 +1,19 @@
+Timmy Interactive Shell - An environment for testing the Timmy unit
+Version 1.0.0
+Using Timmy version 1.2.0
+Copyright (C) 2018 42tm Team
+
+USAGE: shell [options]
+
+OPTIONS:
+  -h, --help        : Print this help and exit
+      --version     : Print the Shell's version and the version of Timmy
+                      it is using
+  -l, --load=FILE   : Load Timmy Interactive Shell commands from FILE
+      --no-esc      : Disable backslash interpretation in Shell inputs
+      --quiet       : Only write log messages with severity of TLogger.ERROR
+                      or higher to console
+      --less-log    : Only record events with severity of TLogger.ERROR
+                      or higher to log file (not recommended)
+      --record-less : Record only the inputs that are not erroneous to the
+                      session's input history

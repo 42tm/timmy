@@ -19,23 +19,19 @@
 
     Manual pages are found in /shell/man.
 }
-Procedure PrintHelp;
+Procedure PrintHelp(ManName: String);
 Var
-    ManFileName, ManLine: String;
+    ManLine: String;
     ManF: Text;
 Begin
-    If Length(InputRec.Args) = 0
-      then ManFileName := 'shell'
-      else ManFileName := InputRec.Args[0];
-
-    If not FileExists('man/' + ManFileName + '.txt')
+    If not FileExists('man/' + ManName + '.txt')
       then Begin
              ShellLg.Log(TLogger.ERROR,
                          'Could not find the manual entry for that');
              Exit;
            End
       else Begin
-             Assign(ManF, 'man/' + ManFileName + '.txt');
+             Assign(ManF, 'man/' + ManName + '.txt');
              {$I-}
              Reset(ManF);
              {$I+}

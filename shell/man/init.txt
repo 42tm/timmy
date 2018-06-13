@@ -42,4 +42,4 @@ Errors
   enter again.
 
   If you specify arguments but specify only two arguments, an error is thrown.
-  If you enter invalid values for 'Percent' and 'DpCheck', an error is thrown.
+  If you specify invalid values for 'Percent' and 'DpCheck', an error is thrown.

@@ -19,8 +19,6 @@ Uses
      Crt, SysUtils, StrUtils,
      ArgsParser, Logger in '../logger/logger.pas',
      Timmy_Debug in '../../variants/timmy_debug.pas';
-Const
-    TIMMYVERSION = '1.2.0';
 Var
     Env: Record  // Shell environment variables
            // Array to store user's entered inputs (in current session)
@@ -56,7 +54,7 @@ Procedure Jam(DotColor: Byte);
 
 (* Main stuff *)
 Procedure ShellExec(ShellInput: String);
-Procedure PrintHelp;
+Procedure PrintHelp(ManName: String);
 Procedure ProcessRecord;
 Procedure Init;
 Procedure RenameBot;
@@ -89,7 +87,9 @@ Begin
                         TextColor(7); Halt;
                       End;
       'clear': ClrScr;
-      'help': PrintHelp;
+      'help': If Length(InputRec.Args) = 0
+                then PrintHelp('shell')
+                else PrintHelp(InputRec.Args[0]);
       'record': ProcessRecord;
       'rename': RenameBot;
       'init': If not Initiated then Init

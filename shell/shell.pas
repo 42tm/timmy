@@ -28,6 +28,7 @@ Uses
      Timmy_Debug in '../variants/timmy_debug.pas';
 Const
     SHELLVERSION = '1.0.0';
+    TIMMYVERSION = '1.2.0';
 Var
     CmdF: Text;
     LoadFilename, CmdRead: String;
@@ -41,23 +42,7 @@ Label
 BEGIN
     If (ParamStr(1) = '-h') or (ParamStr(1) = '--help')
       then Begin
-             Writeln('Timmy Interactive Shell - An environment for testing the Timmy unit');
-             Writeln('Version ' + SHELLVERSION);
-             Writeln('Using Timmy version ' + TIMMYVERSION);
-             Writeln('Copyright (C) 2018 42tm Team');
-             Writeln;
-             Writeln('USAGE: shell [options]');
-             Writeln;
-             Writeln('OPTIONS:');
-             Writeln('  -h, --help       : Print this help and exit');
-             Writeln('      --version    : Print the Shell''s version and the version of Timmy it is using');
-             Writeln('  -l, --load=FILE  : Load Timmy Interactive Shell commands from FILE');
-             Writeln('      --no-esc     : Disable backslash interpretation in Shell inputs');
-             Writeln('      --quiet      : Only write log messages with severity of TLogger.ERROR and up to console');
-             Writeln('      --less-log   : Only record events with severity of TLogger.ERROR and up to log file');
-             Writeln('                     (not recommended)');
-             Writeln('      --record-all : Record all inputs to temporary input history, even the ones');
-             Writeln('                     that are erroneous');
+             PrintHelp('program');
              Halt;
            End;
 
