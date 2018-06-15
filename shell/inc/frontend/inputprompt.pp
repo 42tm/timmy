@@ -18,12 +18,13 @@
 }
 Function InputPrompt: String;
 Var
-    Flag,                 // String on display
-    FlagCurrent: String;  // Current user input string
-    InputKey: Char;       // Character to assign ReadKey to
-    CursorX,              // Current X position of the cursor
-    HistoryPos,           // Position in Env.InputHis, used when user press up/down
-    FlagIter:             // Iteration for the string Flag (local)
+    Flag,              // String on display
+    FlagCurrent
+            : String;  // Current user input string
+    InputKey: Char;    // Character to assign ReadKey to
+    CursorX,           // Current X position of the cursor
+    HistoryPos,        // Position in Env.InputHis, used when user press up/down
+    FlagIter:          // Iteration for the string Flag (local)
               LongWord;
 Begin
     Flag := ''; FlagCurrent := '';
@@ -83,6 +84,9 @@ Begin
                 End;
              13: Exit(Flag);  // Enter key
              32..126: Begin  // A text character
+                        // Space character as first character in input
+                        // -> Don't allow
+                          If (InputKey = #32) and (CursorX = 4) then Continue;
                         Flag := Copy(Flag, 1, CursorX - 4)
                                      + InputKey
                                      + Copy(Flag, CursorX - 3,
