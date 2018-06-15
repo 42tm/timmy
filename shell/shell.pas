@@ -35,6 +35,8 @@ Var
 Label
     StartIntf;
 
+{$Include inc/frontend/drawbar.pp}
+
 // InputPrompt() function is here
 // Later used in the main program of shell.pas
 {$Include inc/frontend/inputprompt.pp}
@@ -143,7 +145,7 @@ BEGIN
         While True
           do Begin
                TextColor(White);
-               UserInput := StrTrim(InputPrompt, False);
+               UserInput := InputPrompt;
                If UserInput = '' then Continue;
                // Add command to input history, if this input is not the same
                // as the previous input
