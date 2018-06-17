@@ -60,8 +60,9 @@ Begin
                          // the input history is not empty
                            If Length(Env.InputHis) > 0
                              then Begin
-                                    If HistoryPos = Length(Env.InputHis)
-                                      then FlagCurrent := Flag;  // Save the current input
+                                    // Save the current input
+                                      If HistoryPos = Length(Env.InputHis)
+                                        then FlagCurrent := Flag;
                                     If HistoryPos > 0
                                       then Begin
                                              Dec(HistoryPos);
