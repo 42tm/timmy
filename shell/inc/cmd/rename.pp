@@ -1,5 +1,5 @@
 {
-    rename.pp - The rename command
+    rename.pp - rename command's method for shell/utils/core.pas
 
     Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
 
