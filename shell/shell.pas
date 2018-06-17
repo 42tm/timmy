@@ -105,7 +105,7 @@ BEGIN
              LoadFilename := OutParse.GetValue('load');
              If not FileExists(LoadFilename)
                then Begin
-                      ShellLg.Put(TLogger.ERROR, 'File ''' + LoadFilename
+                      ShellLg.Log(TLogger.ERROR, 'File ''' + LoadFilename
                                 + ''' does not exist, ignoring...');
                       GoTo StartIntf;
                     End;

@@ -56,6 +56,7 @@ Procedure Jam(DotColor: Byte);
 Procedure ShellExec(ShellInput: String);
 Procedure PrintHelp(ManName: String);
 Procedure ProcessRecord;
+Procedure Exec;
 Procedure Init;
 Procedure RenameBot;
 
@@ -91,6 +92,7 @@ Begin
                 then PrintHelp('shell')
                 else PrintHelp(InputRec.Args[0]);
       'record': ProcessRecord;
+      'exec': Exec;
       'rename': RenameBot;
       'init': If not Initiated then Init
                 else ShellLg.Put(TLogger.INFO, 'Instance already initiated');
@@ -112,6 +114,7 @@ End;
 
 {$Include ../inc/cmd/help.pp}  // The help command
 {$Include ../inc/cmd/record.pp}  // The record command
+{$Include ../inc/cmd/exec.pp}  // The exec command
 {$Include ../inc/cmd/rename.pp}  // The rename command
 {$Include ../inc/cmd/init.pp}  // The init command
 
