@@ -29,10 +29,10 @@ Var
              SfFReading: Boolean;
          End;
 
-    UserInput: String;     // User's input to the shell
-    TestSubj: TTimmy;      // Subject TTimmy instance
-    ShellLg: TLogger;  // Logger for Timmy Interactive Shell
-    InputRec: Record       // User input data record
+    UserInput: String;  // User's input to the shell
+    TestSubj: TTimmy;   // Subject TTimmy instance
+    ShellLg: TLogger;   // Logger for Timmy Interactive Shell
+    InputRec: Record    // User input data record
                 Cmd: String;
                 Args: TStrArray;
               End;
@@ -48,7 +48,7 @@ Var
       ArgParser: TArgumentParser;
       OutParse: TParseResult;
 
-(* Miscellaneous stuff *)
+(* Happy little functions *)
 Function BoolToStr(AnyBool: Boolean): String;
 Procedure Jam(DotColor: Byte);
 
@@ -56,7 +56,7 @@ Procedure Jam(DotColor: Byte);
 Procedure ShellExec(ShellInput: String);
 Procedure PrintHelp(ManName: String);
 Procedure ProcessRecord;
-Procedure Exec;
+Procedure Exec(FName: String);
 Procedure Init;
 Procedure RenameBot;
 
@@ -92,7 +92,9 @@ Begin
                 then PrintHelp('shell')
                 else PrintHelp(InputRec.Args[0]);
       'record': ProcessRecord;
-      'exec': Exec;
+      'exec': If Length(InputRec.Args) = 0
+                then ShellLg.Put(TLogger.ERROR, 'exec: No input file.')
+                else For UserInput in InputRec.Args do Exec(UserInput);
       'rename': RenameBot;
       'init': If not Initiated then Init
                 else ShellLg.Put(TLogger.INFO, 'Instance already initiated');
