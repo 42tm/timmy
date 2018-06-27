@@ -29,9 +29,6 @@ Uses
 Const
     SHELLVERSION = '1.0.0';
     TIMMYVERSION = '1.2.0';
-Var
-    CmdF: Text;
-    LoadFilename, CmdRead: String;
 Label
     StartIntf;
 
@@ -101,42 +98,7 @@ BEGIN
     Recorder.Recording := False;
 
     If OutParse.HasArgument('load')
-      then Begin
-             LoadFilename := OutParse.GetValue('load');
-             If not FileExists(LoadFilename)
-               then Begin
-                      ShellLg.Log(TLogger.ERROR, 'File ''' + LoadFilename
-                                + ''' does not exist, ignoring...');
-                      GoTo StartIntf;
-                    End;
-             Assign(CmdF, LoadFilename);
-             {$I-}
-             Reset(CmdF);
-             {$I+}
-             If IOResult <> 0
-               then Begin
-                      ShellLg.Log(TLogger.ERROR, 'Failed to read commands from file');
-                      Close(CmdF);
-                      GoTo StartIntf;
-                    End;
-             Jam(9);
-             Env.SfFReading := True;
-             ShellLg.Log(TLogger.INFO, 'Reading and executing commands from file...');
-             Writeln('===========================================');
-             While not EOF(CmdF)
-               do Begin
-                    Readln(CmdF, CmdRead);
-                    Jam(11); Writeln(CmdRead);
-                    ShellExec(CmdRead);
-                  End;
-             Close(CmdF);
-             TextColor(15);
-             Writeln('===========================================');
-             Env.SfFReading := False;
-             Jam(10);
-             ShellLg.Log(TLogger.INFO, 'Finished reading and executing commands'
-                       + ' from file');
-           End;
+      then Exec(OutParse.GetValue('load'));
 
     // Start interface
     StartIntf:

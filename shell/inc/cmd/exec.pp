@@ -35,8 +35,9 @@ Begin
                     End
                else ShellLg.Log(TLogger.ERROR, 'exec: File ''' + FName
                               + ''' doesn''t exist, ignoring...');
-           If Recorder.Recording
-             then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+             If Recorder.Recording
+               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+             Exit;
            End;
 
     Jam(9); ShellLg.Log(TLogger.INFO, 'exec: Reading and executing from '
@@ -45,8 +46,15 @@ Begin
     While not EOF(FOBj)
       do Begin
            Readln(FObj, FLine);
+           If Recorder.Recording
+             then Begin
+                    SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) + 1);
+                    Recorder.RecdInps[High(Recorder.RecdInps)] := FLine;
+                  End;
            ShellExec(FLine);
          End;
     Close(FObj);
     TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
+    Jam(10); ShellLg.Log(TLogger.INFO,
+                         'Finished reading and executing commands from file');
 End;
