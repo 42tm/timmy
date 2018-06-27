@@ -26,7 +26,7 @@ Var
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
            // Variable used to check if Shell is reading inputs from file
-             SfFReading: Boolean;
+             // SfFReading: Boolean;
          End;
 
     UserInput: String;  // User's input to the shell
@@ -106,7 +106,7 @@ Begin
                        + '''');
              // Remove input from input history and recorded inputs
              // because it's invalid
-               If (OutParse.HasArgument('record-less')) and (not Env.SfFReading)
+               If (OutParse.HasArgument('record-less'))
                  then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
                If Recorder.Recording
                  then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);

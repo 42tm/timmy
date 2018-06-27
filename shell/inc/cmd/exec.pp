@@ -46,6 +46,7 @@ Begin
     While not EOF(FOBj)
       do Begin
            Readln(FObj, FLine);
+           If FLine = '' then Continue;
            If Recorder.Recording
              then Begin
                     SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) + 1);
