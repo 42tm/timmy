@@ -43,6 +43,7 @@ Begin
     Jam(9); ShellLg.Log(TLogger.INFO, 'exec: Reading and executing from '
                       + FName + '...');
     Writeln(DupeString('=', 40 + Length(FName)));
+
     While not EOF(FOBj)
       do Begin
            Readln(FObj, FLine);
@@ -54,6 +55,7 @@ Begin
                   End;
            ShellExec(FLine);
          End;
+
     Close(FObj);
     TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
     Jam(10); ShellLg.Log(TLogger.INFO,
