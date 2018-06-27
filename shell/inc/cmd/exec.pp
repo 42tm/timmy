@@ -16,64 +16,37 @@
     takes the lines in that file as Shell inputs. Can read commands from
     many files.
 }
-Procedure Exec;
+Procedure Exec(FName: String);
 Var
-    FPIter, FIgnored: Byte;
     FObj: Text;
-    FName, FLine: String;
-    ProcArgs: TStrArray;
+    FLine: String;
 Begin
-    If Length(InputRec.Args) = 0
+    Assign(FObj, FName);
+    {$I-}
+    Reset(FObj);
+    {$I+}
+    If IOResult <> 0
       then Begin
-             ShellLg.Put(TLogger.ERROR, 'exec: No input file specified.');
-             Exit;
+             If FileExists(FName)
+               then Begin
+                      ShellLg.Log(TLogger.ERROR, 'exec: Failed to read from '
+                                + FName + ', ignoring...');
+                      Close(FObj);
+                    End
+               else ShellLg.Log(TLogger.ERROR, 'exec: File ''' + FName
+                              + ''' doesn''t exist, ignoring...');
+           If Recorder.Recording
+             then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
            End;
 
-    If Length(InputRec.Args) > High(FPIter)
-      then Begin
-             ShellLg.Put(TLogger.ERROR, 'exec: Too many input files, at most '
-                       + IntToStr(High(FPIter)) + ' input files only.');
-             Exit;
-           End;
-
-    FIgnored := 0;
-    // Use ProcArgs to iterate over arguments that are originally passed.
-    // As the procedure is reading and executing lines in the file(s),
-    // InputRec.Args is changed
-      ProcArgs := InputRec.Args;
-    For FPIter := 0 to High(ProcArgs)
+    Jam(9); ShellLg.Log(TLogger.INFO, 'exec: Reading and executing from '
+                      + FName + '...');
+    Writeln(DupeString('=', 40 + Length(FName)));
+    While not EOF(FOBj)
       do Begin
-           FName := ProcArgs[FPIter];
-           Assign(FObj, FName);
-           {$I-}
-           Reset(FObj);
-           {$I+}
-           If IOResult <> 0
-             then Begin
-                    If FileExists(FName)
-                      then Begin
-                             ShellLg.Log(TLogger.ERROR, 'exec: Failed to read'
-                                       + ' from ' + FName + ', ignoring...');
-                             Close(FObj);
-                           End
-                      else ShellLg.Log(TLogger.ERROR, 'exec: File ''' + FName
-                                     + ''' doesn''t exist, ignoring...');
-                    Inc(FIgnored);
-                    Continue;
-                  End;
-           Jam(9); ShellLg.Log(TLogger.INFO, 'exec: Reading and executing from '
-                             + FName + '...');
-           Writeln(DupeString('=', 40 + Length(FName)));
-           While not EOF(FOBj)
-             do Begin
-                  Readln(FObj, FLine);
-                  ShellExec(FLine);
-                End;
-           Close(FObj);
-           TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
+           Readln(FObj, FLine);
+           ShellExec(FLine);
          End;
-
-    ShellLg.Log(TLogger.INFO, 'exec: Read '
-             + IntToStr(Length(ProcArgs) - FIgnored) + ' file(s), ignored '
-             + IntToStr(FIgnored) + ' file(s).');
+    Close(FObj);
+    TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
 End;
