@@ -122,10 +122,10 @@ Begin
     End;
 End;
 
-{$Include ../inc/cmd/help.pp}  // The help command
+{$Include ../inc/cmd/help.pp}    // The help command
 {$Include ../inc/cmd/record.pp}  // The record command
-{$Include ../inc/cmd/exec.pp}  // The exec command
+{$Include ../inc/cmd/exec.pp}    // The exec command
 {$Include ../inc/cmd/rename.pp}  // The rename command
-{$Include ../inc/cmd/init.pp}  // The init command
+{$Include ../inc/cmd/init.pp}    // The init command
 
 End.
