@@ -39,10 +39,15 @@ Var
     InstanceName: String;  // Name of the test subject instance
     Initiated: Boolean;    // State of initialization of the test subject
 
-    Recorder: Record  // Input recording mechanism
-                Recording: Boolean;
-                RecdInps: TStrArray;
-              End;
+    // Input recording mechanism
+      Recorder: Record
+                  Recording: Boolean;
+                  RecdInps: TStrArray;
+                End;
+
+    // For exec command
+      UserInput2: String;
+      ExecFilePaths: TStrArray;
 
     // Arguments parsing variables
       ArgParser: TArgumentParser;
@@ -94,7 +99,10 @@ Begin
       'record': ProcessRecord;
       'exec': If Length(InputRec.Args) = 0
                 then ShellLg.Put(TLogger.ERROR, 'exec: No input file.')
-                else For UserInput in InputRec.Args do Exec(UserInput);
+                else Begin
+                       ExecFilePaths := InputRec.Args;  // To avoid conflict
+                       For UserInput2 in ExecFilePaths do Exec(UserInput2);
+                     End;
       'rename': RenameBot;
       'init': If not Initiated then Init
                 else ShellLg.Put(TLogger.INFO, 'Instance already initiated');

@@ -19,7 +19,6 @@
 Procedure Exec(FName: String);
 Var
     FObj: Text;
-    FLine: String;
 Begin
     Assign(FObj, FName);
     {$I-}
@@ -46,14 +45,14 @@ Begin
 
     While not EOF(FOBj)
       do Begin
-           Readln(FObj, FLine);
-           If FLine = '' then Continue;
+           Readln(FObj, UserInput);
+           If UserInput = '' then Continue;
            If Recorder.Recording
              then Begin
                     SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) + 1);
-                    Recorder.RecdInps[High(Recorder.RecdInps)] := FLine;
+                    Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
                   End;
-           ShellExec(FLine);
+           ShellExec(UserInput);
          End;
 
     Close(FObj);
