@@ -1,0 +1,24 @@
+exec
+====
+
+Description
+-----------
+  Execute inputs in given files. Order of executing is from left to right
+  (first argument to last argument). In each file, every input is on its own
+  line, and the file is executed from the first line to the last line.
+
+Arguments
+---------
+    exec FILE1 [FILE2 FILE3 FILE4 FILE5 ...]
+
+  Examples:
+    exec inputs.rec
+    exec /home/frank/pas/script /home/frank/sh/f.txt ../../../bot_test.txt
+
+Errors
+------
+  An error is thrown when at least one of the following is true:
+  - You do not pass any argument to the exec command
+  - A file does not exist. It will be ignored and the exec command will continue
+    executing inputs from other files.
+  - IO check result is not 0 (IOResult <> 0). Again, that file will be ignored.
