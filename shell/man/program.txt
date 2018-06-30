@@ -11,3 +11,4 @@ OPTIONS:
                       or higher to log file (not recommended)
       --record-less : Record only the inputs that are not erroneous to the
                       session's input history
+      --record-more : Record the inputs from files too

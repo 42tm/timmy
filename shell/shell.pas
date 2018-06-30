@@ -1,6 +1,5 @@
 {
     Timmy Interactive Shell - Interactive interface for working with Timmy
-    Always gets upstreamed with the latest version of Timmy.
 
     Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
 
@@ -17,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
-{$mode ObjFPC} {$H+}
+{$mode ObjFPC} {$H+} {$Warnings ON}
 Program TimmyInteractiveShell;
 
 Uses
@@ -27,13 +26,11 @@ Uses
      Logger in 'logger/logger.pas',
      Timmy_Debug in '../variants/timmy_debug.pas';
 Const
-    SHELLVERSION = '1.0.0';
-    TIMMYVERSION = '1.2.0';
+    {$Warning Have you checked SHELLVERSION and TIMMYVERSION constants yet?}
+    SHELLVERSION = '1.0.0';  // Current version of Timmy Interactive Shell
+    TIMMYVERSION = '1.2.0';  // Current version of Timmy that the Shell's using
 
 {$Include inc/frontend/drawbar.pp}
-
-// InputPrompt() function is here
-// Later used in the main program of shell.pas
 {$Include inc/frontend/inputprompt.pp}
 
 BEGIN
@@ -63,6 +60,7 @@ BEGIN
     ArgParser.AddArgument('--quiet', saBool);
     ArgParser.AddArgument('--less-log', saBool);
     ArgParser.AddArgument('--record-less', saBool);
+    ArgParser.AddArgument('--record-more', saBool);
 
     // ****************************************
     // *     PARSE COMMAND LINE ARGUMENTS     *
@@ -71,16 +69,16 @@ BEGIN
     Try
         OutParse := ArgParser.ParseArgs;
     Except
-      On EInvalidArgument
-        Do Begin
-             ShLog.Put(TLogger.FATAL, 'Found invalid option.');
-             TextColor(7); Halt(1);
-           End;
-      On EParameterMissing
-        Do Begin
-             ShLog.Put(TLogger.FATAL, 'Missing argument.');
-             TextColor(7); Halt(2);
-           End;
+        On EInvalidArgument
+          Do Begin
+               ShLog.Put(TLogger.FATAL, 'Found invalid option.');
+               TextColor(7); Halt(1);
+             End;
+        On EParameterMissing
+          Do Begin
+               ShLog.Put(TLogger.FATAL, 'Missing argument.');
+               TextColor(7); Halt(2);
+             End;
     End;
 
     If OutParse.HasArgument('quiet') then ShLog.CslOutMin := TLogger.ERROR;
@@ -100,6 +98,7 @@ BEGIN
               'Declared an instance with the name ''' + InstanceName + '''.');
 
     Env.ItprBackslash := Not OutParse.HasArgument('no-esc');
+    Env.ExecF := False;
     Recorder.Recording := False;
 
 
@@ -116,7 +115,7 @@ BEGIN
     While True
       do Begin
            TextColor(White);
-           UserInput := InputPrompt;
+           UserInput := InputPrompt;  // Prompt the user for input
            Writeln;
            ProcessInput(UserInput);  // Pass input over to Core to process
          End;

@@ -36,6 +36,7 @@ Begin
 
     Jam(9); ShLog.Log(TLogger.INFO,
                       'exec: Reading and executing from ' + FName + '...');
+    If not OutParse.HasArgument('record-more') then Env.ExecF := True;
     Writeln(DupeString('=', 40 + Length(FName)));
 
     While not EOF(FOBj)
@@ -45,6 +46,7 @@ Begin
          End;
 
     Close(FObj);
+    Env.ExecF := False;
     TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
     Jam(10); ShLog.Log(TLogger.INFO,
                        'Finished reading and executing commands from file');

@@ -17,7 +17,7 @@ Interface
 
 Uses
      Crt, SysUtils, StrUtils,
-     ArgsParser, Logger in '../logger/logger.pas',
+     Logger in '../logger/logger.pas',
      Timmy_Debug in '../../variants/timmy_debug.pas';
 Type
     TExitCode: Word;
@@ -27,6 +27,8 @@ Var
              InputHis: TStrArray;
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
+           // True if the Shell is executing inputs from file
+             ExecF: Boolean;
            // Exit code of last executed command
              ExitCode: TExitCode;
          End;
@@ -87,10 +89,10 @@ Begin
     If UserInput = '' then Exit;
 
     // Add command to input history, if this input is not the same as the
-    // previous input.
-      If ( (Length(Env.InputHis) > 0)
+    // previous input, and the Shell is not executing from file
+      If ( ( (Length(Env.InputHis) > 0)
           and (not (UserInput = Env.InputHis[High(Env.InputHis)])) )
-          or (Length(Env.InputHis) = 0)
+          or (Length(Env.InputHis) = 0) ) and (not Env.ExecF)
                then Begin
                       SetLength(Env.InputHis, Length(Env.InputHis) + 1);
                       Env.InputHis[High(Env.InputHis)] := UserInput;
@@ -103,21 +105,29 @@ Begin
                Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
              End;
 
-    FlagSplit := StrSplit(UserInput, ' ', Env.ItprBackslash);
-    InputRec.Cmd := LowerCase(FlagSplit[0]);
-    InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
+    // Get command and arguments passed to that command in the user input
+    // for ShellExec
+      FlagSplit := StrSplit(UserInput, ' ', Env.ItprBackslash);
+      InputRec.Cmd := LowerCase(FlagSplit[0]);
+      InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
 
-    Env.ExitCode := ShellExec;
+    Env.ExitCode := ShellExec;  // Execute the input and get the exit code
 
-    If (Env.ExitCode = 4) and (OutParse.HasArgument('record-less'))
-      then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
+    // Remove the input from input history because it has an invalid command
+      If (Env.ExitCode = 4) and (OutParse.HasArgument('record-less'))
+        then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
 
-    If (Env.ExitCode mod 10 > 2) and (Recorder.Recording)
-      then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+    // Remove the input from recorder because it is invalid
+      If (Env.ExitCode mod 10 > 2) and (Recorder.Recording)
+        then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
 End;
 
-{ Determine the command and execute }
-Function ShellExec: TExitCode;
+{
+    Determine the command and execute
+
+    Return: [TExitCode -> Word] Exit code returned by the command executed
+}
+Function ShellExec: TExitCode: TExitCode;
 Var
     FlagSplit: TStrArray;  // Command split result
 Begin
