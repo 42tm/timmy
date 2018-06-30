@@ -84,6 +84,8 @@ End;
 { Process the user's input (core.pas -> UserInput) before executing }
 Procedure ProcessInput;
 Begin
+    If UserInput = '' then Exit;
+
     // Add command to input history, if this input is not the same as the
     // previous input.
       If ( (Length(Env.InputHis) > 0)

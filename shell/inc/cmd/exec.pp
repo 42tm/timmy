@@ -29,29 +29,23 @@ Begin
              If FileExists(FName)
                then ShLog.Log(TLogger.ERROR, 'exec: Failed to read from '
                               + FName + ', ignoring...');
-               else ShLog.Log(TLogger.ERROR, 'exec: File ''' + FName
-                              + ''' doesn''t exist, ignoring...');
+               else ShLog.Log(TLogger.ERROR, 'exec: File '''
+                            + FName + ''' doesn''t exist, ignoring...');
              Exit;
            End;
 
-    Jam(9); ShLog.Log(TLogger.INFO, 'exec: Reading and executing from '
-                      + FName + '...');
+    Jam(9); ShLog.Log(TLogger.INFO,
+                      'exec: Reading and executing from ' + FName + '...');
     Writeln(DupeString('=', 40 + Length(FName)));
 
     While not EOF(FOBj)
       do Begin
            Readln(FObj, UserInput);
-           If UserInput = '' then Continue;
-           If Recorder.Recording
-             then Begin
-                    SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) + 1);
-                    Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
-                  End;
            ProcessInput(UserInput);
          End;
 
     Close(FObj);
     TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
     Jam(10); ShLog.Log(TLogger.INFO,
-                         'Finished reading and executing commands from file');
+                       'Finished reading and executing commands from file');
 End;

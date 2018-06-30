@@ -52,6 +52,10 @@ BEGIN
       '--info': Halt(PrintHelp('program_info'));
     End;
 
+    // **************************************
+    // *     ADD COMMAND LINE ARGUMENTS     *
+    // **************************************
+
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
     ArgParser.AddArgument('--load', 'load', saStore);
@@ -113,9 +117,7 @@ BEGIN
       do Begin
            TextColor(White);
            UserInput := InputPrompt;
-           If UserInput = '' then Continue;
            Writeln;
-           // Pass input over to Core to process
-             ProcessInput(UserInput);
+           ProcessInput(UserInput);  // Pass input over to Core to process
          End;
 END.
