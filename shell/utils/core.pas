@@ -81,27 +81,23 @@ End;
 
 {$Include ../inc/frontend/jam.pp}
 
-Procedure ProcessInput(ShellInput: String);
+{ Process the user's input (core.pas -> UserInput) before executing }
+Procedure ProcessInput;
 Begin
-    FlagSplit := StrSplit(ShellInput, ' ', Env.ItprBackslash);
+    FlagSplit := StrSplit(UserInput, ' ', Env.ItprBackslash);
     InputRec.Cmd := LowerCase(FlagSplit[0]);
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
 
     Env.ExitCode := ShellExec;
 
-    If (Env.ExitCode mod 10 < 3)
-      then Begin
-             // Remove input from input history and recorded inputs
-             // because it's invalid
+    If (Env.ExitCode = 4) and (OutParse.HasArgument('record-less'))
+      then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
 
-             If (OutParse.HasArgument('record-less'))w3d 4
-               then SetLength(Env.InputHis, Length(Env.InputHis) - 1)4
-             If Recorder.Recording
-               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
-           End;
+    If (Env.ExitCode mod 10 > 2) and (Recorder.Recording)
+      then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
 End;
 
-{ Execute command ShellInput. }
+{ Determine the command and execute }
 Function ShellExec: TExitCode;
 Var
     FlagSplit: TStrArray;  // Command split result
@@ -130,8 +126,8 @@ Begin
              End;
       Else Begin
              ShLog.Put(TLogger.ERROR,
-                         'Invalid command ''' + InputRec.Cmd + '''');
-             Exit(1);
+                       'Invalid command ''' + InputRec.Cmd + '''');
+             Exit(4);
            End;
     End;
 End;
