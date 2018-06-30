@@ -66,7 +66,6 @@ BEGIN
     TextColor(White);
     Writeln('Timmy Interactive Shell ' + SHELLVERSION);
     Writeln('Using Timmy version ' + TIMMYVERSION);
-    Writeln('Type ''help'' for help.');
 
     Try
         OutParse := ArgParser.ParseArgs;
@@ -82,6 +81,8 @@ BEGIN
              TextColor(7); Halt;
            End;
     End;
+
+    Writeln('Type ''help'' for help.');
 
     Initiated := False;
     InstanceName := 'TestSubj';
