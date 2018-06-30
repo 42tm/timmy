@@ -2,8 +2,7 @@ USAGE: shell [options]
 
 OPTIONS:
   -h, --help        : Print this help and exit
-      --version     : Print the Shell's version and the version of Timmy
-                      it is using
+      --info        : Get some information about Timmy Interactive Shell
   -l, --load=FILE   : Load Timmy Interactive Shell commands from FILE
       --no-esc      : Disable backslash interpretation in Shell inputs
       --quiet       : Only write log messages with severity of TLogger.ERROR
