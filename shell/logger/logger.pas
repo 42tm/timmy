@@ -180,6 +180,10 @@ End;
 {
     Print out a message to the console with text color
     that hints the severity, regardless of CslOutMin.
+
+    Parameters:
+      Severity [Integer]: The severity of the event that needs to be informed
+      MsgArray [Array of String]: Strings appended to make the output message
 }
 Procedure TLogger.Put(Severity: Integer; MsgArray: Array of String);
 Var
