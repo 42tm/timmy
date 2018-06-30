@@ -29,8 +29,6 @@ Uses
 Const
     SHELLVERSION = '1.0.0';
     TIMMYVERSION = '1.2.0';
-Label
-    StartIntf;
 
 {$Include inc/frontend/drawbar.pp}
 
@@ -39,20 +37,20 @@ Label
 {$Include inc/frontend/inputprompt.pp}
 
 BEGIN
-    If (ParamStr(1) = '-h') or (ParamStr(1) = '--help')
-      then Begin
-             PrintHelp('program');
-             Halt;
-           End;
-
-    If ParamStr(1) = '--version'
-      then Begin
-             Writeln('Timmy Interactive Shell version ' + SHELLVERSION);
-             Writeln('Using Timmy version ' + TIMMYVERSION);
-             Halt;
-           End;
-
     ShLog.Init(TLogger.CORRECT, TLogger.CORRECT, 'log');
+
+    ShLog.Put(10, 'Timmy Interactive Shell ' + SHELLVERSION);
+    ShLog.Put(10, 'Using Timmy version ' + TIMMYVERSION);
+    ShLog.Put(10, 'Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>');
+
+    // *******************************
+    // *       GENERIC OPTIONS       *
+    // *******************************
+
+    Case ParamStr(1) of
+      '-h', '--help': Halt(PrintHelp('program'));
+      '--info': Halt(PrintHelp('program_info'));
+    End;
 
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
@@ -62,10 +60,9 @@ BEGIN
     ArgParser.AddArgument('--less-log', saBool);
     ArgParser.AddArgument('--record-less', saBool);
 
-    CursorBig;
-    TextColor(White);
-    Writeln('Timmy Interactive Shell ' + SHELLVERSION);
-    Writeln('Using Timmy version ' + TIMMYVERSION);
+    // ****************************************
+    // *     PARSE COMMAND LINE ARGUMENTS     *
+    // ****************************************
 
     Try
         OutParse := ArgParser.ParseArgs;
@@ -73,61 +70,68 @@ BEGIN
       On EInvalidArgument
         Do Begin
              ShLog.Put(TLogger.FATAL, 'Found invalid option.');
-             TextColor(7); Halt;
+             TextColor(7); Halt(1);
            End;
       On EParameterMissing
         Do Begin
              ShLog.Put(TLogger.FATAL, 'Missing argument.');
-             TextColor(7); Halt;
+             TextColor(7); Halt(2);
            End;
     End;
 
-    Writeln('Type ''help'' for help.');
+    If OutParse.HasArgument('quiet') then ShLog.CslOutMin := TLogger.ERROR;
+    If OutParse.HasArgument('less-log') then ShLog.FileOutMin := TLogger.ERROR;
+
+    // ***************************************
+    // *     PREPARE FOR INPUT EXECUTION     *
+    // ***************************************
+
+    CursorBig;
 
     Initiated := False;
     InstanceName := 'TestSubj';
 
     Jam(10);
-    ShLog.Log(TLogger.INFO, 'Declared an instance with the name '''
-              + InstanceName + '''.');
-    If OutParse.HasArgument('quiet')
-      then ShLog.CslOutMin := TLogger.ERROR;
-    If OutParse.HasArgument('less-log')
-      then ShLog.FileOutMin := TLogger.ERROR;
+    ShLog.Log(TLogger.INFO,
+              'Declared an instance with the name ''' + InstanceName + '''.');
 
     Env.ItprBackslash := Not OutParse.HasArgument('no-esc');
     Recorder.Recording := False;
 
-    If OutParse.HasArgument('load')
-      then Exec(OutParse.GetValue('load'));
 
-    // Start interface
-    StartIntf:
-        SetLength(Env.InputHis, 0);
-        Jam(10); ShLog.Log(TLogger.INFO, 'New Shell session started');
-        While True
-          do Begin
-               TextColor(White);
-               UserInput := InputPrompt;
-               If UserInput = '' then Continue;
-               // Add command to input history, if this input is not the same
-               // as the previous input
-                 If ((Length(Env.InputHis) > 0)
-                     and (not (UserInput = Env.InputHis[High(Env.InputHis)])))
-                     or (Length(Env.InputHis) = 0)
-                          then Begin
-                                 SetLength(Env.InputHis,
-                                           Length(Env.InputHis) + 1);
-                                 Env.InputHis[High(Env.InputHis)] := UserInput;
-                               End;
-               If Recorder.Recording
-                 then Begin  // Record input
-                        SetLength(Recorder.RecdInps,
-                                  Length(Recorder.RecdInps) + 1);
-                        Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
-                      End;
-               Writeln;
-               // Pass input over to Core to process
-                 ProcessInput(UserInput);
-             End;
+    If OutParse.HasArgument('load') then Exec(OutParse.GetValue('load'));
+
+
+    // ***************************
+    // *       NEW SESSION       *
+    // ***************************
+
+    SetLength(Env.InputHis, 0);
+    Jam(10); ShLog.Log(TLogger.INFO, 'New Shell session started');
+
+    While True
+      do Begin
+           TextColor(White);
+           UserInput := InputPrompt;
+           If UserInput = '' then Continue;
+           // Add command to input history, if this input is not the same
+           // as the previous input
+             If ((Length(Env.InputHis) > 0)
+                 and (not (UserInput = Env.InputHis[High(Env.InputHis)])))
+                 or (Length(Env.InputHis) = 0)
+                      then Begin
+                             SetLength(Env.InputHis,
+                                       Length(Env.InputHis) + 1);
+                             Env.InputHis[High(Env.InputHis)] := UserInput;
+                           End;
+           If Recorder.Recording
+             then Begin  // Record input
+                    SetLength(Recorder.RecdInps,
+                              Length(Recorder.RecdInps) + 1);
+                    Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
+                  End;
+           Writeln;
+           // Pass input over to Core to process
+             ProcessInput(UserInput);
+         End;
 END.
