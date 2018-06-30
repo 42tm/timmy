@@ -84,6 +84,23 @@ End;
 { Process the user's input (core.pas -> UserInput) before executing }
 Procedure ProcessInput;
 Begin
+    // Add command to input history, if this input is not the same as the
+    // previous input.
+      If ( (Length(Env.InputHis) > 0)
+          and (not (UserInput = Env.InputHis[High(Env.InputHis)])) )
+          or (Length(Env.InputHis) = 0)
+               then Begin
+                      SetLength(Env.InputHis, Length(Env.InputHis) + 1);
+                      Env.InputHis[High(Env.InputHis)] := UserInput;
+                    End;
+
+    // Record input, if the recorder is running
+      If Recorder.Recording
+        then Begin
+               SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) + 1);
+               Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
+             End;
+
     FlagSplit := StrSplit(UserInput, ' ', Env.ItprBackslash);
     InputRec.Cmd := LowerCase(FlagSplit[0]);
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));

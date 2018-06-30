@@ -114,22 +114,6 @@ BEGIN
            TextColor(White);
            UserInput := InputPrompt;
            If UserInput = '' then Continue;
-           // Add command to input history, if this input is not the same
-           // as the previous input
-             If ((Length(Env.InputHis) > 0)
-                 and (not (UserInput = Env.InputHis[High(Env.InputHis)])))
-                 or (Length(Env.InputHis) = 0)
-                      then Begin
-                             SetLength(Env.InputHis,
-                                       Length(Env.InputHis) + 1);
-                             Env.InputHis[High(Env.InputHis)] := UserInput;
-                           End;
-           If Recorder.Recording
-             then Begin  // Record input
-                    SetLength(Recorder.RecdInps,
-                              Length(Recorder.RecdInps) + 1);
-                    Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
-                  End;
            Writeln;
            // Pass input over to Core to process
              ProcessInput(UserInput);
