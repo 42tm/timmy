@@ -26,8 +26,8 @@ Type TLogger = Object
                  CslOutMin: Integer;
                  FileOutMin: Integer;
                  Procedure SetLogFilePath(LogFilePath: String);
-                 Procedure Log(Severity: Integer; LogMsg: String);
-                 Procedure Put(Severity: Integer; Msg: String);
+                 Procedure Log(Severity: Integer; LogMsgArray: Array of String);
+                 Procedure Put(Severity: Integer; MsgArray: Array of String);
                  Procedure Enable;
                  Procedure Disable;
                Private
@@ -133,12 +133,17 @@ End;
 
     Parameters:
       Severity [Integer]: The severity of the event that needs logging
-      LogMsg [String]: The log message
+      LogMsgArray [Array of String]: Strings appended to make the log message
 }
-Procedure TLogger.Log(Severity: Integer; LogMsg: String);
-Var CslMsgColor: Byte;
+Procedure TLogger.Log(Severity: Integer; LogMsgArray: Array of String);
+Var
+    LogMsg, StrIter: String;
+    CslMsgColor: Byte;
     F: Text;
 Begin
+    LogMsg := '';
+    For StrIter in LogMsgArray do LogMsg := LogMsg + StrIter;
+
     If (Severity >= CslOutMin) and (CslOutMin > -1)
       then Begin
              Case Severity of
@@ -176,8 +181,10 @@ End;
     Print out a message to the console with text color
     that hints the severity, regardless of CslOutMin.
 }
-Procedure TLogger.Put(Severity: Integer; Msg: String);
-Var MsgColor: Byte;
+Procedure TLogger.Put(Severity: Integer; MsgArray: Array of String);
+Var
+    Str: String;
+    MsgColor: Byte;
 Begin
     Case Severity of
       0..9: MsgColor := 10;
@@ -190,7 +197,8 @@ Begin
     End;
 
     TextColor(MsgColor);
-    Writeln(Msg);
+    For Str in MsgArray do Write(Str);
+    Writeln;
 End;
 
 End.
