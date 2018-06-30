@@ -52,7 +52,7 @@ BEGIN
              Halt;
            End;
 
-    ShellLg.Init(TLogger.CORRECT, TLogger.CORRECT, 'log');
+    ShLog.Init(TLogger.CORRECT, TLogger.CORRECT, 'log');
 
     ArgParser := TArgumentParser.Create;
     ArgParser.AddArgument('-l', 'load', saStore);
@@ -72,12 +72,12 @@ BEGIN
     Except
       On EInvalidArgument
         Do Begin
-             ShellLg.Put(TLogger.FATAL, 'Found invalid option.');
+             ShLog.Put(TLogger.FATAL, 'Found invalid option.');
              TextColor(7); Halt;
            End;
       On EParameterMissing
         Do Begin
-             ShellLg.Put(TLogger.FATAL, 'Missing argument.');
+             ShLog.Put(TLogger.FATAL, 'Missing argument.');
              TextColor(7); Halt;
            End;
     End;
@@ -88,12 +88,12 @@ BEGIN
     InstanceName := 'TestSubj';
 
     Jam(10);
-    ShellLg.Log(TLogger.INFO, 'Declared an instance with the name '''
+    ShLog.Log(TLogger.INFO, 'Declared an instance with the name '''
               + InstanceName + '''.');
     If OutParse.HasArgument('quiet')
-      then ShellLg.CslOutMin := TLogger.ERROR;
+      then ShLog.CslOutMin := TLogger.ERROR;
     If OutParse.HasArgument('less-log')
-      then ShellLg.FileOutMin := TLogger.ERROR;
+      then ShLog.FileOutMin := TLogger.ERROR;
 
     Env.ItprBackslash := Not OutParse.HasArgument('no-esc');
     Recorder.Recording := False;
@@ -104,7 +104,7 @@ BEGIN
     // Start interface
     StartIntf:
         SetLength(Env.InputHis, 0);
-        Jam(10); ShellLg.Log(TLogger.INFO, 'New Shell session started');
+        Jam(10); ShLog.Log(TLogger.INFO, 'New Shell session started');
         While True
           do Begin
                TextColor(White);
@@ -128,6 +128,6 @@ BEGIN
                       End;
                Writeln;
                // Pass input over to Core to process
-                 ShellExec(UserInput);
+                 ProcessInput(UserInput);
              End;
 END.

@@ -27,11 +27,13 @@ Var
              InputHis: TStrArray;
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
+           // Exit code of last executed command
+             ExitCode: TExitCode;
          End;
 
     UserInput: String;  // User's input to the shell
     TestSubj: TTimmy;   // Subject TTimmy instance
-    ShellLg: TLogger;   // Logger for Timmy Interactive Shell
+    ShLog: TLogger;   // Logger for Timmy Interactive Shell
     InputRec: Record    // User input data record
                 Cmd: String;
                 Args: TStrArray;
@@ -79,17 +81,34 @@ End;
 
 {$Include ../inc/frontend/jam.pp}
 
-{ Execute command ShellInput. }
-Function ShellExec(ShellInput: String): TExitCode;
-Var
-    FlagSplit: TStrArray;  // Command split result
+Procedure ProcessInput(ShellInput: String);
 Begin
     FlagSplit := StrSplit(ShellInput, ' ', Env.ItprBackslash);
     InputRec.Cmd := LowerCase(FlagSplit[0]);
     InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
+
+    Env.ExitCode := ShellExec;
+
+    If (Env.ExitCode mod 10 < 3)
+      then Begin
+             // Remove input from input history and recorded inputs
+             // because it's invalid
+
+             If (OutParse.HasArgument('record-less'))w3d 4
+               then SetLength(Env.InputHis, Length(Env.InputHis) - 1)4
+             If Recorder.Recording
+               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+           End;
+End;
+
+{ Execute command ShellInput. }
+Function ShellExec: TExitCode;
+Var
+    FlagSplit: TStrArray;  // Command split result
+Begin
     Case InputRec.Cmd of
       'exit', 'quit': Begin
-                        ShellLg.Log(TLogger.INFO, 'Quitting Shell session');
+                        ShLog.Log(TLogger.INFO, 'Quitting Shell session');
                         TextColor(7); Halt;
                       End;
       'clear': ClrScr;
@@ -98,26 +117,21 @@ Begin
                 else PrintHelp(InputRec.Args[0]);
       'record': ProcessRecord;
       'exec': If Length(InputRec.Args) = 0
-                then ShellLg.Put(TLogger.ERROR, 'exec: No input file.')
+                then ShLog.Put(TLogger.ERROR, 'exec: No input file.')
                 else Begin
                        ExecFilePaths := InputRec.Args;  // To avoid conflict
                        For UserInput2 in ExecFilePaths do Exec(UserInput2);
                      End;
       'rename': RenameBot;
       'init': If not Initiated then Init
-                else ShellLg.Put(TLogger.INFO, 'Instance already initiated');
+                else ShLog.Put(TLogger.INFO, 'Instance already initiated');
       'add': Begin
 
              End;
       Else Begin
-             ShellLg.Put(TLogger.ERROR, 'Invalid command ''' + InputRec.Cmd
-                       + '''');
-             // Remove input from input history and recorded inputs
-             // because it's invalid
-               If (OutParse.HasArgument('record-less'))
-                 then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
-               If Recorder.Recording
-                 then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
+             ShLog.Put(TLogger.ERROR,
+                         'Invalid command ''' + InputRec.Cmd + '''');
+             Exit(1);
            End;
     End;
 End;

@@ -27,16 +27,14 @@ Begin
     If IOResult <> 0
       then Begin
              If FileExists(FName)
-               then ShellLg.Log(TLogger.ERROR, 'exec: Failed to read from '
+               then ShLog.Log(TLogger.ERROR, 'exec: Failed to read from '
                               + FName + ', ignoring...');
-               else ShellLg.Log(TLogger.ERROR, 'exec: File ''' + FName
+               else ShLog.Log(TLogger.ERROR, 'exec: File ''' + FName
                               + ''' doesn''t exist, ignoring...');
-             If Recorder.Recording
-               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
              Exit;
            End;
 
-    Jam(9); ShellLg.Log(TLogger.INFO, 'exec: Reading and executing from '
+    Jam(9); ShLog.Log(TLogger.INFO, 'exec: Reading and executing from '
                       + FName + '...');
     Writeln(DupeString('=', 40 + Length(FName)));
 
@@ -49,11 +47,11 @@ Begin
                     SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) + 1);
                     Recorder.RecdInps[High(Recorder.RecdInps)] := UserInput;
                   End;
-           ShellExec(UserInput);
+           ProcessInput(UserInput);
          End;
 
     Close(FObj);
     TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
-    Jam(10); ShellLg.Log(TLogger.INFO,
+    Jam(10); ShLog.Log(TLogger.INFO,
                          'Finished reading and executing commands from file');
 End;

@@ -24,7 +24,7 @@ Var
 Begin
     If Length(InputRec.Args) > 1
       then Begin
-             ShellLg.Log(TLogger.ERROR, 'rename: Too many arguments');
+             ShLog.Log(TLogger.ERROR, 'rename: Too many arguments');
              If Recorder.Recording
                then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
              Exit;
@@ -50,7 +50,7 @@ Begin
     If (SIter = 0) or (Pos(' ', UserInput) <> 0)
        or (Length(UserInput) > 15) or (Length(UserInput) = 0)
       then Begin
-             ShellLg.Put(TLogger.ERROR, 'rename: Invalid name');
+             ShLog.Put(TLogger.ERROR, 'rename: Invalid name');
              Jam(2); TextColor(White); Write('See manual entry for rename');
              Writeln(', section "Errors" to see why');
              If Recorder.Recording
@@ -60,6 +60,6 @@ Begin
 
     InstanceName := UserInput;
     Jam(10);
-    ShellLg.Put(TLogger.INFO, 'rename: Test instance renamed to '''
+    ShLog.Put(TLogger.INFO, 'rename: Test instance renamed to '''
               + UserInput + '''.');
 End;

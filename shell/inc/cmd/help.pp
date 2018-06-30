@@ -26,7 +26,7 @@ Var
 Begin
     If not FileExists('man/' + ManName + '.txt')
       then Begin
-             ShellLg.Log(TLogger.ERROR,
+             ShLog.Log(TLogger.ERROR,
                          'Could not find the manual entry for that');
              Exit;
            End
@@ -37,7 +37,7 @@ Begin
              {$I+}
              If IOResult <> 0
                then Begin
-                      ShellLg.Log(TLogger.ERROR, 'Failed to read manual entry');
+                      ShLog.Log(TLogger.ERROR, 'Failed to read manual entry');
                       Exit;
                     End;
              TextColor(7);
