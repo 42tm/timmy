@@ -19,14 +19,14 @@ Uses
      Crt, SysUtils, StrUtils,
      ArgsParser, Logger in '../logger/logger.pas',
      Timmy_Debug in '../../variants/timmy_debug.pas';
+Type
+    TExitCode: Word;
 Var
     Env: Record  // Shell environment variables
            // Array to store user's entered inputs (in current session)
              InputHis: TStrArray;
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
-           // Variable used to check if Shell is reading inputs from file
-             // SfFReading: Boolean;
          End;
 
     UserInput: String;  // User's input to the shell
@@ -58,12 +58,12 @@ Function BoolToStr(AnyBool: Boolean): String;
 Procedure Jam(DotColor: Byte);
 
 (* Main stuff *)
-Procedure ShellExec(ShellInput: String);
-Procedure PrintHelp(ManName: String);
-Procedure ProcessRecord;
-Procedure Exec(FName: String);
-Procedure Init;
-Procedure RenameBot;
+Function ShellExec(ShellInput: String): TExitCode;
+Function PrintHelp(ManName: String): TExitCode;
+Function ProcessRecord: TExitCode;
+Function Exec(FName: String): TExitCode;
+Function Init: TExitCode;
+Function RenameBot: TExitCode;
 
 Implementation
 
@@ -80,7 +80,7 @@ End;
 {$Include ../inc/frontend/jam.pp}
 
 { Execute command ShellInput. }
-Procedure ShellExec(ShellInput: String);
+Function ShellExec(ShellInput: String): TExitCode;
 Var
     FlagSplit: TStrArray;  // Command split result
 Begin
