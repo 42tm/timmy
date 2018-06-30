@@ -27,11 +27,8 @@ Begin
     If IOResult <> 0
       then Begin
              If FileExists(FName)
-               then Begin
-                      ShellLg.Log(TLogger.ERROR, 'exec: Failed to read from '
-                                + FName + ', ignoring...');
-                      Close(FObj);
-                    End
+               then ShellLg.Log(TLogger.ERROR, 'exec: Failed to read from '
+                              + FName + ', ignoring...');
                else ShellLg.Log(TLogger.ERROR, 'exec: File ''' + FName
                               + ''' doesn''t exist, ignoring...');
              If Recorder.Recording
