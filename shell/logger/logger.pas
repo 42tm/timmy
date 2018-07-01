@@ -17,34 +17,39 @@ Interface
 
 Uses
     Crt, SysUtils, StrUtils,
-    Timmy_Debug in '../../variants/timmy_debug.pas';
-Type TLogger = Object
-                 Constructor Init(ACslOutMin: Integer = 0;
-                                  AFileOutMin: Integer = -1; ALogPath: String = '');
-               Public
-                 LeadingStr: String;
-                 CslOutMin: Integer;
-                 FileOutMin: Integer;
-                 Procedure SetLogFilePath(LogFilePath: String);
-                 Procedure Log(Severity: Integer; LogMsgArray: Array of String);
-                 Procedure Put(Severity: Integer; MsgArray: Array of String);
-                 Procedure Enable;
-                 Procedure Disable;
-               Private
-                 LogPath: String;
-                 Enabled: Boolean;
-               Public Const
-                 CORRECT = 0;
-                 INFO = 10;
-                 LIGHTWARNING = 20;
-                 WARNING = 30;
-                 ERROR = 40;
-                 CRITICAL = 50;
-                 FATAL = 60;
-               End;
+    Timmy in '../../timmy.pas';
+Type
+    TLogger = Object
+                Constructor Init(ACslOutMin: Integer = 0;
+                                 AFileOutMin: Integer = -1;
+                                 ALogPath: String = '');
+                Public
+                  LeadingStr: String;   // The first string in the console output
+                  CslOutMin: Integer;   // Minimum level of logging for console output
+                  FileOutMin: Integer;  // Minimum level of logging for file output
+                  Procedure SetLogFilePath(LogFilePath: String);
+                  Procedure Log(Severity: Integer; LogMsg: String);               overload;
+                  Procedure Log(Severity: Integer; LogMsgArray: Array of String); overload;
+                  Procedure Put(Severity: Integer; Msg: String);                  overload;
+                  Procedure Put(Severity: Integer; MsgArray: Array of String);    overload;
+                  Procedure Enable;
+                  Procedure Disable;
+                Private
+                  LogPath: String;
+                  Enabled: Boolean;
+                  Function PickColor(LLevel: Integer): Byte;
+                  Function TimeNow: String;
+                Public Const
+                  CORRECT = 0;
+                  INFO = 10;
+                  LIGHTWARNING = 20;
+                  WARNING = 30;
+                  ERROR = 40;
+                  CRITICAL = 50;
+                  FATAL = 60;
+              End;
 
 Function CreateFile(FilePath: String): Boolean;
-Const DIRDELIM = {$IFDEF MSWINDOWS} '\' {$ELSE} '/' {$ENDIF};
 
 Implementation
 
@@ -54,23 +59,25 @@ Implementation
     If directory path is also given, check if the directory exists.
     If it doesn't, exit without creating a file.
 
-    Return: True if operation success
-            False if directory does not exist (if given) or IOResult is not 0
+    Parameter:
+        FilePath [String]: File name (or path) to create
+
+    Return [Boolean]:
+        True if operation success
+        False if directory does not exist (if given) or IOResult is not 0
 }
 Function CreateFile(FilePath: String): Boolean;
 Var FileName: String;
     F: Text;
 Begin
-    If Pos(DIRDELIM, FilePath) = 0
+    If Pos(PathDelim, FilePath) = 0
       then FileName := FilePath
       else Begin
              FileName := Copy(FilePath,
-                              Length(FilePath) - Pos(DIRDELIM, ReverseString(FilePath)) + 1,
-                              Pos(DIRDELIM, ReverseString(FilePath)) - 1);
+                              Length(FilePath) - Pos(PathDelim, ReverseString(FilePath)) + 1,
+                              Pos(PathDelim, ReverseString(FilePath)) - 1);
              If not DirectoryExists(Copy(FilePath, 1, Length(FilePath) - Length(FileName) - 1))
-               then Begin
-                      Exit(False);
-                    End;
+               then Exit(False);
            End;
 
     If (not FileExists(FilePath))
@@ -120,6 +127,9 @@ Begin Enabled := False; End;
     does not exist, it will be created. If parent directory's path is given
     and it does not exist, no file will be created, and TLogger.LogPath
     remains the same.
+
+    Parameter:
+        LogFilePath [String]: Path of log file to write log messages to
 }
 Procedure TLogger.SetLogFilePath(LogFilePath: String);
 Begin
@@ -128,34 +138,60 @@ Begin
     LogPath := LogFilePath;
 End;
 
+
+{
+    Color of log message output to console, depending
+    on the severity of the event, given as LLevel.
+
+    Parameter:
+        LLevel [Integer]: Severity of event, to determine the right text color
+    Return [Byte]:
+        The value of the text color corresponds to the given event severity
+}
+Function TLogger.PickColor(LLevel: Integer): Byte;
+Begin
+     Case LLevel of
+       0..9:   Exit(10);
+       10..19: Exit(15);
+       20..29: Exit(6);
+       30..39: Exit(14);
+       40..49: Exit(12);
+       50..59: Exit(28);
+       Else Exit(4);
+     End;
+End;
+
+{
+    Return the leading string for writing to log file, which is
+    the current time in the format [hh:mm:ss dd/mm/yy]
+}
+Function TLogger.TimeNow: String;
+Begin
+    Exit('['
+       + StrSplit(DateTimeToStr(Now), ' ')[1]
+       + ' ' + StrJoin(
+                       StrSplit(
+                                StrSplit(DateTimeToStr(Now), ' ')[0],
+                                '-'
+                               ),
+                       '/')
+       + '] ' );
+End;
+
 {
     Log
 
     Parameters:
       Severity [Integer]: The severity of the event that needs logging
-      LogMsgArray [Array of String]: Strings appended to make the log message
+      LogMsg [String]: The log message
 }
-Procedure TLogger.Log(Severity: Integer; LogMsgArray: Array of String);
+Procedure TLogger.Log(Severity: Integer; LogMsg: String);
 Var
-    LogMsg, StrIter: String;
-    CslMsgColor: Byte;
     F: Text;
 Begin
-    LogMsg := '';
-    For StrIter in LogMsgArray do LogMsg := LogMsg + StrIter;
-
     If (Severity >= CslOutMin) and (CslOutMin > -1)
       then Begin
-             Case Severity of
-               0..9: CslMsgColor := 10;
-               10..19: CslMsgColor := 15;
-               20..29: CslMsgColor := 6;
-               30..39: CslMsgColor := 14;
-               40..49: CslMsgColor := 12;
-               50..59: CslMsgColor := 28;
-               Else CslMsgColor := 4;
-             End;
-             TextColor(CslMsgColor);
+             TextColor(PickColor(Severity));
              Writeln(LeadingStr + LogMsg);
            End;
 
@@ -166,13 +202,50 @@ Begin
              Append(F);
              {$I+}
              If IOResult = 0
-             then Writeln(F, '[' + StrSplit(DateTimeToStr(Now), ' ')[1]
-                             + ' ' + StrJoin(
-                                       StrSplit(
-                                         StrSplit(DateTimeToStr(Now), ' ')[0],
-                                                '-'),
-                                                     '/')
-                             + '] ' + LogMsg);
+               then Writeln(F, TimeNow + LogMsg)
+               else Begin
+                      Put(TLogger.ERROR, 'logger: Failed to write to log file');
+                      Exit;
+                    End;
+             Close(F);
+           End;
+End;
+
+{
+    Log, but this one takes an array of strings instead of a string.
+
+    Parameters:
+      Severity [Integer]: The severity of the event that needs logging
+      LogMsgArray [Array of String]: Strings appended to make the log message
+}
+Procedure TLogger.Log(Severity: Integer; LogMsgArray: Array of String);
+Var
+    StrIter: String;
+    F: Text;
+Begin
+     If (Severity >= CslOutMin) and (CslOutMin > -1)
+       then Begin
+              TextColor(PickColor(Severity));
+              For StrIter in LogMsgArray do Write(StrIter);
+              Writeln;
+            End;
+
+    If (Severity >= FileOutMin) and (FileOutMin > -1) and (LogPath <> '')
+      then Begin
+             Assign(F, LogPath);
+             {$I-}
+             Append(F);
+             {$I+}
+             If IOResult = 0
+               then Begin
+                      Write(F, TimeNow);
+                      For StrIter in LogMsgArray do Write(F, StrIter);
+                      Writeln(F);
+                    End
+               else Begin
+                      Put(TLogger.ERROR, 'logger: Failed to write to log file');
+                      Exit;
+                    End;
              Close(F);
            End;
 End;
@@ -183,25 +256,29 @@ End;
 
     Parameters:
       Severity [Integer]: The severity of the event that needs to be informed
+      Msg [String]: String to be printed
+}
+Procedure TLogger.Put(Severity: Integer; Msg: String);
+Begin
+    TextColor(PickColor(Severity));
+    Writeln(Msg);
+End;
+
+{
+    The same as the above implementation, which writes any thing to console
+    regardless of CslOutMin, but this one takes a array of string instead of
+    a string.
+
+    Parameters:
+      Severity [Integer]: The severity of the event that needs to be informed
       MsgArray [Array of String]: Strings appended to make the output message
 }
 Procedure TLogger.Put(Severity: Integer; MsgArray: Array of String);
 Var
-    Str: String;
-    MsgColor: Byte;
+    StrIter: String;
 Begin
-    Case Severity of
-      0..9: MsgColor := 10;
-      10..19: MsgColor := 15;
-      20..29: MsgColor := 6;
-      30..39: MsgColor := 14;
-      40..49: MsgColor := 12;
-      50..59: MsgColor := 28;
-      Else MsgColor := 4;
-    End;
-
-    TextColor(MsgColor);
-    For Str in MsgArray do Write(Str);
+    TextColor(PickColor(Severity));
+    For StrIter in MsgArray do Write(StrIter);
     Writeln;
 End;
 
