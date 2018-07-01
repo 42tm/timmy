@@ -81,12 +81,12 @@ BEGIN
              End;
     End;
 
-    If OutParse.HasArgument('quiet') then ShLog.CslOutMin := TLogger.ERROR;
-    If OutParse.HasArgument('less-log') then ShLog.FileOutMin := TLogger.ERROR;
-
     // ***************************************
     // *     PREPARE FOR INPUT EXECUTION     *
     // ***************************************
+
+    If OutParse.HasArgument('quiet') then ShLog.CslOutMin := TLogger.ERROR;
+    If OutParse.HasArgument('less-log') then ShLog.FileOutMin := TLogger.ERROR;
 
     CursorBig;
 
