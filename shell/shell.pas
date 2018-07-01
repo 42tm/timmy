@@ -46,7 +46,7 @@ BEGIN
 
     Case ParamStr(1) of
       '-h', '--help': Halt(PrintHelp('options'));
-      '--info': Halt(PrintHelp('program_info'));
+      '--info': Halt(PrintHelp('program'));
     End;
 
     // **************************************
