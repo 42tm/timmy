@@ -24,6 +24,7 @@ Type
 Var
     Env: Record  // Shell environment variables
            // Array to store user's entered inputs (in current session)
+           // Commonly refered to as the input history
              InputHis: TStrArray;
            // Option whether to interpret backslash in user's input
              ItprBackslash: Boolean;
@@ -100,7 +101,7 @@ Begin
              End;
 
     // Get command and arguments passed to that command in the user input
-    // for ShellExec
+    // for ShellExec()
       FlagSplit := StrSplit(UserInput, ' ', Env.ItprBackslash);
       InputRec.Cmd := LowerCase(FlagSplit[0]);
       InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
@@ -109,6 +110,7 @@ Begin
 
     // Remove the input from input history because it has an invalid command
       If (Env.ExitCode = 4) and (OutParse.HasArgument('record-less'))
+          and (not Env.ExecF)
         then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
 
     // Remove the input from recorder because it is invalid
@@ -119,7 +121,8 @@ End;
 {
     Determine the command and execute
 
-    Return: [TExitCode -> Word] Exit code returned by the command executed
+    Return:
+        [TExitCode -> Word] Exit code returned by the command executed
 }
 Function ShellExec: TExitCode: TExitCode;
 Begin
