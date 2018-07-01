@@ -37,15 +37,15 @@ BEGIN
     ShLog.Init(TLogger.CORRECT, TLogger.CORRECT, 'log');
 
     ShLog.Put(10, 'Timmy Interactive Shell ' + SHELLVERSION);
-    ShLog.Put(10, 'Using Timmy version ' + TIMMYVERSION);
     ShLog.Put(10, 'Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>');
+    ShLog.Put(10, 'Using Timmy version ' + TIMMYVERSION);
 
     // *******************************
     // *       GENERIC OPTIONS       *
     // *******************************
 
     Case ParamStr(1) of
-      '-h', '--help': Halt(PrintHelp('program'));
+      '-h', '--help': Halt(PrintHelp('options'));
       '--info': Halt(PrintHelp('program_info'));
     End;
 
