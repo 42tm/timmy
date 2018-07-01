@@ -1,5 +1,5 @@
 {
-    core.pas - Timmy-related core utilities for Timmy Interative Shell
+    core.pas - Timmy-related core utilities for Timmy Interactive Shell
 
     Copyright (C) 2018 42tm Team <fourtytwotm@gmail.com>
 
@@ -17,10 +17,10 @@ Interface
 
 Uses
      Crt, SysUtils, StrUtils,
-     Logger in '../logger/logger.pas',
+     ArgsParser, Logger in '../logger/logger.pas',
      Timmy_Debug in '../../variants/timmy_debug.pas';
 Type
-    TExitCode: Word;
+    TExitCode = Word;
 Var
     Env: Record  // Shell environment variables
            // Array to store user's entered inputs (in current session)
@@ -35,11 +35,13 @@ Var
 
     UserInput: String;  // User's input to the shell
     TestSubj: TTimmy;   // Subject TTimmy instance
-    ShLog: TLogger;   // Logger for Timmy Interactive Shell
+    ShLog: TLogger;     // Logger for Timmy Interactive Shell
+
     InputRec: Record    // User input data record
-                Cmd: String;
-                Args: TStrArray;
+                Cmd: String;       // Da command
+                Args: TStrArray;   // Da arguments
               End;
+
     InstanceName: String;  // Name of the test subject instance
     Initiated: Boolean;    // State of initialization of the test subject
 
@@ -57,34 +59,26 @@ Var
       ArgParser: TArgumentParser;
       OutParse: TParseResult;
 
-(* Happy little functions *)
-Function BoolToStr(AnyBool: Boolean): String;
+// Happy little function to print a colored dot
+// shell/inc/frontend/jam.pp
 Procedure Jam(DotColor: Byte);
 
 (* Main stuff *)
 Function ShellExec(ShellInput: String): TExitCode;
-Function PrintHelp(ManName: String): TExitCode;
-Function ProcessRecord: TExitCode;
-Function Exec(FName: String): TExitCode;
-Function Init: TExitCode;
-Function RenameBot: TExitCode;
+Function PrintHelp(ManName: String):    TExitCode;
+Function ProcessRecord:                 TExitCode;
+Function Exec(FName: String):           TExitCode;
+Function Init:                          TExitCode;
+Function RenameBot:                     TExitCode;
 
 Implementation
-
-{
-    Convert boolean value to string.
-    Boolean is true -> Return 'True'. Otherwise return 'False'.
-}
-Function BoolToStr(AnyBool: Boolean): String;
-Begin
-    If AnyBool then Exit('True');
-    Exit('False');
-End;
 
 {$Include ../inc/frontend/jam.pp}
 
 { Process the user's input (core.pas -> UserInput) before executing }
 Procedure ProcessInput;
+Var
+    FlagSplit: TStrArray;
 Begin
     If UserInput = '' then Exit;
 
@@ -128,8 +122,6 @@ End;
     Return: [TExitCode -> Word] Exit code returned by the command executed
 }
 Function ShellExec: TExitCode: TExitCode;
-Var
-    FlagSplit: TStrArray;  // Command split result
 Begin
     Case InputRec.Cmd of
       'exit', 'quit': Begin
@@ -138,16 +130,19 @@ Begin
                       End;
       'clear': ClrScr;
       'help': If Length(InputRec.Args) = 0
-                then PrintHelp('shell')
-                else PrintHelp(InputRec.Args[0]);
-      'record': ProcessRecord;
+                then Exit(PrintHelp('shell'))
+                else Exit(PrintHelp(InputRec.Args[0]));
+      'record': Exit(ProcessRecord);
       'exec': If Length(InputRec.Args) = 0
-                then ShLog.Put(TLogger.ERROR, 'exec: No input file.')
+                then Begin
+                       ShLog.Put(TLogger.ERROR, 'exec: No input file.');
+                       Exit();
+                     End;
                 else Begin
                        ExecFilePaths := InputRec.Args;  // To avoid conflict
                        For UserInput2 in ExecFilePaths do Exec(UserInput2);
                      End;
-      'rename': RenameBot;
+      'rename': Exit(RenameBot);
       'init': If not Initiated then Init
                 else ShLog.Put(TLogger.INFO, 'Instance already initiated');
       'add': Begin
@@ -159,6 +154,8 @@ Begin
              Exit(4);
            End;
     End;
+
+    Exit(0);
 End;
 
 {$Include ../inc/cmd/help.pp}    // The help command
