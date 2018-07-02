@@ -114,7 +114,7 @@ Begin
         then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
 
     // Remove the input from recorder because it is invalid
-      If (Env.ExitCode mod 10 > 2) and (Recorder.Recording)
+      If (Env.ExitCode mod 10 > 3) and (Recorder.Recording)
         then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
 End;
 
