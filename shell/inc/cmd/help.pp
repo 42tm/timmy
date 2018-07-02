@@ -51,3 +51,19 @@ Begin
     Close(ManF);
     Exit(20);
 End;
+
+Function PrintHelp(ManPages: TStrArray): TExitCode;
+Var
+    Iter: String;
+    GotError: Boolean;
+Begin
+    GotError := False;
+
+    For Iter in ManPages
+      do Begin
+           If PrintHelp(Iter) <> 20 then GotError := True;
+           Writeln;
+         End;
+
+    If GotError then Exit(23) else Exit(20);
+End;

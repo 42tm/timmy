@@ -27,7 +27,8 @@ Errors
 
 Exit code values
 ----------------
-  20: Operation successful
+  20: All specified manual pages were successfully read
   21: No manual entry for the given manual name found in shell/man/
   22: Manual entry exists, but somehow the program failed to read from it
       (IOResult <> 0)
+  23: Not all specified manual pages were successfully read
