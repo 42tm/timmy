@@ -66,4 +66,5 @@ Begin
     Jam(10);
     ShLog.Log(TLogger.INFO,
               'rename: Test instance renamed to ''' + InstanceName + '''.');
+    Exit(80);
 End;
