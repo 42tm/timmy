@@ -66,13 +66,14 @@ Procedure Jam(DotColor: Byte);
 
 (* Main stuff *)
 Procedure ProcessInput;
-Function ShellExec(ShellInput: String): TExitCode;
-Function PrintHelp(ManName: String):    TExitCode;
-Function ProcessRecord:                 TExitCode;
-Function FExec(FName: String):          TExitCode; overload;
-Function FExec(FList: TStrArray):       TExitCode; overload;
-Function Init:                          TExitCode;
-Function RenameBot:                     TExitCode;
+Function ShellExec(ShellInput: String):  TExitCode;
+Function PrintHelp(ManName: String):     TExitCode;
+Function PrintHelp(ManPages: TStrArray): TExitCode;
+Function ProcessRecord:                  TExitCode;
+Function FExec(FName: String):           TExitCode; overload;
+Function FExec(FList: TStrArray):        TExitCode; overload;
+Function Init:                           TExitCode;
+Function RenameBot:                      TExitCode;
 
 Implementation
 
@@ -138,7 +139,7 @@ Begin
       'clear': Begin ClrScr; Exit(10); End;
       'help': If Length(InputRec.Args) = 0
                 then Exit(PrintHelp('shell'))
-                else Exit(PrintHelp(InputRec.Args[0]));
+                else Exit(PrintHelp(InputRec.Args));
       'record': Exit(ProcessRecord);
       'fexec': If Length(InputRec.Args) = 0
                  then Begin
