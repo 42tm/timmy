@@ -72,12 +72,12 @@ BEGIN
         On EInvalidArgument
           Do Begin
                ShLog.Put(TLogger.FATAL, 'Found invalid option.');
-               TextColor(7); Halt(1);
+               TextColor(7); Halt(3);
              End;
         On EParameterMissing
           Do Begin
                ShLog.Put(TLogger.FATAL, 'Missing argument.');
-               TextColor(7); Halt(2);
+               TextColor(7); Halt(4);
              End;
     End;
 
