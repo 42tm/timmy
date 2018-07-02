@@ -3,22 +3,31 @@ help
 
 Description
 -----------
-  Print a manual page to the console. Manual pages are stored in shell/man/.
+  Print manual page(s) to the console. Manual pages are stored in shell/man/.
 
 Arguments
 ---------
-    help [MANPAGE]
+    help [MANPAGE1 [MANPAGE2 MANPAGE3 ...]]
 
-  The help command takes at most 1 argument. If you specify 2 or more arguments,
-  only the first argument is taken, the rest is ignored. The argument should
-  be the name of the manual entry that you want to read. There are manual pages
-  for commands in Timmy Interactive Shell. You can type "help MANPAGE",
-  replacing "MANPAGE" with the name of the command you want to get help with.
-  For example, "help rename" will print out the manual page for the 'rename'
-  command. If you specify no argument or specify "shell" as the first argument,
-  the general manual for Timmy Interactive Shell is printed. If you type
-  "help program", the program's help is printed, just as if you were to invoke
-  the option "-h" or "--help" with the Shell.
+  The help command takes as many arguments as you wish. If you do not throw any
+  argument to it, the main manual page for the Shell (shell/man/shell.txt) will
+  be printed. Otherwise, the command will print the manual entries for all the
+  manual page names you've specified.
+
+  Examples:
+    help fexec
+   -> Print the manual page for the fexec command
+
+    help record rename clear
+   -> Print the manual pages of the commands 'record', 'rename; and 'clear' in
+      that same order
+
+    help program
+   -> Print out Timmy Interactive Shell's detailed information
+
+    help options
+   -> Print the command line options usage for Timmy Interactive Shell, which is
+      the same as invoking the Shell with -h or --help option
 
 Errors
 ------
