@@ -65,10 +65,12 @@ Var
 Procedure Jam(DotColor: Byte);
 
 (* Main stuff *)
+Procedure ProcessInput;
 Function ShellExec(ShellInput: String): TExitCode;
 Function PrintHelp(ManName: String):    TExitCode;
 Function ProcessRecord:                 TExitCode;
-Function Exec(FName: String):           TExitCode;
+Function FExec(FName: String):          TExitCode; overload;
+Function FExec(FList: TStrArray):       TExitCode; overload;
 Function Init:                          TExitCode;
 Function RenameBot:                     TExitCode;
 
@@ -145,7 +147,7 @@ Begin
                       End;
                  else Begin
                         ExecFilePaths := InputRec.Args;  // To avoid conflict
-                        For UserInput2 in ExecFilePaths do Exec(UserInput2);
+                        Exit(FExec(ExecFilePaths));
                       End;
       'stat': Begin
               End;

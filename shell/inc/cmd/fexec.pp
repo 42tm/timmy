@@ -12,32 +12,35 @@
 }
 
 {
-    The exec command, which reads a file at a specified path, and
-    takes the lines in that file as Shell inputs. Can read commands from
-    many files.
+    Given a file's path FName, take the lines in that file
+    as Shell inputs.
 }
-Procedure Exec(FName: String);
+Function FExec(FName: String): TExitCode;
 Var
     FObj: Text;
 Begin
+    If not FileExists(FName)
+      then Begin
+             ShLog.Log(TLogger.ERROR,
+                       'fexec: File ''' + FName + ''' does not exist');
+             Exit(41);
+           End;
+
     Assign(FObj, FName);
     {$I-}
     Reset(FObj);
     {$I+}
     If IOResult <> 0
       then Begin
-             If FileExists(FName)
-               then ShLog.Log(TLogger.ERROR, 'exec: Failed to read from '
-                              + FName + ', ignoring...');
-               else ShLog.Log(TLogger.ERROR, 'exec: File '''
-                            + FName + ''' doesn''t exist, ignoring...');
-             Exit;
+             ShLog.Log(TLogger.ERROR, 'fexec: Failed to read from ' + FName);
+             Exit(42);
            End;
 
-    Jam(9); ShLog.Log(TLogger.INFO,
-                      'exec: Reading and executing from ' + FName + '...');
+    Jam(9); ShLog.Log(TLogger.INFO, 'fexec: Executing from ' + FName + '...');
     If not OutParse.HasArgument('record-more') then Env.ExecF := True;
-    Writeln(DupeString('=', 40 + Length(FName)));
+
+
+    TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
 
     While not EOF(FOBj)
       do Begin
@@ -48,6 +51,37 @@ Begin
     Close(FObj);
     Env.ExecF := False;
     TextColor(White); Writeln(DupeString('=', 40 + Length(FName)));
-    Jam(10); ShLog.Log(TLogger.INFO,
-                       'Finished reading and executing commands from file');
+
+
+    Jam(10); ShLog.Log(TLogger.INFO, 'Finished executing inputs from file');
+    Exit(40);
+End;
+
+{
+    Just like the above function, but this one takes many file paths.
+}
+Function FExec(FList: TStrArray): TExitCode;
+Var
+    FPath: String;
+    // Counters for number of each exit code values when calling FExec(String)
+      counter1, counter2, counter3: Word;
+Begin
+    counter1 := 0; counter2 := 0; counter3 := 0;
+
+    For FPath in FList
+      do Begin
+           FExec := FExec(FPath);
+           Case FExec of
+             40: Inc(counter1);
+             41: Inc(counter2);
+             42: Inc(counter3);
+           End;
+         End;
+
+    ShLog.Log(TLogger.INFO,
+              ['Executed ', Length(FList)], ' files, ', counter1, ' succeed, ',
+              counter2, ' did not exist, ', counter3 ' failed to read from.']);
+
+    // If all files were executed successfully, return 40
+      If counter1 = Length(FList) then Exit(40) else Exit(43);
 End;
