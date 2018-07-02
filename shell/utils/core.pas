@@ -109,7 +109,7 @@ Begin
     Env.ExitCode := ShellExec;  // Execute the input and get the exit code
 
     // Remove the input from input history because it has an invalid command
-      If (Env.ExitCode = 4) and (OutParse.HasArgument('record-less'))
+      If (Env.ExitCode = 5) and (OutParse.HasArgument('record-less'))
           and (not Env.ExecF)
         then SetLength(Env.InputHis, Length(Env.InputHis) - 1);
 
@@ -145,6 +145,12 @@ Begin
                        ExecFilePaths := InputRec.Args;  // To avoid conflict
                        For UserInput2 in ExecFilePaths do Exec(UserInput2);
                      End;
+      'stat': Begin
+              End;
+      'set': Begin
+             End;
+      'echo': Begin
+              End;
       'rename': Exit(RenameBot);
       'init': If not Initiated then Init
                 else ShLog.Put(TLogger.INFO, 'Instance already initiated');
@@ -154,7 +160,7 @@ Begin
       Else Begin
              ShLog.Put(TLogger.ERROR,
                        'Invalid command ''' + InputRec.Cmd + '''');
-             Exit(4);
+             Exit(5);
            End;
     End;
 
