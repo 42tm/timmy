@@ -24,3 +24,10 @@ Errors
 ------
   An error is thrown if the manual page could not be found or the IO check
   yields error (IOResult <> 0) during the file-reading operation.
+
+Exit code values
+----------------
+  20: Operation successful
+  21: No manual entry for the given manual name found in shell/man/
+  22: Manual entry exists, but somehow the program failed to read from it
+      (IOResult <> 0)

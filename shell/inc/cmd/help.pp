@@ -17,7 +17,7 @@
     If an argument is specified, and it's the name of a command,
     then print the manual page of that command.
 
-    Manual pages are found in /shell/man.
+    Manual pages are found in /shell/man in form of text files (.txt)
 }
 Function PrintHelp(ManName: String): TExitCode;
 Var
@@ -27,26 +27,27 @@ Begin
     If not FileExists('man/' + ManName + '.txt')
       then Begin
              ShLog.Log(TLogger.ERROR,
-                         'Could not find the manual entry for that');
+                       'help: Could not find the manual entry for that');
              Exit(21);
-           End
-      else Begin
-             Assign(ManF, 'man/' + ManName + '.txt');
-             {$I-}
-             Reset(ManF);
-             {$I+}
-             If IOResult <> 0
-               then Begin
-                      ShLog.Log(TLogger.ERROR, 'Failed to read manual entry');
-                      Exit(22);
-                    End;
-             TextColor(7);
-             While not EOF(ManF)
-               do Begin
-                    Readln(ManF, ManLine);
-                    Writeln(ManLine);
-                  End;
-             Close(ManF);
            End;
+
+    Assign(ManF, 'man/' + ManName + '.txt');
+    {$I-}
+    Reset(ManF);
+    {$I+}
+    If IOResult <> 0
+      then Begin
+             ShLog.Log(TLogger.ERROR, 'Failed to read manual entry');
+             Exit(22);
+           End;
+
+    TextColor(7);
+    While not EOF(ManF)
+      do Begin
+           Readln(ManF, ManLine);
+           Writeln(ManLine);
+        End;
+
+    Close(ManF);
     Exit(20);
 End;
