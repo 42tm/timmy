@@ -106,7 +106,9 @@ Begin
       InputRec.Cmd := LowerCase(FlagSplit[0]);
       InputRec.Args := Copy(FlagSplit, 1, High(FlagSplit));
 
-    Env.ExitCode := ShellExec;  // Execute the input and get the exit code
+    If Env.ExecF
+      then ShellExec
+      else Env.ExitCode := ShellExec;
 
     // Remove the input from input history because it has an invalid command
       If (Env.ExitCode = 5) and (OutParse.HasArgument('record-less'))
@@ -136,15 +138,15 @@ Begin
                 then Exit(PrintHelp('shell'))
                 else Exit(PrintHelp(InputRec.Args[0]));
       'record': Exit(ProcessRecord);
-      'exec': If Length(InputRec.Args) = 0
-                then Begin
-                       ShLog.Put(TLogger.ERROR, 'exec: No input file.');
-                       Exit();
-                     End;
-                else Begin
-                       ExecFilePaths := InputRec.Args;  // To avoid conflict
-                       For UserInput2 in ExecFilePaths do Exec(UserInput2);
-                     End;
+      'fexec': If Length(InputRec.Args) = 0
+                 then Begin
+                        ShLog.Put(TLogger.ERROR, 'fexec: No input file.');
+                        Exit(44);
+                      End;
+                 else Begin
+                        ExecFilePaths := InputRec.Args;  // To avoid conflict
+                        For UserInput2 in ExecFilePaths do Exec(UserInput2);
+                      End;
       'stat': Begin
               End;
       'set': Begin
