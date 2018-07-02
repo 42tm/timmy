@@ -37,3 +37,14 @@ Errors
   arguments, an error is thrown.
   If you specify invalid argument, an error is thrown.
   If the IO file check (IOResult) is not 0, an error is thrown too.
+
+Exit code values
+----------------
+  30: Operation successful (started/stopped recording, inputs written to file)
+  31: User wants to start a recording session but one is active
+  32: User wants to stop the running session but the recorder is not running
+  33: User entered an invalid option when being asked whether to append or
+      overwrite to inputs.rec file
+  34: User specified more than 1 argument to the record command (that's invalid)
+  35: User specified an invalid option to the record command
+  36: Failed to write recorded inputs to inputs.rec file (IOResult <> 0)
