@@ -19,7 +19,7 @@
 
     Manual pages are found in /shell/man.
 }
-Procedure PrintHelp(ManName: String);
+Function PrintHelp(ManName: String): TExitCode;
 Var
     ManLine: String;
     ManF: Text;
@@ -28,7 +28,7 @@ Begin
       then Begin
              ShLog.Log(TLogger.ERROR,
                          'Could not find the manual entry for that');
-             Exit;
+             Exit(21);
            End
       else Begin
              Assign(ManF, 'man/' + ManName + '.txt');
@@ -38,7 +38,7 @@ Begin
              If IOResult <> 0
                then Begin
                       ShLog.Log(TLogger.ERROR, 'Failed to read manual entry');
-                      Exit;
+                      Exit(22);
                     End;
              TextColor(7);
              While not EOF(ManF)
@@ -48,4 +48,5 @@ Begin
                   End;
              Close(ManF);
            End;
+    Exit(20);
 End;

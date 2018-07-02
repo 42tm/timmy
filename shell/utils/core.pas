@@ -131,7 +131,7 @@ Begin
                         ShLog.Log(TLogger.INFO, 'Quitting Shell session');
                         TextColor(7); Halt;
                       End;
-      'clear': ClrScr;
+      'clear': Begin ClrScr; Exit(10); End;
       'help': If Length(InputRec.Args) = 0
                 then Exit(PrintHelp('shell'))
                 else Exit(PrintHelp(InputRec.Args[0]));
