@@ -1,0 +1,50 @@
+record
+======
+
+Description
+-----------
+  Start or end a record session. During a record session, any input submitted
+  by the user to the Shell is recorded, as long as the input is valid.
+  When the user terminates the record session, all recorded inputs are then
+  written to a text file with the name "inputs.rec", placed in the shell/
+  directory. At any time, only ONE record session is running at most.
+
+Arguments
+---------
+    record [status|start|begin|stop|quit|end]
+
+  If no argument is passed over, start a record session if none hasn't started,
+  or end the current record session if recording.
+
+  Take at most 1 argument. There are 6 valid arguments. They are:
+    1. status
+        Print out the status of the recorder. The status includes whether if
+        there's an active recording process running or not, and if there's
+        a record session running, print out how many inputs have been recorded.
+    2. start, begin
+        Start a record session. Print a warning if a record session is running.
+    3. stop, quit, end
+        End record session and write the record to inputs.rec. If inputs.rec
+        exists, a prompt will appear and ask the user whether if the user
+        wants to append or overwrite the existing inputs.rec. Entering "a" or
+        "append" will append the file. Entering "o" or "overwrite" will
+        overwrite the file. Entering anything else will cancel the file writing
+        operation. If there's no record session, print a warning.
+
+Errors
+------
+  The record command asks for at most 1 argument only. If you give it 2 or more
+  arguments, an error is thrown.
+  If you specify invalid argument, an error is thrown.
+  If the IO file check (IOResult) is not 0, an error is thrown too.
+
+Exit code values
+----------------
+  30: Operation successful (started/stopped recording, inputs written to file)
+  31: User wants to start a recording session but one is active
+  32: User wants to stop the running session but the recorder is not running
+  33: User entered an invalid option when being asked whether to append or
+      overwrite to inputs.rec file
+  34: User specified more than 1 argument to the record command (that's invalid)
+  35: User specified an invalid option to the record command
+  36: Failed to write recorded inputs to inputs.rec file (IOResult <> 0)

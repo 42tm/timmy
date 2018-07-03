@@ -1,0 +1,43 @@
+help
+====
+
+Description
+-----------
+  Print manual page(s) to the console. Manual pages are stored in shell/man/.
+
+Arguments
+---------
+    help [MANPAGE1 [MANPAGE2 MANPAGE3 ...]]
+
+  The help command takes as many arguments as you wish. If you do not throw any
+  argument to it, the main manual page for the Shell (shell/man/shell.txt) will
+  be printed. Otherwise, the command will print the manual entries for all the
+  manual page names you've specified.
+
+  Examples:
+    help fexec
+   -> Print the manual page for the fexec command
+
+    help record rename clear
+   -> Print the manual pages of the commands 'record', 'rename; and 'clear' in
+      that same order
+
+    help program
+   -> Print out Timmy Interactive Shell's detailed information
+
+    help options
+   -> Print the command line options usage for Timmy Interactive Shell, which is
+      the same as invoking the Shell with -h or --help option
+
+Errors
+------
+  An error is thrown if the manual page could not be found or the IO check
+  yields error (IOResult <> 0) during the file-reading operation.
+
+Exit code values
+----------------
+  20: All specified manual pages were successfully read
+  21: No manual entry for the given manual name found in shell/man/
+  22: Manual entry exists, but somehow the program failed to read from it
+      (IOResult <> 0)
+  23: Not all specified manual pages were successfully read

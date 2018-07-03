@@ -1,0 +1,14 @@
+exit
+====
+
+Description
+-----------
+  Terminate Timmy Interactive Shell.
+
+Arguments
+---------
+  None.
+
+Errors
+------
+  None.
