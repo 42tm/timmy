@@ -67,6 +67,7 @@ Procedure Jam(DotColor: Byte);
 (* Main stuff *)
 Procedure ProcessInput;
 Function ShellExec:  TExitCode;
+
 Function PrintHelp(ManName: String):     TExitCode;
 Function PrintHelp(ManPages: TStrArray): TExitCode;
 Function ProcessRecord:                  TExitCode;
