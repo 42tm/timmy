@@ -17,7 +17,7 @@ Interface
 
 Uses
     Crt, SysUtils, StrUtils,
-    Timmy in '../../timmy.pas';
+    Timmy in '../timmy.pas';
 Type
     TLogger = Object
                 Constructor Init(ACslOutMin: Integer = 0;
