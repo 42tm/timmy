@@ -1,0 +1,14 @@
+USAGE: shell [options]
+
+OPTIONS:
+  -h, --help        : Print this help and exit
+      --info        : Get some information about Timmy Interactive Shell
+  -l, --load=FILE   : Load Timmy Interactive Shell commands from FILE
+      --no-esc      : Disable backslash interpretation in Shell inputs
+      --quiet       : Only write log messages with severity of TLogger.ERROR
+                      or higher to console
+      --less-log    : Only record events with severity of TLogger.ERROR
+                      or higher to log file (not recommended)
+      --record-less : Record only the inputs that are not erroneous to the
+                      session's input history
+      --record-more : Record the inputs from files too

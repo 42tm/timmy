@@ -15,25 +15,25 @@ Arguments
   If no argument is specified, there will be prompts asking for value of each
   of the required inputs to TTimmy.Init() and you have to manually enter them.
   For the first and last prompt (out of 3 prompts), if you enter an empty
-  string, the procedure stops and you are back with the Shell input prompt
+  string, the function stops and you are back with the Shell input prompt
   with the instance yet to be initialized.
 
   If you do specify arguments, however, you have to specify all the arguments to
   TTimmy.Init(), namely, values for 'Percent', 'DefaultRep', and 'DpCheck' of
   constructor Init(). The first argument is regarded as value for 'Percent',
-  and, of course, it must be a whole number. The last argument is considered
-  the value for 'DpCheck', which, you should enter either "true" or "false".
-  Anything between the first and the last argument is regarded as the value
-  for 'DefaultRep'. Even the space counts. For example:
+  and, of course, it must be a whole number. The second argumment is the value
+  for 'DefaultRep. The last argument is considered the value for 'DpCheck',
+  which, you should enter either "true" or "false".
 
-    init 70    Sorry,    it seems like I don't understand that     False
+    init 70 Sorry, it seems like I don't understand that False
 
   In the example above, 70 is value for 'Percent', 'False' is value for DpCheck,
-  and '   Sorry,    it seems like I don't understand that    ' is value for
+  and 'Sorry, it seems like I don't understand that' is value for
   DefaultRep. 1 space is used to delimit between the value of DefaultRep and
   other arguments.
 
-  If you specify only two arguments, the command will throw an error.
+  If you specify only two arguments, or more than 3 arguments, the command will
+  throw an error.
 
 Errors
 ------
@@ -41,5 +41,18 @@ Errors
   enter invalid values to the prompts, a warning will be thrown and you have to
   enter again.
 
-  If you specify arguments but specify only two arguments, an error is thrown.
+  If you specify arguments but specify only two arguments or more than 3
+  arguments, an error is thrown.
+
   If you specify invalid values for 'Percent' and 'DpCheck', an error is thrown.
+
+Exit code values
+----------------
+  100: Operation successful, TTimmy.Init() working as expected
+  101: Instance already initiated
+  102: User input was empty during the prompt for value of TTimmy.TPercent
+       or TTimmy.DupesCheck
+  104: Wrong number of arguments passed to the init command
+  105: Invalid value for TTimmy.TPercent (taken from the Shell input)
+  106: Invalid value for TTimmy.DupesCheck (taken from the Shell input)
+  114: Operation successful, but TTimmy.Init() didn't work as expected

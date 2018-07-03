@@ -16,50 +16,55 @@
 
     Perform various checks for user input, see if it's a valid name.
 }
-Procedure RenameBot;
+Function RenameBot: TExitCode;
 Const
-    Alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-Var
-    SIter: Byte;
+    // String that contains the valid characters for the first character of
+    // the test instance's name, will be used later for validation.
+      Alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 Begin
-    If Length(InputRec.Args) > 1
-      then Begin
-             ShellLg.Log(TLogger.ERROR, 'rename: Too many arguments');
-             If Recorder.Recording
-               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
-             Exit;
+    Case Length(InputRec.Args) of
+      0: Begin
+           TextColor(White);
+           Write('New name for test instance: ');
+           Readln(UserInput);
+         End;
+      1: UserInput := InputRec.Args[0];
+      Else Begin
+             ShLog.Put(TLogger.ERROR, 'rename: Too many arguments');
+             Exit(84);
            End;
-
-    If Length(InputRec.Args) = 1
-      then UserInput := InputRec.Args[0]
-      else Begin
-             Write('New name for test instance: ');
-             Readln(UserInput);
-           End;
+    End;
 
     UserInput := StrTrim(UserInput);
 
-    SIter := Length(Alpha);
-    If Length(UserInput) > 0  // To avoid run-time error
-      then While SIter > 0
-             do Begin
-                  If Alpha[SIter] = UserInput[1] then Break;
-                  Dec(SIter);
-                End;
+    // ************************  VALIDATE NEW NAME  ************************
+    // *                                                                   *
+    // * Name is invalid when                                              *
+    // *  1. It's empty string                                             *
+    // *  2. The first character is not in the constant Alpha              *
+    // *     defined above                                                 *
+    // *  3. It is more than 15 characters in length                       *
+    // *  4. It contains at least 1 space character                        *
+    // *                                                                   *
+    // *********************************************************************
 
-    If (SIter = 0) or (Pos(' ', UserInput) <> 0)
-       or (Length(UserInput) > 15) or (Length(UserInput) = 0)
+    If (Length(UserInput) = 0) or (Pos(UserInput[1], Alpha) = 0)
+        or (Length(UserInput) > 15) or (Pos(' ', UserInput) <> 0)
       then Begin
-             ShellLg.Put(TLogger.ERROR, 'rename: Invalid name');
-             Jam(2); TextColor(White); Write('See manual entry for rename');
-             Writeln(', section "Errors" to see why');
-             If Recorder.Recording
-               then SetLength(Recorder.RecdInps, Length(Recorder.RecdInps) - 1);
-             Exit;
+             ShLog.Put(TLogger.ERROR, 'rename: Invalid name');
+             Jam(2); ShLog.Put(TLogger.INFO, 'See manual entry for rename, '
+                             + 'section "Errors"');
+
+             // If the new name was taken from the input prompt
+             // (InputRec.Args = 1), exit 85 so that the recorder, if recording,
+             // removes the input, to prevent errors when executing from record.
+             // Else, exit 82 as a light warning.
+               If Length(InputRec.Args) = 1 then Exit(85) else Exit(82);
            End;
 
     InstanceName := UserInput;
     Jam(10);
-    ShellLg.Put(TLogger.INFO, 'rename: Test instance renamed to '''
-              + UserInput + '''.');
+    ShLog.Log(TLogger.INFO,
+              'rename: Test instance renamed to ''' + InstanceName + '''.');
+    Exit(80);
 End;
