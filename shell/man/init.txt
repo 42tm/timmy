@@ -45,3 +45,14 @@ Errors
   arguments, an error is thrown.
 
   If you specify invalid values for 'Percent' and 'DpCheck', an error is thrown.
+
+Exit code values
+----------------
+  100: Operation successful, TTimmy.Init() working as expected
+  101: Instance already initiated
+  102: User input was empty during the prompt for value of TTimmy.TPercent
+       or TTimmy.DupesCheck
+  104: Wrong number of arguments passed to the init command
+  105: Invalid value for TTimmy.TPercent (taken from the Shell input)
+  106: Invalid value for TTimmy.DupesCheck (taken from the Shell input)
+  114: Operation successful, but TTimmy.Init() didn't work as expected
