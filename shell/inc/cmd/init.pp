@@ -47,7 +47,7 @@ Begin
 
             Readln(UserInput);
 
-            If UserInput = '' then Exit(100);
+            If UserInput = '' then Exit(102);
 
             Val(UserInput, FlagPercent, ValErrorCode);
             If ValErrorCode <> 0
@@ -78,11 +78,8 @@ Begin
 
             Readln(UserInput);
 
-            If UserInput = '' then Exit(100);
+            If UserInput = '' then Exit(102);
             UserInput := LowerCase(UserInput);
-
-            If (UserInput <> 'true') and (UserInput <> 'false')
-              then
 
             Case UserInput of
               'true': FlagDpCheck := True;
@@ -101,7 +98,7 @@ Begin
             then Begin
                    ShLog.Put(TLogger.ERROR,
                              'Invalid value for ' + InstanceName + '.TPercent');
-                   Exit();
+                   Exit(105);
                  End;
 
           InputRec.Args[2] := LowerCase(InputRec.Args[2]);
@@ -110,9 +107,9 @@ Begin
             'true': FlagDpCheck := True;
             'false': FlagDpCheck := False;
             Else Begin
-                   ShLog.Put(TLogger.WARNING,
-                             'Expected a boolean value (true|false)');
-                   Exit();
+                   ShLog.Put(TLogger.ERROR, 'Invalid value for ' + InstanceName
+                          + '.DupesCheck, expected a boolean value (true|false)');
+                   Exit(106);
                  End;
           End;
         End;
@@ -141,4 +138,6 @@ Begin
               + IntToStr(TestSubj.TPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
               + TestSubj.NoUdstdRep + '''; ' + InstanceName + '.DupesCheck = '
               + BoolToStr(TestSubj.DupesCheck));
+
+    If FlagSeverity := TLogger.CORRECT then Exit(100) Else Exit(114);
 End;
