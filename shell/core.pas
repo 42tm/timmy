@@ -17,8 +17,8 @@ Interface
 
 Uses
      Crt, SysUtils, StrUtils,
-     ArgsParser, Logger in '../logger/logger.pas',
-     Timmy_Debug in '../../variants/timmy_debug.pas';
+     ArgsParser, Logger in 'lib/logger.pas',
+     Timmy_Debug in '../variants/timmy_debug.pas';
 Type
     TExitCode = Word;
 Var
@@ -66,7 +66,7 @@ Procedure Jam(DotColor: Byte);
 
 (* Main stuff *)
 Procedure ProcessInput;
-Function ShellExec(ShellInput: String):  TExitCode;
+Function ShellExec:  TExitCode;
 Function PrintHelp(ManName: String):     TExitCode;
 Function PrintHelp(ManPages: TStrArray): TExitCode;
 Function ProcessRecord:                  TExitCode;
@@ -77,7 +77,7 @@ Function RenameBot:                      TExitCode;
 
 Implementation
 
-{$Include ../inc/frontend/jam.pp}
+{$Include inc/frontend/jam.pp}
 
 { Process the user's input (core.pas -> UserInput) before executing }
 Procedure ProcessInput;
@@ -129,7 +129,7 @@ End;
     Return:
         [TExitCode -> Word] Exit code returned by the command executed
 }
-Function ShellExec: TExitCode: TExitCode;
+Function ShellExec: TExitCode;
 Begin
     Case InputRec.Cmd of
       'exit', 'quit': Begin
@@ -145,7 +145,7 @@ Begin
                  then Begin
                         ShLog.Put(TLogger.ERROR, 'fexec: No input file.');
                         Exit(44);
-                      End;
+                      End
                  else Begin
                         ExecFilePaths := InputRec.Args;  // To avoid conflict
                         Exit(FExec(ExecFilePaths));
@@ -157,8 +157,7 @@ Begin
       'echo': Begin
               End;
       'rename': Exit(RenameBot);
-      'init': If not Initiated then Init
-                else ShLog.Put(TLogger.INFO, 'Instance already initiated');
+      'init': Exit(Init);
       'add': Begin
 
              End;
@@ -172,10 +171,10 @@ Begin
     Exit(0);
 End;
 
-{$Include ../inc/cmd/help.pp}    // The help command
-{$Include ../inc/cmd/record.pp}  // The record command
-{$Include ../inc/cmd/exec.pp}    // The exec command
-{$Include ../inc/cmd/rename.pp}  // The rename command
-{$Include ../inc/cmd/init.pp}    // The init command
+{$Include inc/cmd/help.pp}    // The help command
+{$Include inc/cmd/record.pp}  // The record command
+{$Include inc/cmd/fexec.pp}   // The exec command
+{$Include inc/cmd/rename.pp}  // The rename command
+{$Include inc/cmd/init.pp}    // The init command
 
 End.

@@ -139,5 +139,5 @@ Begin
               + TestSubj.NoUdstdRep + '''; ' + InstanceName + '.DupesCheck = '
               + BoolToStr(TestSubj.DupesCheck));
 
-    If FlagSeverity := TLogger.CORRECT then Exit(100) Else Exit(114);
+    If FlagSeverity = TLogger.CORRECT then Exit(100) Else Exit(114);
 End;

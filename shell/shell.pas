@@ -20,17 +20,15 @@
 Program TimmyInteractiveShell;
 
 Uses
-     Crt, SysUtils,
-     Core in 'utils/core.pas',
-     ArgsParser in 'utils/argsparser.pas',
-     Logger in 'logger/logger.pas',
+     Crt, SysUtils, Core,
+     ArgsParser in 'lib/argsparser.pas',
+     Logger in 'lib/logger.pas',
      Timmy_Debug in '../variants/timmy_debug.pas';
 Const
     {$Warning Have you checked SHELLVERSION and TIMMYVERSION constants yet?}
     SHELLVERSION = '1.0.0';  // Current version of Timmy Interactive Shell
     TIMMYVERSION = '1.2.0';  // Current version of Timmy that the Shell's using
 
-{$Include inc/frontend/drawbar.pp}
 {$Include inc/frontend/inputprompt.pp}
 
 BEGIN
@@ -102,7 +100,7 @@ BEGIN
     Recorder.Recording := False;
 
 
-    If OutParse.HasArgument('load') then Exec(OutParse.GetValue('load'));
+    If OutParse.HasArgument('load') then FExec(OutParse.GetValue('load'));
 
 
     // ***************************
@@ -117,6 +115,6 @@ BEGIN
            TextColor(White);
            UserInput := InputPrompt;  // Prompt the user for input
            Writeln;
-           ProcessInput(UserInput);  // Pass input over to Core to process
+           ProcessInput;  // Pass input over to Core to process
          End;
 END.

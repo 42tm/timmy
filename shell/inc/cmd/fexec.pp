@@ -45,7 +45,7 @@ Begin
     While not EOF(FOBj)
       do Begin
            Readln(FObj, UserInput);
-           ProcessInput(UserInput);
+           ProcessInput;
          End;
 
     Close(FObj);
@@ -79,8 +79,9 @@ Begin
          End;
 
     ShLog.Log(TLogger.INFO,
-              ['Executed ', Length(FList)], ' files, ', counter1, ' succeed, ',
-              counter2, ' did not exist, ', counter3 ' failed to read from.']);
+              ['Executed ', IntToStr(Length(FList)), ' files, ',
+              IntToStr(counter1), ' succeed, ', IntToStr(counter2),
+              ' did not exist, ', IntToStr(counter3), ' failed to read from.']);
 
     // If all files were executed successfully, return 40
       If counter1 = Length(FList) then Exit(40) else Exit(43);

@@ -37,8 +37,8 @@ Begin
                 Begin
                   If Recorder.Recording
                     then ShLog.Put(TLogger.INFO,
-                                   ['Recorded ', Length(Recorder.RecdInps),
-                                    ' and still recording...']);
+                                   ['Recorded ', IntToStr(Length(Recorder.RecdInps)),
+                                    ' and still recording...'])
                     else ShLog.Put(TLogger.INFO, 'Not recording.');
                   Exit(30);
                 End;
@@ -73,6 +73,7 @@ Begin
                             + ' ''' + InputRec.Args[0] + '''.');
                     Exit(35);
                   End;
+             End;
          End;  // End second case
       Else Begin
              ShLog.Put(TLogger.ERROR, 'record: Wrong number of arguments');
@@ -116,6 +117,7 @@ Begin
                       ShLog.Put(TLogger.ERROR, 'Invalid input, quitting without'
                               + ' writing to file');
                       Exit(33);
+                    End;
              End;
            End
       else Rewrite(RecordOutF);
