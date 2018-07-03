@@ -26,7 +26,7 @@ Begin
              then Begin
                     ShLog.Log(TLogger.INFO, 'Input recording started');
                     ShLog.Put(TLogger.INFO, 'Type ''record'' again or '
-                            + '''record --end'' to stop recording.');
+                            + '''record end'' to stop recording.');
                     Exit(30);
                   End;
            // Else, proceed to writting record to inputs.rec
@@ -64,10 +64,7 @@ Begin
                                    'No active recording session running.');
                          Exit(32);
                        End
-                  else Begin
-                         Recorder.Recording := False;
-                         Exit(30);
-                       End;
+                  else Recorder.Recording := False;
              Else Begin
                     ShLog.Put(TLogger.ERROR, 'record: Invalid argument'
                             + ' ''' + InputRec.Args[0] + '''.');
