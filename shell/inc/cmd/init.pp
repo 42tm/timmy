@@ -123,7 +123,7 @@ Begin
     Initiated := True;
     ShLog.Log(TLogger.INFO, 'Instance initiated');
 
-    // Check if TTimmy.Init works fine
+    // Check if TTimmy.Init() works fine
     ShLog.Log(TLogger.INFO, 'Expected: ' + InstanceName + '.TPercent = '
               + IntToStr(FlagPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
               + FlagDefaultRep + '''; ' + InstanceName + '.DupesCheck = '

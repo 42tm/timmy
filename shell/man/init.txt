@@ -3,7 +3,7 @@ init
 
 Description
 -----------
-Initialize the test instance. This is the test command for 'TTimmy.Init()'.
+  Initialize the test instance. This is the test command for TTimmy.Init().
 
 Arguments
 ---------
@@ -23,14 +23,16 @@ Arguments
   constructor Init(). The first argument is regarded as value for 'Percent',
   and, of course, it must be a whole number. The second argumment is the value
   for 'DefaultRep. The last argument is considered the value for 'DpCheck',
-  which, you should enter either "true" or "false".
+  which, you should enter either "true" or "false". "0", "1", and "-1" are also
+  valid values, used as replacements for "true" and "false". "0" is "true",
+  and "1" and "-1" are interpreted as "false".
 
-    init 70 Sorry, it seems like I don't understand that False
+    init 70 Sorry,\ it\ seems\ like\ I\ don't\ understand\ that False
 
   In the example above, 70 is value for 'Percent', 'False' is value for DpCheck,
   and 'Sorry, it seems like I don't understand that' is value for
-  DefaultRep. 1 space is used to delimit between the value of DefaultRep and
-  other arguments.
+  DefaultRep. Notice that the space characters in the default reply argument are
+  escaped using the backward slash character.
 
   If you specify only two arguments, or more than 3 arguments, the command will
   throw an error.
@@ -39,12 +41,13 @@ Errors
 ------
   If no argument is specified, prompts will ask you for the arguments. If you
   enter invalid values to the prompts, a warning will be thrown and you have to
-  enter again.
+  enter again. This is not really an error, but still.
 
   If you specify arguments but specify only two arguments or more than 3
   arguments, an error is thrown.
 
-  If you specify invalid values for 'Percent' and 'DpCheck', an error is thrown.
+  If you specify invalid values for 'Percent' and 'DpCheck' (via arguments),
+  an error is thrown, and the instance bot is left uninitialized.
 
 Exit code values
 ----------------
