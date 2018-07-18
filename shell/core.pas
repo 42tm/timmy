@@ -17,8 +17,8 @@ Interface
 
 Uses
      Crt, SysUtils, StrUtils,
-     ArgsParser, Logger in 'lib/logger.pas',
-     Timmy_Debug in '../variants/timmy_debug.pas';
+     ArgsParser in 'lib/argsparser.pas', Logger in 'lib/logger.pas',
+     Timmy_Debug in 'lib/timmy_debug.pas';
 Type
     TExitCode = Word;
 Var
