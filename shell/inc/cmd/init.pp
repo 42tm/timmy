@@ -82,8 +82,8 @@ Begin
             UserInput := LowerCase(UserInput);
 
             Case UserInput of
-              'true': FlagDpCheck := True;
-              'false': FlagDpCheck := False;
+              'true', '0': FlagDpCheck := True;
+              'false', '-1', '1': FlagDpCheck := False;
               Else ShLog.Put(TLogger.WARNING,
                              'Expected a boolean value (true|false)');
             End;
@@ -104,11 +104,11 @@ Begin
           InputRec.Args[2] := LowerCase(InputRec.Args[2]);
 
           Case InputRec.Args[2] of
-            'true': FlagDpCheck := True;
-            'false': FlagDpCheck := False;
+            'true', '0': FlagDpCheck := True;
+            'false', '1', '-1': FlagDpCheck := False;
             Else Begin
                    ShLog.Put(TLogger.ERROR, 'Invalid value for ' + InstanceName
-                          + '.DupesCheck, expected a boolean value (true|false)');
+                        + '.DupesCheck, expected a boolean value (true|false)');
                    Exit(106);
                  End;
           End;
@@ -123,7 +123,7 @@ Begin
     Initiated := True;
     ShLog.Log(TLogger.INFO, 'Instance initiated');
 
-    // Check if TTimmy.Init works fine
+    // Check if TTimmy.Init() works fine
     ShLog.Log(TLogger.INFO, 'Expected: ' + InstanceName + '.TPercent = '
               + IntToStr(FlagPercent) + '; ' + InstanceName + '.NoUdstdRep = '''
               + FlagDefaultRep + '''; ' + InstanceName + '.DupesCheck = '

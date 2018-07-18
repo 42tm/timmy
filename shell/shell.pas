@@ -23,7 +23,7 @@ Uses
      Crt, SysUtils, Core,
      ArgsParser in 'lib/argsparser.pas',
      Logger in 'lib/logger.pas',
-     Timmy_Debug in '../variants/timmy_debug.pas';
+     Timmy_Debug in 'lib/timmy_debug.pas';
 Const
     {$Warning Have you checked SHELLVERSION and TIMMYVERSION constants yet?}
     SHELLVERSION = '1.0.0';  // Current version of Timmy Interactive Shell
