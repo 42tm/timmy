@@ -17,12 +17,11 @@ Unit Comparer;
 Interface
 
 Uses
-    Crt, SysUtils, StrUtils,
-    Core in '../core.pas';
+    Crt, SysUtils, StrUtils, FrontEnd;
 
 Type
     TCmpr = Object
-              Constructor Init(TestingProc: String);
+              Constructor Init(TestingProc, UsrInput: String);
               Destructor EndCmprProc;
               Public
                 Procedure Cmpr(eint, gint: LongInt; VarName: String);               overload;
@@ -30,8 +29,7 @@ Type
                 Procedure Cmpr(estr, gstr, VarName: String);                        overload;
                 Procedure Cmpr(estrarr, gstrarr: Array of String; VarName: String); overload;
               Private
-                TestProcName: String;
-                NormLine, SpcLine: String;
+                TestProcName, UserInput, NormLine, SpcLine: String;
                 CorrectCprs, TotalCprs: Byte;
                 Col2Width, Col3Width: Word;
                 Procedure MkBox(BoxWidth: Word; BoxText: String;
@@ -49,11 +47,12 @@ Implementation
     Timmy library. The output is in the form of table. This constructor draws
     the head of a table (much like the <thead> tag in HTML).
 }
-Constructor TCmpr.Init(TestingProc: String);
+Constructor TCmpr.Init(TestingProc, UsrInput: String);
 Begin
     // *** SETTING UP SOME VARIABLES *** \\
 
     TestProcName := TestingProc;
+    UserInput := UsrInput;
 
     // Timmy Interactive Shell uses a 3-column table for comparing.
     // The first column holds the variable names, the second for the expected
@@ -61,8 +60,8 @@ Begin
     // 24 in width. Width of the second column and the third column, however,
     // vary depend on the user's command prompt window's width. Col2Width is the
     // width of the second column, and Col2Width is the width of the third one.
-      Col2Width := Trunc((WindMaxX - 28) / 2);
-      Col3Width := Round((WindMaxX - 28) / 2);
+      Col2Width := Trunc((WindMaxX - 10 - 28) / 2);
+      Col3Width := Round((WindMaxX - 10 - 28) / 2);
 
     // Lines between the rows of the table. SpcLine will appear above and under
     // the table's head, and under the whole table. NormLine will appear between
@@ -136,12 +135,11 @@ Begin
     Write(DupeString(' ', Round((BoxWidth - Length(BoxText)) / 2)));
     TextColor(7); Write('|');
 
-    If ESig = ''
-      then Exit
-      else Begin
-             Writeln;
-             If ESig = 'LASTBOX' then Writeln(NormLine) else Writeln(SpcLine);
-           End;
+    If (ESig = '') or (ESig = 'FIRSTBOX')
+      then Exit;
+
+    Writeln;
+    If ESig = 'LASTBOX' then Writeln(NormLine) else Writeln(SpcLine);
 End;
 
 {
