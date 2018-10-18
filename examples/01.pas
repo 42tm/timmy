@@ -15,7 +15,6 @@ BEGIN
     MyBot.Init(70, 'I gave up', False);
     MyBot.Add(StrSplit('Hello', ' '), StrSplit('Greetings!|Hello to you!|Hi!', '|'));
     MyBot.Add('How are you', 'I am fine!;Never better!;I''m doing great.');
-    MyBot.Add('What 2 + 2', 'The answer is 4', '@');
 
     Writeln(MyBot.Answer('Hello!'));  // -> "Greetings!" or "Hello to you!" or "Hi!" (randomly selected)
     Writeln(MyBot.Answer('How are you?'));  // -> "I am fine!" or "Never better!" or "I'm doing great."
