@@ -24,14 +24,23 @@ Type
               Constructor Init(TestingProc, UsrInput: String);
               Destructor EndCmprProc;
               Public
-                Procedure Cmpr(eint, gint: LongInt; VarName: String);               overload;
-                Procedure Cmpr(ebool, gbool: Boolean; VarName: String);             overload;
-                Procedure Cmpr(estr, gstr, VarName: String);                        overload;
-                Procedure Cmpr(estrarr, gstrarr: Array of String; VarName: String); overload;
+                Procedure AddData(eint, gint: LongInt; VarName: String);               overload;
+                Procedure AddData(ebool, gbool: Boolean; VarName: String);             overload;
+                Procedure AddData(estr, gstr, VarName: String);                        overload;
+                Procedure AddData(estrarr, gstrarr: Array of String; VarName: String); overload;
+                Procedure MkTable;
               Private
                 TestProcName, UserInput, NormLine, SpcLine: String;
-                CorrectCprs, TotalCprs: Byte;
-                Col2Width, Col3Width: Word;
+                Col1Width, Col2Width, Col3Width: Word;
+                Order: String;
+                TCmprData: Record
+                             VarNames: Array of String;
+                             IntArr: Array of LongInt;
+                             BoolArr: Array of Boolean;
+                             StrArr: Array of String;
+                             StrArrArr: Array of Array of String;
+                             ResultCache: Array of Boolean;
+                           End;
                 Procedure MkBox(BoxWidth: Word; BoxText: String;
                                 BoxTextColor: ShortInt = 15; ESig: String = '');
                 Function BoolToInt(ABool: Boolean): ShortInt;
@@ -49,37 +58,20 @@ Implementation
 }
 Constructor TCmpr.Init(TestingProc, UsrInput: String);
 Begin
-    // *** SETTING UP SOME VARIABLES *** \\
-
+    // Just setting up some variables
     TestProcName := TestingProc;
     UserInput := UsrInput;
-
-    // Timmy Interactive Shell uses a 3-column table for comparing.
-    // The first column holds the variable names, the second for the expected
-    // values, and the third is for the 'got' values. The first column is always
-    // 24 in width. Width of the second column and the third column, however,
-    // vary depend on the user's command prompt window's width. Col2Width is the
-    // width of the second column, and Col2Width is the width of the third one.
-      Col2Width := Trunc((WindMaxX - 10 - 28) / 2);
-      Col3Width := Round((WindMaxX - 10 - 28) / 2);
-
-    // Lines between the rows of the table. SpcLine will appear above and under
-    // the table's head, and under the whole table. NormLine will appear between
-    // normal rows.
-      SpcLine := Concat('*', DupeString('-', 24), '*',
-                        DupeString('-', Col2Width), '*',
-                        DupeString('-', Col3Width), '*');
-      NormLine := ReplaceStr(SpcLine, '*', '|');
-
-    // *** DRAW TABLE'S HEAD ***
-      TextColor(7); Writeln(SpcLine);
-      MkBox(24, 'Variable', 11, 'FIRSTBOX');   // First column
-      MkBox(Col2Width, 'Expected', 11);        // Second column
-      MkBox(Col3Width, 'Got', 11, 'ENDHEAD');  // Third column
+    Order := '';
+    SetLength(VarNames, 0);
 End;
 
 { Print out the comparing result, end the comparing session. }
 Destructor TCmpr.EndCmprProc;
+Var
+    CIter: Boolean;   // Iterator for TCmpr.CmprData.ResultCache;
+    // Number of correct results (i.e. booleans that are true)
+    // in TCmpr.CmprData.ResultCache;
+      FlagResult: Byte = 0;
 Begin
     Writeln;
     TextColor(14); Writeln('Testing results');
@@ -88,10 +80,13 @@ Begin
     Jam(9); Write('Input: '); TextColor(15); Writeln(UserInput);
     Jam(9); Write('Method tested: '); TextColor(15); Writeln(TestProcName);
 
+    For CIter in CmprData.ResultCache do If CIter then Inc(FlagResult);
+
     // Print result
       Jam(9); Write('Results: '); TextColor(15); Write('Got ');
-      If CorrectCprs = TotalCprs then TextColor(10) else TextColor(12);
-      Write(CorrectCprs, ' out of ', TotalCprs);
+      If FlagResult = Length(CmprData.ResultCache)
+        then TextColor(10) else TextColor(12);
+      Write(FlagResult, ' out of ', Length(CmprData.ResultCache));
       TextColor(15); Write(' compared values correctly as expected');
 
     Writeln;
@@ -143,7 +138,7 @@ Begin
 End;
 
 {
-    Convert boolean to numeric type.
+    Convert boolean to numeric type, for TCmpr.MkBox().
 
     Parameter:
         ABool [Boolean]: Boolean value to be converted
@@ -153,103 +148,209 @@ Function TCmpr.BoolToInt(ABool: Boolean): ShortInt;
 Begin If ABool then Exit(0); Exit(-1); End;
 
 {
-    Create string representation for array of string such that it is only
-    LLimit or shorter in length.
-
-    ArrayRepr(['some string', 'another string'], 35)
-      -> '['some string','another string']'
-
-    ArrayRepr(['some string', 'another string'], 20)
-      -> '['some string', ...]'
+    Create string representation of array, with length limit.
 
     Parameters:
-        InputArray [Array of String]: Input array
-        LLimit [Word]: Length limit (in characters) for the output string
-    Return [String]: String representation of InputArray
+        InputArr [TStrArray]: Array that needs a string representation
+        LLimit: Length limit of the string representation.
+    Return [String]: String representation.
+
+    NOTE: This function does not handle the case where, InputArr is empty,
+    because this function is mainly used by some parent Timmy Interactive Shell
+    processes and there's no event where InputArr is empty.
+
+    Examples (result strings are in double quotes):
+      TestArray: ['a string', 'another string']
+
+        MkArrayRep(TestArray, 30) -> "['a string','another string']"
+        MkArrayRep(TestArray, 25) -> "['a string',...]"
+        MkArrayRep(TestArray, 5)  -> "[...]"
+        MkArrayRep(TestArray, 3)  -> "[]"
 }
-Function TCmpr.ArrayRepr(InputArray: Array of String; LLimit: Word): String;
+Function MkArrayRep(InputArr: TStrArray; LLimit: Word): String;
 Var
-    iter: LongWord;
+    AIter: String;
 Begin
-    // String representation. Will be exitted with "[" and "]" characters later
-      ArrayRepr := '';
+    // This one isn't in the while loop (below) to increase loop execution speed
+      MkArrayRep := '';
+      For AIter in InputArr
+        do MkArrayRep := Concat(MkArrayRep, '''', AIter, '''', ',');
+      MkArrayRep := '[' + Copy(MkArrayRep, 1, Length(MkArrayRep) - 1) + ']';
+      Writeln(Length(MkArrayRep));
 
-    { The last element does not need a comma after it, so only itererate to
-    Length(InputArray) - 2. Special case with the last element is dealt
-    later. }
+    While (Length(MkArrayRep) > LLimit) and (Length(InputArr) > 0)
+      do Begin
+           MkArrayRep := '';
+           SetLength(InputArr, High(InputArr));  // Decrease array's length by 1
+           For AIter in InputArr
+             do MkArrayRep := Concat(MkArrayRep, '''', AIter, '''', ',');
+           MkArrayRep := '[' + Copy(MkArrayRep, 1, Length(MkArrayRep)) + '...]';
+         End;
 
-    For iter := 0 to Length(InputArray) - 2
-      do { If we take the current string representation, and add the next
-         string in the array to it, and the thing does not exceed the LLimit,
-         add it to the string representation. The "5" in the first clause in
-         the if statement are the total length of the comma (put after every
-         array element in the representation), the square brackets pair
-         ("[" and "]") at the start and end of the representation, and the
-         single quotes wrap around the string element, so those add up to 5
-         characters in length. }
-           If Length(ArrayRepr) + 5 + Length(InputArray[iter]) < LLimit
-             then ArrayRepr := ArrayRepr + '''' + InputArray[iter] + ''','
-             else Break;
-
-    {
-        If we are at the final element in the array, and the final element can
-        be added to the string representation without having the representation
-        size to exceed LLimit, then add it.
-        The "4" in "Length(InputArray[iter + 1]) + 4" is the total length of the
-        pair of square brackets ("[" and "]") must be added at the start and end
-        of the string, plus the single quotes around the last string element.
-    }
-    If (iter = Length(InputArray) - 2) and (Length(ArrayRepr)
-      + Length(InputArray[iter + 1]) + 4 <= LLimit)
-      then Exit('[' + ArrayRepr + '''' + InputArray[iter + 1] + ''']');
-
-    { We cannot add more to the representation, as it would make the length of
-    the representation to exceed LLimit. So we return with an ellipsis
-    ("...") to indicate that there are still more elements in the array }
-    Exit('[' + ArrayRepr + '...]');
+    If Length(InputArr) = 0
+      then Begin If LLimit < 5 then Exit('') else Exit('[...]'); End;
 End;
 
-Procedure TCmpr.Cmpr(eint, gint: LongInt; VarName: String);
+{
+    Convert boolean to string type.
+
+    Parameter:
+        ABool [Boolean]: Boolean value to be converted
+    Return [String]: "True" if ABool is true, "False" otherwise.
+}
+Function TCmpr.BoolToStr(ABool: Boolean): String;
+Begin If ABool then Exit('True'); Exit('False'); End;
+
+// *******************************************************
+// *                  ADD DATA ROUTINES                  *
+// *                  -----------------                  *
+// *                                                     *
+// * 1. Add variable's name to VarNames array            *
+// * 2. Append a character to the string Order:          *
+// *     - Append 'i' if data's type is integer          *
+// *     - Append 'b' if data's type is boolean          *
+// *     - Append 's' if data's type is string           *
+// *     - Append 'a' if data's type is array of string  *
+// * 3. Add the value of data to                         *
+// *    TCmprData.ARRAY_OF_CORRESPONDING_DATA            *
+// * 4. Compare two variables. Add a TRUE boolean to     *
+// *    TCmprData.ResultCache if their values are the    *
+// *    the same, FALSE boolean otherwise                *
+// *                                                     *
+// *******************************************************
+
+
+Procedure TCmpr.AddData(eint, gint: LongInt; VarName: String);
 Begin
-    MkBox(24, VarName, 14, 'FIRSTBOX');
-    MkBox(Col2Width, IntToStr(eint));
-    MkBox(Col3Width, IntToStr(gint), BoolToInt(eint = eint), 'LASTBOX');
+    SetLength(VarNames, Length(VarNames) + 1);
+    VarNames[High(VarNames)] := VarName;
+    Order := Order + 'i';
+    SetLength(TCmprData.IntArr, Length(TCmprData.IntArr) + 2);
+    TCmprData.IntArr[High(TCmprData.IntArr) - 1] := eint;
+    TCmprData.IntArr[High(TCmprData.IntArr)] := gint;
+    SetLength(TCmprData.ResultCache, Length(TCmprData.ResultCache) + 1);
+    TCmprData.ResultCache[High(TCmprData.ResultCache)] := (eint = gint);
 End;
 
-Procedure TCmpr.Cmpr(ebool, gbool: Boolean; VarName: String);
+Procedure TCmpr.AddData(ebool, gbool: Boolean; VarName: String);
 Begin
-    MkBox(24, VarName, 14, 'FIRSTBOX');
-    MkBox(Col2Width, BoolToStr(ebool, True));
-    MkBox(Col3Width, BoolToStr(gbool, True), BoolToInt(ebool = gbool),
-          'LASTBOX');
+    SetLength(VarNames, Length(VarNames) + 1);
+    VarNames[High(VarNames)] := VarName;
+    Order := Order + 'b';
+    SetLength(TCmprData.BoolArr, Length(TCmprData.BoolArr) + 2);
+    TCmprData.BoolArr[High(TCmprData.BoolArr) - 1] := ebool;
+    TCmprData.BoolArr[High(TCmprData.BoolArr)] := gbool;
+    SetLength(TCmprData.ResultCache, Length(TCmprData.ResultCache) + 1);
+    TCmprData.ResultCache[High(TCmprData.ResultCache)] := (ebool = gbool);
 End;
 
-Procedure TCmpr.Cmpr(estr, gstr, VarName: String);
+Procedure TCmpr.AddData(estr, gstr, VarName: String);
 Begin
-    MkBox(24, VarName, 14, 'FIRSTBOX');
-    MkBox(Col2Width, estr);
-    MkBox(Col3Width, gstr, BoolToInt(estr = gstr), 'LASTBOX');
+    SetLength(VarNames, Length(VarNames) + 1);
+    VarNames[High(VarNames)] := VarName;
+    Order := Order + 's';
+    SetLength(TCmprData.StrArr, Length(TCmprData.StrArr) + 2);
+    TCmprData.StrArr[High(TCmprData.StrArr) - 1] := estr;
+    TCmprData.StrArr[High(TCmprData.StrArr)] := gstr;
+    SetLength(TCmprData.ResultCache, Length(TCmprData.ResultCache) + 1);
+    TCmprData.ResultCache[High(TCmprData.ResultCache)] := (estr = gstr);
 End;
 
-Procedure TCmpr.Cmpr(estrarr, gstrarr: Array of String; VarName: String);
+Procedure TCmpr.AddData(estrarr, gstrarr: Array of String; VarName: String);
 Var
-    SameArrays: Boolean;
-    AIter: LongWord;
+    TestIter: LongWord;
 Begin
-    SameArrays := True;
+    SetLength(VarNames, Length(VarNames) + 1);
+    VarNames[High(VarNames)] := VarName;
+    Order := Order + 'a';
+    SetLength(TCmprData.StrArr, Length(TCmprData.StrArr) + 2);
+    TCmprData.StrArr[High(TCmprData.StrArr) - 1] := estrarr;
+    TCmprData.StrArr[High(TCmprData.StrArr)] := gstrarr;
+    SetLength(TCmprData.ResultCache, Length(TCmprData.ResultCache) + 1);
     If Length(estrarr) <> Length(gstrarr)
-      then SameArrays := False
-      else For AIter := 0  to High(estrarr)
-             do If estrarr[AIter] <> gstrarr[AIter]
-                  then Begin
-                         SameArrays := False;
-                         Break;
-                       End;
+      then TCmprData.ResultCache[High(TCmprData.ResultCache)] := False
+      else Begin
+             For TestIter := 0 to High(estrarr)
+               do If estrarr[TestIter] <> gstrarr[TestIter] then Break;
+             TCmprData.ResultCache[High(TCmprData.ResultCache)]
+                    := ( (TestIter = High(estrarr))
+                       and (estrarr[High(estrarr)] = gstrarr[High(gstrarr)]) );
+           End;
+End;
 
-    MkBox(24, VarName, 14, 'FIRSTBOX');
-    MkBox(Col2Width, ArrayRepr(estrarr, Col2Width));
-    MkBox(Col3Width, ArrayRepr(gstrarr, Col3Width),
-          BoolToInt(SameArrays), 'LASTBOX');
+Procedure TCmpr.MkTable;
+Var
+    Iter: LongWord;   // General iterator
+    OrderIter: Byte;  // Iterator for TCmpr.Order
+    // Total computed length of the three columns with inputed data,
+    // use in compare with WindMaxX
+      FlagTotalLen: Word;
+    // Iterators for IntArr, BoolArr, StrArr, StrArrArr in TCmpr.TCmprData
+      IntDIter, BoolDIter, StrDIter, AStrDIter: Byte;
+    StrReps: Array of String;
+Lable
+    PrintRawResult;
+Begin
+    // ******************************************
+    // *      DETERMINE THE COLUMNS' WIDTH      *
+    // ******************************************
+
+    Col1Width := 0;
+
+    For Iter := 0 to High(TCmprData.VarNames)
+      do If Length(TCmprData.VarNames[Iter]) > Col1Width
+           then Col1Width := Length(TCmprData.VarNames[Iter]);
+
+    If Pos('a', Order) + Pos('s', Order) = 0
+      then Begin
+             Col2Width := 0;
+             IntDIter := 0; BoolDIter := 0; StrDIter := 0; AStrDIter := 0;
+
+             For OrderIter in Order
+               do Begin
+                    Case OrderIter of
+                      'i': Begin
+                             If Length(IntToStr[IntDIter]) > Col2Width
+                               then Col2Width := Length(IntToStr[IntDIter]);
+                             Inc(IntDIter);
+                           End;
+                      'b': Begin
+                             If Length(BoolToStr[BoolDIter]) > Col2Width
+                               then Col2Width := Length(BoolToStr[BoolDIter]);
+                             Inc(BoolDIter);
+                           End;
+                    End;
+
+                    If Col2Width * 2 > WindMaxX
+                      then Begin
+                             TextColor(12);
+                             Write('Cmpr: Window''s width isn''t wide enough.');
+                             Writeln; Exit;
+                           End;
+                  End;
+           End
+      Else Begin
+             Col2Width := Trunc((WindMaxX - Col1Width) / 2);
+             Col3Width := Round((WindMaxX - Col1Width) / 2);
+
+             For OrderIter in Order
+               do Begin
+                    Case OrderIter of
+                      'i': Begin
+                             If Length(IntToStr[IntDIter]) > Col2Width
+                               then Col2Width := Length(IntToStr[IntDIter]);
+                             Inc(IntDIter);
+                           End;
+                      'b': Begin
+                             If Length(BoolToStr[BoolDIter]) > Col2Width
+                               then Col2Width := Length(BoolToStr[BoolDIter]);
+                             Inc(BoolDIter);
+                           End;
+                      's': Begin
+                             If Length()
+                           End;
+                    End;
+           End;
 End;
 
 End.
