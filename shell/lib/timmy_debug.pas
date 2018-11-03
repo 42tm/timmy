@@ -1,1 +1,0 @@
-../../variants/timmy_debug.pas
