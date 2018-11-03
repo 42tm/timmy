@@ -8,7 +8,7 @@
 Program TimmyExample3;
 Uses Timmy in '../timmy.pas';
 Var MyBot: TTimmy;
-    MyString: String;
+    MyString: AnsiString;
     PMyStr: PStr;
 
 BEGIN

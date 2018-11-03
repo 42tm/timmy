@@ -1,8 +1,26 @@
 *
-!examples
+
+# Source files
 !*.pas
+!*.pp
+!*.inc
+
+# Markdown files in the project and the license copies
 !*.md
 !COPYING
 !COPYING.LESSER
-!examples/mkexample.sh
+
+# Put examples in
+!examples/
+
+# Shell folders & files
+!shell/
+!shell/**/
+!shell/inc/**
+!shell/man/*.txt
+
+# Put variants of Timmy in
+!variants/
+
+# Don't ignore .gitignore itself :/
 !.gitignore
