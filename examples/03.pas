@@ -1,6 +1,6 @@
 {
     Timmy example 3: Using pointers with Timmy
-    Original author: Nguyen Hoang Duong (@NOVAglow).
+    Original author: Nguyen Hoang Duong (@you-create).
 
     This example demonstrates the use of pointers in Timmy,
     or more specifically , TTimmy.Add().

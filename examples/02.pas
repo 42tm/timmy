@@ -1,6 +1,6 @@
 {
     Timmy example 2: Birthday bot
-    Original author: Nguyen Hoang Duong (@NOVAglow).
+    Original author: Nguyen Hoang Duong (@you-create).
 
     This is a simple birthday bot, made possible with the Timmy library plus
     some manual Pascal instructions.

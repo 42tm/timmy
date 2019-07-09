@@ -1,6 +1,6 @@
 {
     Timmy example 1: The basics
-    Original author: Nguyen Hoang Duong (@NOVAglow).
+    Original author: Nguyen Hoang Duong (@you-create).
     This example is similar to the one demonstrated in the README file.
 
     This simple example demonstrates the basic usage of Timmy, which involves
